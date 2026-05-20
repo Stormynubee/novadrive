@@ -158,12 +158,9 @@ Our creative differentiator is **information surviving dead zones** (GHP + human
 
 ### The Three Pillars
 
-```
-┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
-│  1. START TRIAGE    │   │  2. TRAUMA-TIER     │   │  3. GOLDEN HOUR     │
-│     CHATBOT         │ → │     ROUTING         │ → │     PACKET (GHP)    │
-│  (AI + FSM)         │   │  (not nearest pin)  │   │  + QR HUMAN RELAY   │
-└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
+```mermaid
+flowchart LR
+  P1["1. START TRIAGE CHATBOT<br/>(AI + FSM)"] --> P2["2. TRAUMA-TIER ROUTING<br/>(not nearest pin)"] --> P3["3. GOLDEN HOUR PACKET (GHP)<br/>+ QR HUMAN RELAY"]
 ```
 
 ### Innovation #1 — Golden Hour Packet (GHP)
@@ -342,45 +339,43 @@ Trigger sms:108?body=... OR navigator.share() OR copy-to-clipboard
 
 ### Landing Gate (3 Entry Points)
 
-```
-                    ┌──────────────────────┐
-                    │   RelaySaathi Home   │
-                    └──────────┬───────────┘
-           ┌───────────────────┼───────────────────┐
-           ▼                   ▼                   ▼
-  [Start Emergency]    [Scan Distress QR]   [Download Corridor Pack]
-     (Victim /            (Bystander)         (Pre-trip offline prep)
-      Bystander-help)
+```mermaid
+flowchart TB
+  Home["RelaySaathi Home"]
+  Home --> Start["Start Emergency<br/>Victim / Bystander-help"]
+  Home --> Scan["Scan Distress QR<br/>Bystander"]
+  Home --> Download["Download Corridor Pack<br/>Pre-trip offline prep"]
 ```
 
 ### Mind Map — Full System
 
-```
-RelaySaathi
-├── INPUT
-│   ├── Voice (Web Speech API)
-│   ├── Text chat
-│   └── GPS + optional NH km marker
-├── PROCESSING
-│   ├── AI layer (LLM slot filling — online)
-│   ├── FSM layer (START triage — always)
-│   ├── Routing layer (trauma-tier + distance)
-│   └── GHP builder (structured output)
-├── DATA
-│   ├── emergency_seed.db (SQLite via sql.js)
-│   ├── IndexedDB (relay packets)
-│   └── Service Worker cache (shell, wasm, tiles)
-├── OUTPUT
-│   ├── Map with ranked facilities
-│   ├── Human-readable GHP on screen
-│   ├── QR code (compressed payload)
-│   ├── Call / SMS / WhatsApp actions
-│   └── Bystander relay → 108 SMS
-└── SUBMISSION
-    ├── Source code
-    ├── Database file
-    ├── 7 slides
-    └── Word doc
+```mermaid
+mindmap
+  root((RelaySaathi))
+    INPUT
+      Voice Web Speech API
+      Text chat
+      GPS + NH km marker
+    PROCESSING
+      LLM slot filling online
+      START triage FSM always
+      Trauma-tier routing
+      GHP builder
+    DATA
+      emergency_seed.db
+      IndexedDB relay packets
+      Service Worker cache
+    OUTPUT
+      Ranked facility map
+      Human-readable GHP
+      Compressed QR payload
+      Call SMS WhatsApp
+      Bystander relay to 108
+    SUBMISSION
+      Source code
+      Database file
+      7 slides
+      Word doc
 ```
 
 ### Flowchart — Triage Decision (Simplified)
@@ -618,18 +613,14 @@ locateFile: (file) => `https://sql.js.org/dist/${file}`
 
 ### Hybrid Model: LLM-as-Skin, FSM-as-Spine
 
-```
-User natural language
-        ↓
-┌───────────────────┐
-│ ONLINE            │ OFFLINE
-│ LLM extracts      │ Regex / keyword patterns
-│ structured slots  │ OR scripted button options
-└─────────┬─────────┘
-          ↓
-    START Triage FSM (always runs)
-          ↓
-    Deterministic triage color
+```mermaid
+flowchart TB
+  NL[User natural language] --> Branch{Network?}
+  Branch -->|Online| LLM[LLM extracts structured slots]
+  Branch -->|Offline| Regex[Regex / keyword patterns<br/>OR scripted button options]
+  LLM --> FSM[START Triage FSM always runs]
+  Regex --> FSM
+  FSM --> Color[Deterministic triage color]
 ```
 
 ### LLM Policy
