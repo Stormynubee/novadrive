@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+docs/site/node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Vercel
+.vercel/
+
+# Env secrets
+.env
+.env.*
+
+# Puppeteer cache (optional local)
+.cache/
