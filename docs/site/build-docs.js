@@ -9,11 +9,11 @@ const ROOT = path.join(__dirname, '..');
 const MD_PATH = path.join(ROOT, 'RELAYSATHI_MASTER_BRIEF.md');
 const OUT_HTML = path.join(__dirname, 'index.html');
 
-const md = fs.readFileSync(MD_PATH, 'utf8');
+const md = fs.readFileSync(MD_PATH, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
 // Split mermaid blocks before markdown conversion
 const parts = [];
-const mermaidRegex = /```mermaid\n([\s\S]*?)```/g;
+const mermaidRegex = /```mermaid\r?\n([\s\S]*?)```/g;
 let lastIndex = 0;
 let match;
 let mermaidIndex = 0;
@@ -30,7 +30,19 @@ if (lastIndex < md.length) {
 }
 
 function mdToHtml(text) {
+  const codeBlocks = [];
   let html = text;
+
+  // Fenced code blocks first — protects content from header/list transforms
+  html = html.replace(/```(\w*)\r?\n([\s\S]*?)```/g, (_, lang, code) => {
+    const idx = codeBlocks.length;
+    const langClass = lang ? ` class="language-${lang}"` : '';
+    const preClass = lang ? '' : ' class="diagram-block"';
+    codeBlocks.push(
+      `<pre${preClass}><code${langClass}>${escapeHtml(code.replace(/\s+$/, ''))}</code></pre>`
+    );
+    return `\n%%CODEBLOCK${idx}%%\n`;
+  });
 
   // Headers
   html = html.replace(/^###### (.+)$/gm, '<h6 id="$1">$1</h6>');
@@ -50,12 +62,6 @@ function mdToHtml(text) {
   // Horizontal rules
   html = html.replace(/^---$/gm, '<hr>');
 
-  // Code blocks (non-mermaid)
-  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-    const cls = lang ? ` class="language-${lang}"` : '';
-    return `<pre><code${cls}>${escapeHtml(code.trim())}</code></pre>`;
-  });
-
   // Inline code
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
@@ -73,16 +79,12 @@ function mdToHtml(text) {
   html = html.replace(/^- \[ \] (.+)$/gm, '<li class="checklist"><input type="checkbox" disabled> $1</li>');
   html = html.replace(/^- \[x\] (.+)$/gm, '<li class="checklist"><input type="checkbox" checked disabled> $1</li>');
   html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>[\s\S]*?<\/li>\n?)+/g, (block) => {
-    if (block.includes('class="checklist"')) return `<ul class="checklist">${block}</ul>`;
-    return `<ul>${block}</ul>`;
-  });
-
-  // Numbered lists
-  html = html.replace(/^\d+\. (.+)$/gm, '<li>$1</li>');
-  html = html.replace(/(<li>(?![\s\S]*class="checklist")[\s\S]*?<\/li>\n?)+/g, (block) => {
-    if (block.startsWith('<ul')) return block;
-    return `<ol>${block}</ol>`;
+  html = html.replace(/^\d+\. (.+)$/gm, '<li class="numbered">$1</li>');
+  html = html.replace(/(?:<li class="checklist">[\s\S]*?<\/li>\s*)+/g, (block) => `<ul class="checklist">${block.trim()}</ul>`);
+  html = html.replace(/(?:<li class="numbered">[\s\S]*?<\/li>\s*)+/g, (block) => `<ol>${block.trim().replace(/ class="numbered"/g, '')}</ol>`);
+  html = html.replace(/(?:<li>[\s\S]*?<\/li>\s*)+/g, (block) => {
+    if (block.startsWith('<ul') || block.startsWith('<ol')) return block;
+    return `<ul>${block.trim()}</ul>`;
   });
 
   // Links
@@ -92,9 +94,12 @@ function mdToHtml(text) {
   html = html.split('\n\n').map((block) => {
     block = block.trim();
     if (!block) return '';
+    if (/^%%CODEBLOCK\d+%%$/.test(block)) return block;
     if (/^<(h[1-6]|ul|ol|pre|table|hr|blockquote|div)/.test(block)) return block;
     return `<p>${block.replace(/\n/g, '<br>')}</p>`;
   }).join('\n');
+
+  html = html.replace(/%%CODEBLOCK(\d+)%%/g, (_, idx) => codeBlocks[Number(idx)] || '');
 
   return html;
 }
@@ -326,6 +331,16 @@ const html = `<!DOCTYPE html>
       overflow-x: auto;
       margin: 1rem 0 1.5rem;
       font-size: 0.82rem;
+    }
+    pre code {
+      white-space: pre;
+      display: block;
+      line-height: 1.5;
+      color: #c8d0de;
+    }
+    pre.diagram-block code {
+      font-size: 0.78rem;
+      line-height: 1.45;
     }
     code {
       font-family: 'JetBrains Mono', monospace;
