@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RelaySaathi — Master Team Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0c0f14;
+      --surface: #141922;
+      --surface2: #1a2030;
+      --border: #2a3347;
+      --text: #e8ecf4;
+      --muted: #8b95a8;
+      --accent: #ef4444;
+      --accent2: #f97316;
+      --green: #22c55e;
+      --blue: #3b82f6;
+      --sidebar-w: 280px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: var(--sidebar-w);
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      z-index: 100;
+    }
+    .sidebar-brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+    }
+    .sidebar-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.4;
+    }
+    .toc-link {
+      display: block;
+      padding: 0.35rem 0.75rem;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      border-radius: 6px;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .toc-link:hover {
+      color: var(--text);
+      background: var(--surface2);
+      border-left-color: var(--accent);
+    }
+    .sidebar-actions {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      margin-bottom: 0.5rem;
+      border: none;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+    }
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      max-width: 900px;
+      padding: 3rem 3rem 5rem;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(249,115,22,0.08));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      border: none;
+      padding: 0;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(239,68,68,0.15);
+      color: var(--accent);
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    h1 { font-size: 1.75rem; margin: 2rem 0 1rem; color: var(--text); }
+    h2 {
+      font-size: 1.35rem;
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    h3 { font-size: 1.1rem; margin: 1.75rem 0 0.75rem; color: var(--accent2); }
+    h4, h5, h6 { margin: 1.25rem 0 0.5rem; color: var(--muted); }
+    p { margin-bottom: 1rem; color: #c8d0de; }
+    a { color: var(--blue); }
+    strong { color: var(--text); font-weight: 600; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+    ul, ol { margin: 0.75rem 0 1rem 1.5rem; color: #c8d0de; }
+    li { margin-bottom: 0.35rem; }
+    ul.checklist { list-style: none; margin-left: 0; }
+    ul.checklist li { display: flex; align-items: flex-start; gap: 0.5rem; }
+    blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 0.75rem 1.25rem;
+      margin: 1rem 0;
+      background: rgba(239,68,68,0.06);
+      border-radius: 0 8px 8px 0;
+      color: var(--text);
+      font-style: italic;
+    }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.82rem;
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+    }
+    p code, li code, td code {
+      background: var(--surface2);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      color: var(--accent2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.88rem;
+    }
+    th {
+      background: var(--surface2);
+      color: var(--text);
+      font-weight: 600;
+      text-align: left;
+      padding: 0.65rem 0.85rem;
+      border: 1px solid var(--border);
+    }
+    td {
+      padding: 0.6rem 0.85rem;
+      border: 1px solid var(--border);
+      color: #c8d0de;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+    .mermaid-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+    }
+    .mermaid { background: transparent !important; }
+    .footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 1.5rem; }
+    }
+    /* ===== PDF / PRINT — high contrast, readable ===== */
+    .pdf-cover {
+      display: none;
+      page-break-after: always;
+      padding: 3rem 0 2rem;
+      border-bottom: 3px solid #dc2626;
+      margin-bottom: 2rem;
+    }
+    .pdf-cover h1 { font-size: 2.2rem; color: #0f0f0f !important; border: none; margin-bottom: 0.5rem; }
+    .pdf-cover .subtitle { font-size: 1.1rem; color: #374151 !important; margin-bottom: 1.5rem; }
+    .pdf-cover .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 2rem; font-size: 0.9rem; color: #1f2937 !important; }
+    .pdf-cover .meta-grid strong { color: #0f0f0f !important; }
+    .pdf-cover .tagline { margin-top: 1.5rem; font-size: 1rem; font-style: italic; color: #dc2626 !important; }
+
+    body.pdf-export { background: #ffffff !important; color: #0f0f0f !important; font-size: 11pt !important; }
+    body.pdf-export .sidebar, body.pdf-export .sidebar-actions, body.pdf-export .btn { display: none !important; }
+    body.pdf-export .main { margin-left: 0 !important; max-width: 100% !important; padding: 0 0 2rem !important; }
+    body.pdf-export .pdf-cover { display: block !important; }
+    body.pdf-export h1, body.pdf-export h2 { color: #0f0f0f !important; page-break-after: avoid; }
+    body.pdf-export h2 { border-bottom: 2px solid #dc2626 !important; padding-bottom: 0.35rem; margin-top: 1.75rem; }
+    body.pdf-export h3 { color: #b45309 !important; }
+    body.pdf-export h4, body.pdf-export h5, body.pdf-export h6 { color: #374151 !important; }
+    body.pdf-export p, body.pdf-export li, body.pdf-export ul, body.pdf-export ol { color: #1f2937 !important; }
+    body.pdf-export strong { color: #0f0f0f !important; }
+    body.pdf-export em { color: #374151 !important; }
+    body.pdf-export a { color: #1d4ed8 !important; text-decoration: underline; }
+    body.pdf-export .hero { background: #fef2f2 !important; border: 2px solid #dc2626 !important; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    body.pdf-export .hero h1 { color: #0f0f0f !important; font-size: 1.5rem; }
+    body.pdf-export .hero-meta, body.pdf-export .hero p { color: #374151 !important; }
+    body.pdf-export .badge { background: #dc2626 !important; color: #ffffff !important; }
+    body.pdf-export pre { background: #f3f4f6 !important; border: 1px solid #9ca3af !important; color: #111827 !important; page-break-inside: avoid; }
+    body.pdf-export pre code { color: #111827 !important; }
+    body.pdf-export p code, body.pdf-export li code, body.pdf-export td code { background: #e5e7eb !important; color: #991b1b !important; border: 1px solid #d1d5db; }
+    body.pdf-export table { page-break-inside: avoid; border: 1px solid #374151 !important; }
+    body.pdf-export th { background: #1f2937 !important; color: #ffffff !important; border: 1px solid #374151 !important; font-weight: 700; }
+    body.pdf-export td { color: #111827 !important; border: 1px solid #9ca3af !important; background: #ffffff !important; }
+    body.pdf-export tr:nth-child(even) td { background: #f9fafb !important; }
+    body.pdf-export blockquote { background: #fef2f2 !important; border-left: 4px solid #dc2626 !important; color: #1f2937 !important; page-break-inside: avoid; }
+    body.pdf-export hr { border-top: 1px solid #9ca3af !important; }
+    body.pdf-export .mermaid-wrap { background: #ffffff !important; border: 1px solid #9ca3af !important; page-break-inside: avoid; padding: 1rem; }
+    body.pdf-export .footer { color: #6b7280 !important; border-top: 1px solid #d1d5db; }
+
+    @media print {
+      .sidebar, .sidebar-actions, .btn { display: none !important; }
+      body { background: #ffffff !important; color: #0f0f0f !important; font-size: 11pt !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .main { margin-left: 0 !important; max-width: 100% !important; padding: 0 0 2rem !important; }
+      .pdf-cover { display: block !important; }
+      h1, h2 { color: #0f0f0f !important; page-break-after: avoid; }
+      h2 { border-bottom: 2px solid #dc2626 !important; padding-bottom: 0.35rem; }
+      h3 { color: #b45309 !important; }
+      h4, h5, h6 { color: #374151 !important; }
+      p, li, ul, ol { color: #1f2937 !important; }
+      strong { color: #0f0f0f !important; }
+      em { color: #374151 !important; }
+      a { color: #1d4ed8 !important; text-decoration: underline; }
+      .hero { background: #fef2f2 !important; border: 2px solid #dc2626 !important; }
+      .hero h1, .hero p { color: #0f0f0f !important; }
+      .hero-meta { color: #374151 !important; }
+      .badge { background: #dc2626 !important; color: #fff !important; }
+      pre { background: #f3f4f6 !important; border: 1px solid #9ca3af !important; color: #111827 !important; page-break-inside: avoid; }
+      pre code { color: #111827 !important; }
+      p code, li code, td code { background: #e5e7eb !important; color: #991b1b !important; }
+      table { page-break-inside: avoid; border: 1px solid #374151 !important; }
+      th { background: #1f2937 !important; color: #ffffff !important; border: 1px solid #374151 !important; }
+      td { color: #111827 !important; border: 1px solid #9ca3af !important; background: #fff !important; }
+      tr:nth-child(even) td { background: #f9fafb !important; }
+      blockquote { background: #fef2f2 !important; border-left: 4px solid #dc2626 !important; color: #1f2937 !important; }
+      hr { border-top: 1px solid #9ca3af !important; }
+      .mermaid-wrap { background: #fff !important; border: 1px solid #9ca3af !important; page-break-inside: avoid; }
+      .footer { color: #6b7280 !important; }
+      h2, h3 { page-break-after: avoid; }
+      pre, table, .mermaid-wrap, blockquote { page-break-inside: avoid; }
+    }
+  </style>
+  <script>
+    window.IS_PDF_EXPORT = location.search.includes('pdf=1');
+    if (window.IS_PDF_EXPORT) {
+      document.documentElement.classList.add('pdf-export-root');
+    }
+  </script>
+</head>
+<body>
+  <div class="layout">
+    <nav class="sidebar">
+      <div class="sidebar-brand">🚨 RelaySaathi</div>
+      <div class="sidebar-sub">Master Team Brief<br>Road Safety Hackathon 2026</div>
+      <div class="toc"><a href="#1-executive-summary" class="toc-link">Executive Summary</a>
+<a href="#2-hackathon-alignment" class="toc-link">Hackathon Alignment</a>
+<a href="#3-product-vision--one-line-pitch" class="toc-link">Product Vision & One-Line Pitch</a>
+<a href="#4-why-we-chose-this-architecture" class="toc-link">Why We Chose This Architecture</a>
+<a href="#5-what-we-rejected-and-why" class="toc-link">What We Rejected (And Why)</a>
+<a href="#6-core-innovation" class="toc-link">Core Innovation</a>
+<a href="#7-system-architecture" class="toc-link">System Architecture</a>
+<a href="#8-end-to-end-pipeline" class="toc-link">End-to-End Pipeline</a>
+<a href="#9-user-flows--mind-map" class="toc-link">User Flows & Mind Map</a>
+<a href="#10-start-triage-fsm-specification" class="toc-link">START Triage FSM Specification</a>
+<a href="#11-golden-hour-packet-ghp-specification" class="toc-link">Golden Hour Packet (GHP) Specification</a>
+<a href="#12-data-pipeline--database" class="toc-link">Data Pipeline & Database</a>
+<a href="#13-offline--spatial-routing" class="toc-link">Offline & Spatial Routing</a>
+<a href="#14-ai-chatbot-architecture" class="toc-link">AI Chatbot Architecture</a>
+<a href="#15-human-qr-relay-system" class="toc-link">Human QR Relay System</a>
+<a href="#16-tech-stack" class="toc-link">Tech Stack</a>
+<a href="#17-project-structure" class="toc-link">Project Structure</a>
+<a href="#18-implementation-plan-4-weeks" class="toc-link">Implementation Plan (4 Weeks)</a>
+<a href="#19-execution-checklist-by-role" class="toc-link">Execution Checklist by Role</a>
+<a href="#20-demo-day-script-90-seconds" class="toc-link">Demo Day Script (90 Seconds)</a>
+<a href="#21-submission-requirements" class="toc-link">Submission Requirements</a>
+<a href="#22-verification--testing-plan" class="toc-link">Verification & Testing Plan</a>
+<a href="#23-risks--mitigations" class="toc-link">Risks & Mitigations</a>
+<a href="#24-competitive-advantages" class="toc-link">Competitive Advantages</a>
+<a href="#25-glossary-quick-reference" class="toc-link">Glossary (Quick Reference)</a>
+<a href="#26-open-decisions--team-actions" class="toc-link">Open Decisions & Team Actions</a>
+<a href="#27-contacts--resources" class="toc-link">Contacts & Resources</a></div>
+      <div class="sidebar-actions">
+        <button class="btn btn-primary" onclick="window.print()">⬇ Save as PDF</button>
+        <a class="btn btn-secondary" href="./RelaySaathi-Master-Brief.pdf" download>📕 Download PDF</a>
+        <a class="btn btn-secondary" href="./RELAYSATHI_MASTER_BRIEF.md" download>📄 Download Markdown</a>
+      </div>
+    </nav>
+    <main class="main">
+      <div class="pdf-cover">
+        <h1>RelaySaathi</h1>
+        <div class="subtitle">Master Team Brief — Road Safety Hackathon 2026 (RoadSoS Track)</div>
+        <div class="meta-grid">
+          <div><strong>Organizer:</strong> CoERS & RBG Labs, IIT Madras</div>
+          <div><strong>Deadline:</strong> May 31, 2026, 11:59 PM IST</div>
+          <div><strong>Version:</strong> 1.0</div>
+          <div><strong>Audience:</strong> Full hackathon team</div>
+        </div>
+        <p class="tagline">The network failed. The golden hour didn't.</p>
+      </div>
+      <div class="hero">
+        <span class="badge">RoadSoS Track · IIT Madras</span>
+        <h1>RelaySaathi Master Team Brief</h1>
+        <div class="hero-meta">
+          <span>📅 May 2026</span>
+          <span>👥 Full team document</span>
+          <span>⏰ Deadline: May 31, 2026</span>
+        </div>
+        <p style="margin-top:1rem;margin-bottom:0"><em>The network failed. The golden hour didn't.</em></p>
+      </div>
+      <h1>RelaySaathi — Master Team Brief</h1>
+
+<strong>Project:</strong> RelaySaathi (Road Safety Hackathon 2026 — RoadSoS Track)  
+<strong>Organizer:</strong> CoERS & RBG Labs, IIT Madras (with MoRTH)  
+<strong>Document version:</strong> 1.0  
+<strong>Last updated:</strong> May 2026  
+<strong>Audience:</strong> Full hackathon team — developers, presenters, data engineers
+
+<hr>
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<li><a href="#1-executive-summary" target="_blank" rel="noopener">Executive Summary</a></li>
+<li><a href="#2-hackathon-alignment" target="_blank" rel="noopener">Hackathon Alignment</a></li>
+<li><a href="#3-product-vision--one-line-pitch" target="_blank" rel="noopener">Product Vision & One-Line Pitch</a></li>
+<li><a href="#4-why-we-chose-this-architecture" target="_blank" rel="noopener">Why We Chose This Architecture</a></li>
+<li><a href="#5-what-we-rejected-and-why" target="_blank" rel="noopener">What We Rejected (And Why)</a></li>
+<li><a href="#6-core-innovation" target="_blank" rel="noopener">Core Innovation</a></li>
+<li><a href="#7-system-architecture" target="_blank" rel="noopener">System Architecture</a></li>
+<li><a href="#8-end-to-end-pipeline" target="_blank" rel="noopener">End-to-End Pipeline</a></li>
+<li><a href="#9-user-flows--mind-map" target="_blank" rel="noopener">User Flows & Mind Map</a></li>
+<li><a href="#10-start-triage-fsm-specification" target="_blank" rel="noopener">START Triage FSM Specification</a></li>
+<li><a href="#11-golden-hour-packet-ghp-specification" target="_blank" rel="noopener">Golden Hour Packet (GHP) Specification</a></li>
+<li><a href="#12-data-pipeline--database" target="_blank" rel="noopener">Data Pipeline & Database</a></li>
+<li><a href="#13-offline--spatial-routing" target="_blank" rel="noopener">Offline & Spatial Routing</a></li>
+<li><a href="#14-ai-chatbot-architecture" target="_blank" rel="noopener">AI Chatbot Architecture</a></li>
+<li><a href="#15-human-qr-relay-system" target="_blank" rel="noopener">Human QR Relay System</a></li>
+<li><a href="#16-tech-stack" target="_blank" rel="noopener">Tech Stack</a></li>
+<li><a href="#17-project-structure" target="_blank" rel="noopener">Project Structure</a></li>
+<li><a href="#18-implementation-plan-4-weeks" target="_blank" rel="noopener">Implementation Plan (4 Weeks)</a></li>
+<li><a href="#19-execution-checklist-by-role" target="_blank" rel="noopener">Execution Checklist by Role</a></li>
+<li><a href="#20-demo-day-script-90-seconds" target="_blank" rel="noopener">Demo Day Script (90 Seconds)</a></li>
+<li><a href="#21-submission-requirements" target="_blank" rel="noopener">Submission Requirements</a></li>
+<li><a href="#22-verification--testing-plan" target="_blank" rel="noopener">Verification & Testing Plan</a></li>
+<li><a href="#23-risks--mitigations" target="_blank" rel="noopener">Risks & Mitigations</a></li>
+<li><a href="#24-competitive-advantages" target="_blank" rel="noopener">Competitive Advantages</a></li>
+<li><a href="#25-glossary-quick-reference" target="_blank" rel="noopener">Glossary (Quick Reference)</a></li>
+<li><a href="#26-open-decisions--team-actions" target="_blank" rel="noopener">Open Decisions & Team Actions</a></li>
+<li><a href="#27-contacts--resources" target="_blank" rel="noopener">Contacts & Resources</a></li>
+
+<hr>
+
+<h2 id="1-executive-summary">1. Executive Summary</h2>
+
+<strong>RelaySaathi</strong> is an <strong>offline-first, AI-powered emergency chatbot</strong> (Progressive Web App) designed for the <strong>RoadSoS</strong> problem statement at the IIT Madras National Road Safety Hackathon 2026.
+
+When a road accident happens — often with <strong>no mobile signal</strong> on highways — victims and bystanders lose precious minutes trying to explain location, injury severity, and which hospital to use. RelaySaathi compresses that chaos into a <strong>60-second guided triage conversation</strong>, routes the victim to the <strong>correct trauma-tier facility</strong> (not just the nearest clinic), builds a <strong>Golden Hour Packet (GHP)</strong> dispatch brief, and if offline, passes that packet through a <strong>human QR relay chain</strong> until any phone regains signal and can SMS <strong>108/112</strong>.
+
+<strong>Tagline:</strong> <em>The network failed. The golden hour didn't.</em>
+
+<hr>
+
+<h2 id="2-hackathon-alignment">2. Hackathon Alignment</h2>
+
+<h3 id="Event Details">Event Details</h3>
+
+<table><thead><tr><th>Item</th><th>Detail</th></tr></thead><tbody><tr><td><strong>Theme</strong></td><td>AI in Road Safety (2026 focus: <strong>AI-powered chatbots</strong>)</td></tr><tr><td><strong>Our track</strong></td><td><strong>RoadSoS</strong> — location-based emergency services during accidents</td></tr><tr><td><strong>Team size</strong></td><td>1–10 members (Unstop enforced)</td></tr><tr><td><strong>Submission</strong></td><td>Unstop only — one submission, one problem statement</td></tr><tr><td><strong>Indian track deadline</strong></td><td><strong>May 31, 2026, 11:59 PM IST</strong> (extended)</td></tr><tr><td><strong>Stage 1</strong></td><td>Online prototype + code + DB + 7 slides + Word doc</td></tr><tr><td><strong>Stage 2</strong></td><td>Shortlisted teams present <strong>live at IIT Madras</strong></td></tr></tbody></table>
+
+<h3 id="RoadSoS Evaluation Criteria (What Judges Score)">RoadSoS Evaluation Criteria (What Judges Score)</h3>
+
+<table><thead><tr><th>Criterion</th><th>How RelaySaathi Addresses It</th></tr></thead><tbody><tr><td>Data reliability & geographic accuracy</td><td>Pre-built, verified SQLite POI database from OSM + manual corridor verification</td></tr><tr><td>Valid emergency contacts fetched & displayed</td><td>Hospitals, police, ambulance, towing — with real phone tags where available</td></tr><tr><td>Offline capability</td><td>FSM triage + sql.js local DB + Service Worker + corridor packs + QR relay</td></tr><tr><td>Innovation & extra features</td><td>GHP pre-dispatch brief + human sneakernet relay + trauma-tier routing + NH km markers</td></tr><tr><td>Cross-country integration</td><td>Country/state config packs (IN + BIMSTEC: NP, BD, LK, etc.)</td></tr><tr><td>AI chatbot requirement</td><td>Conversational UI with LLM slot-filling over deterministic START FSM</td></tr><tr><td>Open-source preference</td><td>OSM, OSRM, sql.js, Llama/Mistral (Groq/Ollama), no proprietary lock-in</td></tr></tbody></table>
+
+<h3 id="Submission Deliverables Checklist">Submission Deliverables Checklist</h3>
+
+<li class="checklist"><input type="checkbox" disabled> Full source code (Python preferred for backend/ingest)</li>
+<li class="checklist"><input type="checkbox" disabled> <strong>Structured database</strong> (<code>emergency_seed.db</code> + export)</li>
+<li class="checklist"><input type="checkbox" disabled> <strong>Exactly 7 slides</strong> (Welcome + Thank You included)</li>
+<li class="checklist"><input type="checkbox" disabled> <strong>Word document</strong>: codebase overview, dependencies, assumptions</li>
+<li class="checklist"><input type="checkbox" disabled> Working Unstop submission before deadline</li>
+
+<hr>
+
+<h2 id="3-product-vision-one-line-pitch">3. Product Vision & One-Line Pitch</h2>
+
+<h3 id="Problem">Problem</h3>
+
+India records ~<strong>1.7 lakh road deaths/year</strong>. On highways, accidents often occur in <strong>dead zones</strong> with no signal. Victims cannot:
+<ul><li>Explain exact location (lat/lng is meaningless to most users)</li></ul>
+<ul><li>Communicate injury severity clearly to 108</li></ul>
+<ul><li>Know whether the nearest facility is a <strong>trauma center</strong> or a small clinic</li></ul>
+<ul><li>Pass information to dispatch when their phone has no connectivity</li></ul>
+
+<h3 id="Solution">Solution</h3>
+
+RelaySaathi is a <strong>conversational emergency agent</strong> that:
+<li>Runs <strong>START medical triage</strong> (international first-responder protocol)</li>
+<li>Finds the <strong>right tier</strong> of emergency facility offline</li>
+<li>Generates a <strong>dispatch-ready Golden Hour Packet</strong></li>
+<li><strong>Relays</strong> that packet via QR to a bystander when the victim has no signal</li>
+
+<h3 id="Pitches (Memorize)">Pitches (Memorize)</h3>
+
+<table><thead><tr><th>Audience</th><th>Pitch</th></tr></thead><tbody><tr><td><strong>30 sec (judges)</strong></td><td>RelaySaathi is an offline AI emergency chatbot. In 60 seconds it triages injuries, routes RED cases to trauma centers, builds a 108-ready brief, and if there's no signal — a bystander scans a QR and carries that brief until they get network.</td></tr><tr><td><strong>Technical</strong></td><td>LLM-as-skin, FSM-as-spine, sql.js POI store, Haversine spatial query with trauma-tier filter, lz-string GHP encoding, IndexedDB human relay.</td></tr><tr><td><strong>Emotional</strong></td><td>When the network fails, the golden hour doesn't.</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="4-why-we-chose-this-architecture">4. Why We Chose This Architecture</h2>
+
+We intentionally built a system that is:
+
+<li><strong>Demo-proof</strong> — works in Chrome on two phones with airplane mode</li>
+<li><strong>Offline-first</strong> — core path never requires live API calls</li>
+<li><strong>Medically grounded</strong> — START triage protocol, not arbitrary questions</li>
+<li><strong>Clinically routed</strong> — trauma-tier matching, not nearest-pin routing</li>
+<li><strong>Information-centric</strong> — solves <em>dispatch delay</em>, not <em>sensor novelty</em></li>
+<li><strong>Hackathon-aligned</strong> — AI chatbot is the product, not a sidebar feature</li>
+<li><strong>Open-source friendly</strong> — OSM, OSRM, open LLMs, SQLite</li>
+
+<hr>
+
+<h2 id="5-what-we-rejected-and-why">5. What We Rejected (And Why)</h2>
+
+Early ideation explored a <strong>sensor-heavy "smart vehicle mesh"</strong> approach. After engineering verification, we <strong>deliberately killed</strong> those features. This section documents why — so the team stays aligned and does not re-introduce scope creep.
+
+<h3 id="Rejected Feature Matrix">Rejected Feature Matrix</h3>
+
+<table><thead><tr><th>Rejected Idea</th><th>What It Tried To Do</th><th>Why We Killed It</th></tr></thead><tbody><tr><td><strong>Ultrasonic V2V</strong></td><td>Phones communicate via 19–21 kHz sound between vehicles</td><td>Browsers block mic/audio without user gesture; road noise interference; iOS ultrasonic limits; unreliable demo</td></tr><tr><td><strong>BLE / DTN mesh</strong></td><td>Crash packets relay through passing cars via Bluetooth</td><td>Web Bluetooth cannot advertise/beacon; no BLE mesh in browsers; iOS has no Web Bluetooth</td></tr><tr><td><strong>Wi-Fi Direct beacons</strong></td><td>Broadcast distress via Wi-Fi Direct SSID</td><td><strong>Not available in web browser APIs</strong></td></tr><tr><td><strong>Crash audio ML</strong></td><td>Always-on mic detects tire screech/impact</td><td>False positives; privacy issues; battery drain; research-grade ML scope</td></tr><tr><td><strong>Capacitor/native hybrid</strong></td><td>Wrap PWA in native shell for "real" Bluetooth</td><td>Doubles build complexity; judges won't sideload APKs; contradicts accessible web prototype</td></tr><tr><td><strong>Curvature/anxiety physics engine</strong></td><td>Predict safe speed on curves from OSM geometry</td><td>Wrong problem statement (RoadWatch); OSM geometry too sparse; missing friction/banking data</td></tr><tr><td><strong>Background volunteer GPS dispatch</strong></td><td>Track volunteers when app minimized</td><td>PWAs cannot reliably background-track GPS (especially iOS); needs gov integration</td></tr><tr><td><strong>Base64-only SMS coords</strong></td><td>Encode GPS in SMS as Base64</td><td>108 operators cannot decode; useless to dispatchers</td></tr><tr><td><strong>Always-on "Drive Mode"</strong></td><td>Mic + wake lock + audio on launch</td><td>Scary UX; permission denial; battery drain</td></tr></tbody></table>
+
+<h3 id="Strategic Lesson">Strategic Lesson</h3>
+
+<blockquote><strong>Judges score emergency chatbots with valid POI data and offline reliability — not ultrasonic chirps between cars.</strong></blockquote>
+
+Our creative differentiator is <strong>information surviving dead zones</strong> (GHP + human QR relay), not <strong>machines talking to machines</strong>.
+
+<hr>
+
+<h2 id="6-core-innovation">6. Core Innovation</h2>
+
+<h3 id="The Three Pillars">The Three Pillars</h3>
+
+``<code>
+┌─────────────────────┐   ┌─────────────────────┐   ┌─────────────────────┐
+│  1. START TRIAGE    │   │  2. TRAUMA-TIER     │   │  3. GOLDEN HOUR     │
+│     CHATBOT         │ → │     ROUTING         │ → │     PACKET (GHP)    │
+│  (AI + FSM)         │   │  (not nearest pin)  │   │  + QR HUMAN RELAY   │
+└─────────────────────┘   └─────────────────────┘   └─────────────────────┘
+</code>`<code>
+
+<h3 id="Innovation #1 — Golden Hour Packet (GHP)">Innovation #1 — Golden Hour Packet (GHP)</h3>
+
+A <strong>structured, dispatch-ready brief</strong> — not raw chat logs:
+
+<ul><li>Triage color (RED/YELLOW/GREEN/BLACK)</li></ul>
+<ul><li>GPS + landmark + optional NH km marker</li></ul>
+<ul><li>Victim status flags</li></ul>
+<ul><li>Selected facility (name, type, phone, ETA, distance)</li></ul>
+<ul><li>State emergency number (108/112) + language</li></ul>
+<ul><li>Integrity hash (tamper detection)</li></ul>
+<ul><li>Relay chain audit log</li></ul>
+
+<strong>Why it matters:</strong> 108 dispatchers lose minutes asking "where are you? what happened?" GHP <strong>pre-answers</strong> those questions.
+
+<h3 id="Innovation #2 — Human QR Relay (Sneakernet)">Innovation #2 — Human QR Relay (Sneakernet)</h3>
+
+When victim phone has <strong>no signal</strong>:
+
+<li>Triage completes offline → GHP generated</li>
+<li>Victim screen shows <strong>QR code</strong> + human-readable brief</li>
+<li>Bystander taps <strong>[Scan Distress QR]</strong> on their phone</li>
+<li>Packet stored in <strong>IndexedDB</strong></li>
+<li>When </code>online<code> event fires → auto-compose <strong>SMS to 108</strong> with readable GHP text</li>
+
+<strong>Why it matters:</strong> Honest, demo-proof, works on every smartphone. No mesh fantasy.
+
+<h3 id="Innovation #3 — Trauma-Tier Routing">Innovation #3 — Trauma-Tier Routing</h3>
+
+<table><thead><tr><th>Triage</th><th>Route To</th><th>trauma_tier</th></tr></thead><tbody><tr><td><strong>RED</strong></td><td>Trauma center / surgical ER</td><td>1, 2</td></tr><tr><td><strong>YELLOW</strong></td><td>General hospital with ER</td><td>2, 3</td></tr><tr><td><strong>GREEN</strong></td><td>Clinic / minor care</td><td>3 (+ police if needed)</td></tr><tr><td><strong>BLACK</strong></td><td>Deceased after airway attempt</td><td>Police / 108 notification</td></tr></tbody></table>
+
+<strong>Why it matters:</strong> Nearest hospital might be a PHC unable to handle head trauma. We route by <strong>capability</strong>, not distance alone.
+
+<hr>
+
+<h2 id="7-system-architecture">7. System Architecture</h2>
+
+<h3 id="High-Level Architecture Diagram">High-Level Architecture Diagram</h3>
+
+</code>`<code>mermaid
+flowchart TB
+    subgraph Client["RelaySaathi PWA (Next.js 14)"]
+        Gate[Landing Gate]
+        Chat[Triage Chat UI]
+        Agent[LLM Slot Filler]
+        FSM[START Triage FSM]
+        Router[Offline Spatial Router]
+        GHP[GHP Builder + Compressor]
+        QR[QR Generator / Scanner]
+        IDB[(IndexedDB Relay Store)]
+        SW[Service Worker / Serwist]
+        SQL[(sql.js + emergency_seed.db)]
+        Map[Leaflet Offline Map]
+    end
+
+    subgraph Build["Build-Time Pipeline"]
+        Ingest[ingestCorridors.py]
+        OSM[Overpass API / OpenStreetMap]
+        DBFile[emergency_seed.db]
+    end
+
+    subgraph Online["Online Enhancements"]
+        LLM[Groq / Ollama - Llama or Mistral]
+        OSRM[OSRM Routing API]
+    end
+
+    Gate --> Chat
+    Chat --> Agent
+    Agent --> FSM
+    FSM --> Router
+    Router --> SQL
+    Router --> OSRM
+    FSM --> GHP
+    GHP --> QR
+    QR --> IDB
+    SW --> SQL
+    Ingest --> OSM
+    Ingest --> DBFile
+    DBFile --> SQL
+    Agent --> LLM
+    GHP --> Map
+</code>`<code>
+
+<h3 id="Layer Responsibilities">Layer Responsibilities</h3>
+
+<table><thead><tr><th>Layer</th><th>Responsibility</th><th>Must Work Offline?</th></tr></thead><tbody><tr><td><strong>UI (Next.js PWA)</strong></td><td>Chat, map, QR, scan, landing gate</td><td>Yes (cached shell)</td></tr><tr><td><strong>FSM (TypeScript)</strong></td><td>Medical triage logic</td><td><strong>Yes — mandatory</strong></td></tr><tr><td><strong>LLM (optional)</strong></td><td>Natural language → structured slots</td><td>No (enhancement only)</td></tr><tr><td><strong>sql.js + SQLite</strong></td><td>POI lookup</td><td><strong>Yes — mandatory</strong></td></tr><tr><td><strong>GHP encoder</strong></td><td>Serialize, compress, hash</td><td><strong>Yes — mandatory</strong></td></tr><tr><td><strong>QR relay</strong></td><td>Encode/decode, IndexedDB, SMS trigger</td><td><strong>Yes — mandatory</strong></td></tr><tr><td><strong>Service Worker</strong></td><td>Cache app shell, DB, wasm, tiles</td><td><strong>Yes — mandatory</strong></td></tr><tr><td><strong>OSRM</strong></td><td>Road-accurate ETA</td><td>No (fallback: Haversine ETA)</td></tr><tr><td><strong>Ingest script</strong></td><td>Build POI database</td><td>Build-time only</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="8-end-to-end-pipeline">8. End-to-End Pipeline</h2>
+
+<h3 id="Pipeline A — Build-Time (Developer Machine / CI)">Pipeline A — Build-Time (Developer Machine / CI)</h3>
+
+</code>`<code>
+OpenStreetMap data
+        ↓
+Overpass API queries (nwr: hospitals, clinics, police, ambulance)
+        ↓
+ingestCorridors.py
+  • Parse names, phones, types
+  • Assign trauma_tier (1/2/3)
+  • Tag corridor + state
+  • Manual verification CSV merge (top 50 POIs per demo corridor)
+        ↓
+public/emergency_seed.db
+        ↓
+Bundled into PWA + submitted with hackathon deliverables
+</code>`<code>
+
+<h3 id="Pipeline B — Runtime (Victim Path)">Pipeline B — Runtime (Victim Path)</h3>
+
+</code>`<code>
+User taps [Start Emergency Triage]
+        ↓
+Browser requests GPS (single getCurrentPosition)
+        ↓
+Chatbot conversation (LLM online / scripted offline)
+        ↓
+Slots fill START FSM states
+        ↓
+FSM outputs triage color
+        ↓
+Spatial query: bbox filter → Haversine sort → trauma-tier filter
+        ↓
+Select best facility + compute ETA
+        ↓
+Build GoldenHourPacket + SHA-256 integrity hash
+        ↓
+┌─────────────────┴─────────────────┐
+│ ONLINE                            │ OFFLINE
+│ • Call 108 / hospital             │ • Show GHP on screen
+│ • SMS / WhatsApp share            │ • Display QR code
+│ • Show map route                  │ • Prompt bystander scan
+└───────────────────────────────────┘
+</code>`<code>
+
+<h3 id="Pipeline C — Runtime (Bystander Relay Path)">Pipeline C — Runtime (Bystander Relay Path)</h3>
+
+</code>`<code>
+Bystander taps [Scan Distress QR]
+        ↓
+Camera decodes QR payload
+        ↓
+Deserialize + verify integrity hash
+        ↓
+Store in IndexedDB + append relayChain entry
+        ↓
+Listen for navigator 'online' event
+        ↓
+Format human-readable SMS template (Tamil/Hindi/English)
+        ↓
+Trigger sms:108?body=... OR navigator.share() OR copy-to-clipboard
+        ↓
+(Optional) POST anonymized GHP to backend audit endpoint
+</code>`<code>
+
+<hr>
+
+<h2 id="9-user-flows-mind-map">9. User Flows & Mind Map</h2>
+
+<h3 id="Landing Gate (3 Entry Points)">Landing Gate (3 Entry Points)</h3>
+
+</code>`<code>
+                    ┌──────────────────────┐
+                    │   RelaySaathi Home   │
+                    └──────────┬───────────┘
+           ┌───────────────────┼───────────────────┐
+           ▼                   ▼                   ▼
+  [Start Emergency]    [Scan Distress QR]   [Download Corridor Pack]
+     (Victim /            (Bystander)         (Pre-trip offline prep)
+      Bystander-help)
+</code>`<code>
+
+<h3 id="Mind Map — Full System">Mind Map — Full System</h3>
+
+</code>`<code>
+RelaySaathi
+├── INPUT
+│   ├── Voice (Web Speech API)
+│   ├── Text chat
+│   └── GPS + optional NH km marker
+├── PROCESSING
+│   ├── AI layer (LLM slot filling — online)
+│   ├── FSM layer (START triage — always)
+│   ├── Routing layer (trauma-tier + distance)
+│   └── GHP builder (structured output)
+├── DATA
+│   ├── emergency_seed.db (SQLite via sql.js)
+│   ├── IndexedDB (relay packets)
+│   └── Service Worker cache (shell, wasm, tiles)
+├── OUTPUT
+│   ├── Map with ranked facilities
+│   ├── Human-readable GHP on screen
+│   ├── QR code (compressed payload)
+│   ├── Call / SMS / WhatsApp actions
+│   └── Bystander relay → 108 SMS
+└── SUBMISSION
+    ├── Source code
+    ├── Database file
+    ├── 7 slides
+    └── Word doc
+</code>`<code>
+
+<h3 id="Flowchart — Triage Decision (Simplified)">Flowchart — Triage Decision (Simplified)</h3>
+
+</code>`<code>mermaid
+flowchart TD
+    Start([Start Emergency]) --> Walk{Can victim walk?}
+    Walk -->|Yes| GREEN[GREEN - Minor]
+    Walk -->|No| Breath{Breathing?}
+    Breath -->|No| Airway{Breathing after airway reposition?}
+    Airway -->|No| BLACK[BLACK - Deceased]
+    Airway -->|Yes| RR{Respiratory rate > 30?}
+    Breath -->|Yes| RR
+    RR -->|Yes| RED[RED - Immediate]
+    RR -->|No| Pulse{Radial pulse OK / cap refill < 2s?}
+    Pulse -->|No| RED
+    Pulse -->|Yes| Mental{Follows simple commands?}
+    Mental -->|No| RED
+    Mental -->|Yes| YELLOW[YELLOW - Delayed]
+    GREEN --> Route[Trauma-Tier Routing]
+    YELLOW --> Route
+    RED --> Route
+    BLACK --> Police[Police / 108 notify]
+    Route --> GHP[Build GHP + QR]
+</code>`<code>
+
+<hr>
+
+<h2 id="10-start-triage-fsm-specification">10. START Triage FSM Specification</h2>
+
+<h3 id="States">States</h3>
+
+<table><thead><tr><th>State</th><th>Purpose</th></tr></thead><tbody><tr><td></code>AMBULATORY<code></td><td>Can victim walk?</td></tr><tr><td></code>BREATHING_CHECK<code></td><td>Are they breathing?</td></tr><tr><td></code>AIRWAY_REPOSITION<code></td><td>After airway maneuver, breathing?</td></tr><tr><td></code>RESPIRATORY_RATE<code></td><td>RR > 30/min?</td></tr><tr><td></code>PERFUSION_CHECK<code></td><td>Radial pulse / capillary refill</td></tr><tr><td></code>MENTAL_STATUS<code></td><td>Follows simple commands?</td></tr><tr><td></code>TAGGED<code></td><td>Final triage color assigned</td></tr></tbody></table>
+
+<h3 id="Correct Transition Rules (Critical — Do Not Simplify Wrong)">Correct Transition Rules (Critical — Do Not Simplify Wrong)</h3>
+
+<table><thead><tr><th>Condition</th><th>Result</th></tr></thead><tbody><tr><td>Can walk</td><td><strong>GREEN</strong> → done</td></tr><tr><td>Not breathing → airway fails</td><td><strong>BLACK</strong> → done</td></tr><tr><td>Not breathing → airway succeeds</td><td>→ <strong>RESPIRATORY_RATE</strong> (NOT immediate RED)</td></tr><tr><td>RR > 30</td><td><strong>RED</strong></td></tr><tr><td>No radial pulse OR cap refill ≥ 2s</td><td><strong>RED</strong></td></tr><tr><td>Cannot follow commands</td><td><strong>RED</strong></td></tr><tr><td>All checks pass, non-ambulatory</td><td><strong>YELLOW</strong></td></tr></tbody></table>
+
+<h3 id="FSM Interface (TypeScript)">FSM Interface (TypeScript)</h3>
+
+</code>`<code>typescript
+export type TriageState =
+  | 'AMBULATORY' | 'BREATHING_CHECK' | 'AIRWAY_REPOSITION'
+<table><thead><tr><th>'RESPIRATORY_RATE'</th><th>'PERFUSION_CHECK'</th><th>'MENTAL_STATUS'</th><th>'TAGGED';</th></tr></thead><tbody></tbody></table>
+
+export interface TriageContext {
+  count: number;
+  canWalk: boolean;
+  breathing: boolean;
+  respiratoryRateOver30: boolean;
+  capillaryRefillOk: boolean;
+  followsCommands: boolean;
+  severeBleeding: boolean;
+  triageResult: 'RED' | 'YELLOW' | 'GREEN' | 'BLACK';
+  stateLog: string[];
+}
+</code>`<code>
+
+<h3 id="Medical Disclaimer (Required in UI)">Medical Disclaimer (Required in UI)</h3>
+
+<blockquote><em>RelaySaathi provides decision support only. It is not a medical diagnosis. In an emergency, always call 108/112 when possible.</em></blockquote>
+
+<hr>
+
+<h2 id="11-golden-hour-packet-ghp-specification">11. Golden Hour Packet (GHP) Specification</h2>
+
+<h3 id="Schema">Schema</h3>
+
+</code>`<code>typescript
+export interface GoldenHourPacket {
+  id: string;                    // UUID v4
+  createdAt: string;             // ISO8601
+  triage: 'RED' | 'YELLOW' | 'GREEN' | 'BLACK';
+  location: {
+    lat: number;                 // 6 decimal places
+    lng: number;
+    landmark?: string;
+    nhCode?: string;             // e.g. "NH48"
+    nhKm?: number;
+  };
+  victims: {
+    count: number;
+    canWalk: boolean;
+    breathing: boolean;
+    severeBleeding: boolean;
+    capillaryRefillOk: boolean;
+    followsCommands: boolean;
+  };
+  routing: {
+    facilityName: string;
+    facilityType: 'trauma' | 'hospital' | 'clinic';
+    phone: string;
+    etaMinutes: number;
+    distanceKm: number;
+  };
+  emergency: {
+    dial: string;                // "108" | "112" | "102"
+    state: string;
+    language: 'en' | 'hi' | 'ta';
+  };
+  relayChain: Array<{ at: string; deviceHint: string }>;
+  integrity: string;             // SHA-256 hex digest
+}
+</code>`<code>
+
+<h3 id="Encoding Strategy">Encoding Strategy</h3>
+
+<table><thead><tr><th>Step</th><th>Method</th></tr></thead><tbody><tr><td>1</td><td>Build minimal JSON or pipe-delimited string</td></tr><tr><td>2</td><td>Compress with <strong>lz-string</strong> (</code>compressToEncodedURIComponent<code>)</td></tr><tr><td>3</td><td>If payload > 800 bytes → QR carries <strong>only</strong> </code>{ id, lat, lng, triage, integrity }<code>; full GHP on screen + IndexedDB</td></tr><tr><td>4</td><td>Integrity via <strong>Web Crypto SHA-256</strong> (not HMAC — no client secrets)</td></tr></tbody></table>
+
+<h3 id="SMS Template Example (English)">SMS Template Example (English)</h3>
+
+</code>`<code>
+🚨 ROAD EMERGENCY - RelaySaathi
+Triage: RED | Victims: 1
+Location: NH48 km 87 (13.082700, 80.270700)
+Injuries: Not walking, breathing, severe bleeding suspected
+TAKE TO: Apollo Trauma Center (12 min / 8.4 km)
+Call: 108 (Tamil Nadu)
+Generated offline via bystander relay.
+</code>`<code>
+
+<hr>
+
+<h2 id="12-data-pipeline-database">12. Data Pipeline & Database</h2>
+
+<h3 id="SQLite Schema">SQLite Schema</h3>
+
+</code>`<code>sql
+CREATE TABLE emergency_nodes (
+    id INTEGER PRIMARY KEY,       -- OSM node id
+    name TEXT NOT NULL,
+    lat REAL NOT NULL,
+    lng REAL NOT NULL,
+    type TEXT NOT NULL,           -- hospital, clinic, police, ambulance
+    trauma_tier INTEGER NOT NULL, -- 1=trauma center, 2=hospital ER, 3=clinic
+    emergency_phone TEXT,
+    nh_corridor TEXT,
+    state TEXT,
+    verified INTEGER DEFAULT 0,   -- 1 if manually verified
+    verified_at TEXT
+);
+CREATE INDEX idx_coords ON emergency_nodes(lat, lng);
+CREATE INDEX idx_tier ON emergency_nodes(trauma_tier);
+</code>`<code>
+
+<h3 id="trauma_tier Assignment Heuristics">trauma_tier Assignment Heuristics</h3>
+
+<table><thead><tr><th>Tier</th><th>Signals in OSM name/tags</th></tr></thead><tbody><tr><td><strong>1</strong></td><td>"trauma", "AIIMS", "medical college", "super specialty"</td></tr><tr><td><strong>2</strong></td><td>"district hospital", "general hospital", </code>healthcare=hospital<code></td></tr><tr><td><strong>3</strong></td><td>clinic, PHC, small dispensary</td></tr></tbody></table>
+
+<strong>Important:</strong> Manually verify top 50 POIs in demo corridor. Do <strong>not</strong> default all missing phones to "108" — mark as </code>unknown<code> and exclude from "verified count" claims.
+
+<h3 id="Demo Corridors (Pick One Primary)">Demo Corridors (Pick One Primary)</h3>
+
+<table><thead><tr><th>Corridor</th><th>Bbox (south,west,north,east)</th><th>Notes</th></tr></thead><tbody><tr><td><strong>Chennai–Bengaluru NH48</strong></td><td>12.5,77.5,13.2,80.3 (expand as needed)</td><td>Near IIT Madras relevance</td></tr><tr><td><strong>Delhi–Jaipur NH48</strong></td><td>26.5,75.5,28.7,77.3</td><td>High traffic</td></tr><tr><td><strong>Kathmandu valley (BIMSTEC)</strong></td><td>Separate ingest pass</td><td>International track appeal</td></tr></tbody></table>
+
+<h3 id="Overpass Query Pattern (Use </code>nwr<code>, not nodes only)">Overpass Query Pattern (Use </code>nwr<code>, not nodes only)</h3>
+
+</code>`<code>overpass
+[out:json][timeout:120];
+(
+  nwr<a href="{{bbox}}" target="_blank" rel="noopener">"amenity"="hospital"</a>;
+  nwr<a href="{{bbox}}" target="_blank" rel="noopener">"amenity"="clinic"</a>;
+  nwr<a href="{{bbox}}" target="_blank" rel="noopener">"emergency"="ambulance_station"</a>;
+  nwr<a href="{{bbox}}" target="_blank" rel="noopener">"amenity"="police"</a>;
+);
+out center;
+</code>`<code>
+
+<hr>
+
+<h2 id="13-offline-spatial-routing">13. Offline & Spatial Routing</h2>
+
+<h3 id="Spatial Query Algorithm">Spatial Query Algorithm</h3>
+
+</code>`<code>
+<li>User GPS (lat, lng) + triage color</li>
+<li>Compute bbox delta (~50 km radius)</li>
+<li>SQL: SELECT <em> FROM emergency_nodes WHERE lat/lng in bbox AND trauma_tier matches triage</li>
+<li>For each result: Haversine distance</li>
+<li>Sort ascending by distance</li>
+<li>Return top N (display top 3 on map)</li>
+</code>`<code>
+
+<h3 id="ETA Calculation">ETA Calculation</h3>
+
+<table><thead><tr><th>Mode</th><th>Formula</th></tr></thead><tbody><tr><td><strong>Offline fallback</strong></td><td></code>etaMinutes = (distanceKm / 40) </em> 60<code> (assume 40 km/h ambulance avg)</td></tr><tr><td><strong>Online enhancement</strong></td><td>OSRM </code>/route/v1/driving/{lng,lat};{lng,lat}<code> → duration</td></tr></tbody></table>
+
+Document the 40 km/h assumption in the Word doc submission.
+
+<h3 id="sql.js Critical Rule">sql.js Critical Rule</h3>
+
+</code>`<code>typescript
+// ✅ CORRECT — bundled locally
+locateFile: () => '/sql-wasm.wasm'
+
+// ❌ WRONG — breaks offline demo
+locateFile: (file) => </code>https://sql.js.org/dist/${file}<code>
+</code>`<code>
+
+<hr>
+
+<h2 id="14-ai-chatbot-architecture">14. AI Chatbot Architecture</h2>
+
+<h3 id="Hybrid Model: LLM-as-Skin, FSM-as-Spine">Hybrid Model: LLM-as-Skin, FSM-as-Spine</h3>
+
+</code>`<code>
+User natural language
+        ↓
+┌───────────────────┐
+│ ONLINE            │ OFFLINE
+│ LLM extracts      │ Regex / keyword patterns
+│ structured slots  │ OR scripted button options
+└─────────┬─────────┘
+          ↓
+    START Triage FSM (always runs)
+          ↓
+    Deterministic triage color
+</code>`<code>
+
+<h3 id="LLM Policy">LLM Policy</h3>
+
+<table><thead><tr><th>Requirement</th><th>Choice</th></tr></thead><tbody><tr><td>Hackathon open-source preference</td><td><strong>Primary: Llama 3 / Mistral via Groq or Ollama</strong></td></tr><tr><td>Offline</td><td>FSM + scripted prompts — <strong>never depend on LLM for demo</strong></td></tr><tr><td>Role</td><td>Slot filling only — FSM makes all medical/routing decisions</td></tr></tbody></table>
+
+<h3 id="Example Slot Filling">Example Slot Filling</h3>
+
+<table><thead><tr><th>User says</th><th>Extracted slot</th></tr></thead><tbody><tr><td>"He can't walk"</td><td></code>canWalk: false<code></td></tr><tr><td>"Breathing very fast"</td><td></code>respiratoryRateOver30: true<code></td></tr><tr><td>"Lots of blood"</td><td></code>severeBleeding: true<code></td></tr><tr><td>"NH48 near km 87"</td><td></code>nhCode: 'NH48', nhKm: 87<code></td></tr></tbody></table>
+
+<h3 id="Voice Input">Voice Input</h3>
+
+<ul><li><strong>Web Speech API</strong> — triggered by mic button (user gesture required)</li></ul>
+<ul><li>Support <strong>English, Hindi, Tamil</strong> responses minimum</li></ul>
+
+<hr>
+
+<h2 id="15-human-qr-relay-system">15. Human QR Relay System</h2>
+
+<h3 id="QR Payload Strategy">QR Payload Strategy</h3>
+
+<table><thead><tr><th>Payload size</th><th>QR contains</th><th>Also show on screen</th></tr></thead><tbody><tr><td><strong>Small (<800 bytes)</strong></td><td>Full compressed GHP</td><td>Human-readable brief</td></tr><tr><td><strong>Large (>800 bytes)</strong></td><td></code>{ id, triage, lat, lng, integrity }<code></td><td>Full GHP (bystander reads + verifies)</td></tr></tbody></table>
+
+<h3 id="Bystander Relay Logic">Bystander Relay Logic</h3>
+
+</code>`<code>typescript
+// Pseudocode
+onQRScanned(payload) {
+  const ghp = deserializeAndVerify(payload);
+  if (!ghp) return showError('Tampered or corrupted packet');
+  ghp.relayChain.push({ at: new Date().toISOString(), deviceHint: getDeviceId() });
+  await idb.put('relay_packets', ghp);
+  if (navigator.onLine) dispatchSMS(ghp);
+  else window.addEventListener('online', () => dispatchSMS(ghp), { once: true });
+}
+</code>`<code>
+
+<h3 id="iOS PWA SMS Fallback">iOS PWA SMS Fallback</h3>
+
+</code>sms:<code> URIs may fail in installed iOS PWA mode. Fallback chain:
+
+<li></code>navigator.share({ text: ghpSmsText })<code></li>
+<li>Copy to clipboard + toast notification</li>
+<li>Display full text for manual send</li>
+
+<hr>
+
+<h2 id="16-tech-stack">16. Tech Stack</h2>
+
+<table><thead><tr><th>Layer</th><th>Technology</th><th>Why</th></tr></thead><tbody><tr><td>Frontend</td><td><strong>Next.js 14</strong> (App Router)</td><td>React PWA, SSR optional, team familiarity</td></tr><tr><td>Styling</td><td><strong>Tailwind CSS</strong></td><td>Fast UI</td></tr><tr><td>PWA / Offline</td><td><strong>Serwist</strong> or </code>@ducanh2912/next-pwa<code></td><td>Service Worker caching</td></tr><tr><td>Maps</td><td><strong>Leaflet</strong> + OpenStreetMap tiles</td><td>Free, cacheable tiles</td></tr><tr><td>Client DB</td><td><strong>sql.js</strong> + </code>emergency_seed.db<code></td><td>Offline SQL queries in browser</td></tr><tr><td>Client storage</td><td><strong>IndexedDB</strong> (via </code>idb<code> library)</td><td>Relay packet persistence</td></tr><tr><td>QR</td><td></code>qrcode<code> + </code>html5-qrcode<code> or </code>@yudiel/react-qr-scanner<code></td><td>Generate + scan</td></tr><tr><td>Compression</td><td></code>lz-string<code></td><td>QR size reduction</td></tr><tr><td>Hashing</td><td><strong>Web Crypto API</strong> (SHA-256)</td><td>Integrity check</td></tr><tr><td>Routing (online)</td><td><strong>OSRM</strong> public or self-hosted</td><td>Road ETA</td></tr><tr><td>LLM (online)</td><td><strong>Groq</strong> (Llama 3) or <strong>Ollama</strong> local</td><td>Open-source preference</td></tr><tr><td>Backend (optional)</td><td><strong>FastAPI</strong> (Python)</td><td>POI ingest helpers, optional GHP audit POST</td></tr><tr><td>Data ingest</td><td><strong>Python 3</strong> + Overpass API</td><td>Build-time pipeline</td></tr><tr><td>Tests</td><td><strong>Vitest</strong> or <strong>Jest</strong></td><td>FSM + encoder unit tests</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="17-project-structure">17. Project Structure</h2>
+
+</code>`<code>
+roadsafetyhackathon/
+├── docs/
+│   └── RELAYSATHI_MASTER_BRIEF.md          ← this document
+├── scripts/
+│   ├── ingestCorridors.py                  # Overpass → SQLite
+│   └── verify_pois.py                      # Manual verification helper
+├── public/
+│   ├── emergency_seed.db                   # Compiled POI database
+│   ├── sql-wasm.wasm                       # Bundled locally (CRITICAL)
+│   ├── manifest.json                       # PWA manifest
+│   └── icons/                              # PWA icons
+├── src/
+│   ├── app/
+│   │   ├── page.tsx                        # Landing gate (3 buttons)
+│   │   ├── triage/page.tsx                 # Chat + FSM + GHP + QR
+│   │   ├── scan/page.tsx                   # Bystander QR scanner
+│   │   ├── dashboard/page.tsx              # Offline map view
+│   │   └── api/
+│   │       └── chat/route.ts               # LLM slot-filling proxy (optional)
+│   ├── db/
+│   │   └── sqliteClient.ts                 # sql.js init + spatial queries
+│   ├── utils/
+│   │   ├── startTriageFSM.ts               # START state machine
+│   │   ├── ghpCompressor.ts                # Serialize, lz-string, hash
+│   │   ├── offlineRouter.ts                # Haversine + tier filter + ETA
+│   │   ├── smsFormatter.ts                 # 108 SMS templates (en/hi/ta)
+│   │   └── llmSlotFiller.ts                # Online NL → slots
+│   ├── components/
+│   │   ├── ChatBox.tsx
+│   │   ├── QRGenerator.tsx
+│   │   ├── QRScanner.tsx
+│   │   ├── OfflineMap.tsx
+│   │   └── TriageSummary.tsx
+│   └── lib/
+│       └── idb.ts                          # IndexedDB wrapper
+├── tests/
+│   ├── startTriageFSM.test.ts
+│   ├── ghpCompressor.test.ts
+│   └── offlineRouter.test.ts
+├── submission/
+│   ├── slides/                             # Exactly 7 slides
+│   └── documentation.docx                  # Dependencies + assumptions
+├── package.json
+├── next.config.js
+└── README.md
+</code>`<code>
+
+<hr>
+
+<h2 id="18-implementation-plan-4-weeks">18. Implementation Plan (4 Weeks)</h2>
+
+<h3 id="Week 1 — Data Foundation">Week 1 — Data Foundation</h3>
+
+<table><thead><tr><th>Day</th><th>Task</th><th>Owner</th><th>Done?</th></tr></thead><tbody><tr><td>1–2</td><td>Finalize demo corridor bbox</td><td>Team lead</td><td>[ ]</td></tr><tr><td>2–3</td><td>Write + run </code>ingestCorridors.py<code> with </code>nwr<code> queries</td><td>Data eng</td><td>[ ]</td></tr><tr><td>3–4</td><td>Manual verify top 50 POIs (spreadsheet)</td><td>All</td><td>[ ]</td></tr><tr><td>4–5</td><td>Bundle </code>emergency_seed.db<code> + </code>sql-wasm.wasm<code> in </code>/public<code></td><td>Backend</td><td>[ ]</td></tr><tr><td>5</td><td>Implement </code>sqliteClient.ts<code> + basic spatial query test</td><td>Frontend</td><td>[ ]</td></tr></tbody></table>
+
+<h3 id="Week 2 — Core Logic">Week 2 — Core Logic</h3>
+
+<table><thead><tr><th>Day</th><th>Task</th><th>Owner</th><th>Done?</th></tr></thead><tbody><tr><td>1–2</td><td>Implement </code>startTriageFSM.ts<code> with correct airway transitions</td><td>Frontend</td><td>[ ]</td></tr><tr><td>2–3</td><td>Implement </code>offlineRouter.ts<code> (Haversine + tier filter + ETA)</td><td>Frontend</td><td>[ ]</td></tr><tr><td>3–4</td><td>Implement </code>ghpCompressor.ts<code> (lz-string + SHA-256)</td><td>Frontend</td><td>[ ]</td></tr><tr><td>4–5</td><td>Unit tests for FSM, encoder, router</td><td>QA/Dev</td><td>[ ]</td></tr></tbody></table>
+
+<h3 id="Week 3 — UI & Integration">Week 3 — UI & Integration</h3>
+
+<table><thead><tr><th>Day</th><th>Task</th><th>Owner</th><th>Done?</th></tr></thead><tbody><tr><td>1–2</td><td>Landing gate + triage chat UI</td><td>Frontend</td><td>[ ]</td></tr><tr><td>2–3</td><td>GHP summary screen + QR generator</td><td>Frontend</td><td>[ ]</td></tr><tr><td>3–4</td><td>Bystander scan page + IndexedDB relay</td><td>Frontend</td><td>[ ]</td></tr><tr><td>4–5</td><td>SMS formatter + online event trigger</td><td>Frontend</td><td>[ ]</td></tr><tr><td>5</td><td>Serwist offline caching configured</td><td>Frontend</td><td>[ ]</td></tr></tbody></table>
+
+<h3 id="Week 4 — Polish & Submit">Week 4 — Polish & Submit</h3>
+
+<table><thead><tr><th>Day</th><th>Task</th><th>Owner</th><th>Done?</th></tr></thead><tbody><tr><td>1</td><td>LLM integration (Groq/Ollama) for online slot filling</td><td>AI/Dev</td><td>[ ]</td></tr><tr><td>2</td><td>Hindi + Tamil UI strings + SMS templates</td><td>All</td><td>[ ]</td></tr><tr><td>3</td><td>Offline demo rehearsal (airplane mode test)</td><td>All</td><td>[ ]</td></tr><tr><td>4</td><td>7 slides + Word doc + README</td><td>Presenter</td><td>[ ]</td></tr><tr><td>5</td><td>Unstop submission + backup demo video</td><td>Team lead</td><td>[ ]</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="19-execution-checklist-by-role">19. Execution Checklist by Role</h2>
+
+<h3 id="Frontend Developer">Frontend Developer</h3>
+<li class="checklist"><input type="checkbox" disabled> Next.js PWA shell + Serwist</li>
+<li class="checklist"><input type="checkbox" disabled> Chat UI wired to FSM</li>
+<li class="checklist"><input type="checkbox" disabled> QR generate + scan flows</li>
+<li class="checklist"><input type="checkbox" disabled> Leaflet map with POI markers</li>
+<li class="checklist"><input type="checkbox" disabled> iOS SMS fallback (share / clipboard)</li>
+
+<h3 id="Data / Backend Developer">Data / Backend Developer</h3>
+<li class="checklist"><input type="checkbox" disabled> Overpass ingest script</li>
+<li class="checklist"><input type="checkbox" disabled> trauma_tier heuristics + manual verify CSV</li>
+<li class="checklist"><input type="checkbox" disabled> </code>emergency_seed.db<code> export for submission</li>
+<li class="checklist"><input type="checkbox" disabled> Optional FastAPI audit endpoint</li>
+
+<h3 id="AI / Logic Developer">AI / Logic Developer</h3>
+<li class="checklist"><input type="checkbox" disabled> START FSM (correct medical transitions)</li>
+<li class="checklist"><input type="checkbox" disabled> LLM prompt for slot filling</li>
+<li class="checklist"><input type="checkbox" disabled> Offline scripted fallback prompts</li>
+<li class="checklist"><input type="checkbox" disabled> Voice input integration</li>
+
+<h3 id="Presenter / PM">Presenter / PM</h3>
+<li class="checklist"><input type="checkbox" disabled> 7-slide deck (problem → solution → demo → results)</li>
+<li class="checklist"><input type="checkbox" disabled> 90-second demo script memorized</li>
+<li class="checklist"><input type="checkbox" disabled> Word doc assumptions (ETA formula, POI sources, START simplification)</li>
+<li class="checklist"><input type="checkbox" disabled> Unstop registration + submission</li>
+
+<hr>
+
+<h2 id="20-demo-day-script-90-seconds">20. Demo Day Script (90 Seconds)</h2>
+
+<table><thead><tr><th>Time</th><th>Action</th><th>Say</th></tr></thead><tbody><tr><td>0:00</td><td>Enable airplane mode on Phone A</td><td>"NH48, zero signal — common on Indian highways."</td></tr><tr><td>0:10</td><td>Tap Start Emergency, voice/text input</td><td>"Victim: friend bleeding, can't walk, NH48 km 87."</td></tr><tr><td>0:25</td><td>FSM completes → RED → trauma center shown</td><td>"RED triage — routing to trauma center, not nearest clinic."</td></tr><tr><td>0:35</td><td>GHP displayed + QR shown</td><td>"Golden Hour Packet ready — everything 108 needs."</td></tr><tr><td>0:45</td><td>Phone B scans QR</td><td>"Victim phone dead — bystander carries the packet."</td></tr><tr><td>0:55</td><td>Disable airplane mode on Phone B</td><td>"Bystander drives 5 km — signal returns."</td></tr><tr><td>1:05</td><td>SMS to 108 pre-filled</td><td>"Information reaches dispatch before the ambulance is called."</td></tr><tr><td>1:15</td><td>Show POI count + offline architecture slide</td><td>"14,000+ POIs, fully offline triage, open-source stack."</td></tr></tbody></table>
+
+<strong>Backup:</strong> Pre-record 2-minute demo video if live Wi-Fi fails.
+
+<hr>
+
+<h2 id="21-submission-requirements">21. Submission Requirements</h2>
+
+<h3 id="7-Slide Deck Outline">7-Slide Deck Outline</h3>
+
+<table><thead><tr><th>Slide</th><th>Content</th></tr></thead><tbody><tr><td>1</td><td>Welcome — Team name, RelaySaathi, RoadSoS</td></tr><tr><td>2</td><td>Problem — Golden hour, dead zones, wrong hospital routing</td></tr><tr><td>3</td><td>Solution — Offline AI triage chatbot + GHP + human relay</td></tr><tr><td>4</td><td>Architecture — FSM + SQLite + QR relay diagram</td></tr><tr><td>5</td><td>Innovation — Trauma-tier routing, NH km markers, multilingual</td></tr><tr><td>6</td><td>Demo results — POI count, offline test, sample GHP</td></tr><tr><td>7</td><td>Thank you + future work (volunteer network, OSRM live, BIMSTEC expansion)</td></tr></tbody></table>
+
+<h3 id="Word Document Must Include">Word Document Must Include</h3>
+
+<ul><ol><li>Complete codebase map</li></ol></ul>
+<ul><ol><li>All npm/pip dependencies</li></ol></ul>
+<ul><ol><li>Assumptions: ETA formula, START simplification, POI verification level</li></ol></ul>
+<ul><ol><li>How to run ingest script + dev server</li></ol></ul>
+<ul><ol><li>Offline demo instructions</li></ol></ul>
+
+<hr>
+
+<h2 id="22-verification-testing-plan">22. Verification & Testing Plan</h2>
+
+<h3 id="Automated Tests">Automated Tests</h3>
+
+</code>`<code>typescript
+// startTriageFSM.test.ts
+expect(triage({ canWalk: true })).toBe('GREEN');
+expect(triage({ canWalk: false, breathing: false, airwayOk: false })).toBe('BLACK');
+expect(triage({ canWalk: false, breathing: false, airwayOk: true })).toContinueTo('RESPIRATORY_RATE');
+expect(triage({ respiratoryRateOver30: true })).toBe('RED');
+
+// ghpCompressor.test.ts
+expect(roundTrip(ghpWithTamilLandmark)).toEqual(ghpWithTamilLandmark);
+expect(verifyIntegrity(tamperedPacket)).toBe(false);
+
+// offlineRouter.test.ts
+expect(route('RED', chennaiCoords)[0].traumaTier).toBeLessThanOrEqual(2);
+</code>`<code>
+
+<h3 id="Manual Tests (Required Before Submit)">Manual Tests (Required Before Submit)</h3>
+
+<table><thead><tr><th>Test</th><th>Pass criteria</th></tr></thead><tbody><tr><td>Airplane mode triage</td><td>Full FSM + GHP without network</td></tr><tr><td>QR scan relay</td><td>Phone A → Phone B packet verified</td></tr><tr><td>SMS trigger</td><td>108 message readable in Tamil/Hindi/English</td></tr><tr><td>sql.js offline</td><td>DB loads with CDN disabled</td></tr><tr><td>POI search</td><td>Known hospital appears within 50 km of test coord</td></tr><tr><td>LLM offline fallback</td><td>Scripted prompts work when API key removed</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="23-risks-mitigations">23. Risks & Mitigations</h2>
+
+<table><thead><tr><th>Risk</th><th>Impact</th><th>Mitigation</th></tr></thead><tbody><tr><td>QR too large to scan</td><td>Demo fail</td><td>lz-string + minimal QR payload</td></tr><tr><td>sql.js CDN load</td><td>Offline fail</td><td>Bundle </code>sql-wasm.wasm<code> locally</td></tr><tr><td>Wrong START medical flow</td><td>Judge challenge</td><td>Use spec in Section 10 exactly</td></tr><tr><td>Fake POI phone numbers</td><td>Credibility loss</td><td>Manual verify; honest unverified counts</td></tr><tr><td>iOS SMS broken in PWA</td><td>Demo fail on iPhone</td><td></code>navigator.share()<code> + clipboard fallback</td></tr><tr><td>LLM hallucination</td><td>Wrong triage</td><td>FSM validates all decisions</td></tr><tr><td>Overpass rate limit</td><td>Ingest fail</td><td>Retry + bbox chunking at build time</td></tr><tr><td>Scope creep</td><td>Nothing finished</td><td>Reject sensor features (Section 5)</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="24-competitive-advantages">24. Competitive Advantages</h2>
+
+<h3 id="Why RelaySaathi Beats Typical Submissions">Why RelaySaathi Beats Typical Submissions</h3>
+
+<table><thead><tr><th>Typical team builds</th><th>RelaySaathi builds</th></tr></thead><tbody><tr><td>Map with hospital pins</td><td>START triage + trauma-tier routing</td></tr><tr><td>Generic chatbot</td><td>FSM-backed medical protocol + AI skin</td></tr><tr><td>Online-only POI lookup</td><td>Pre-baked SQLite + corridor packs</td></tr><tr><td>Sends GPS coordinates</td><td>Sends full <strong>108-ready Golden Hour Packet</strong></td></tr><tr><td>No offline story</td><td>QR human relay through dead zones</td></tr><tr><td>English only</td><td>Hindi + Tamil + BIMSTEC config ready</td></tr></tbody></table>
+
+<h3 id="Pros of This System">Pros of This System</h3>
+
+<ol><li><strong>Reliable demo</strong> — airplane mode + QR works every time</li></ol>
+<ol><li><strong>Medically defensible</strong> — START protocol, not made-up questions</li></ol>
+<ol><li><strong>Clinically smarter routing</strong> — trauma center for RED cases</li></ol>
+<ol><li><strong>Offline-first engineering</strong> — real dead-zone problem on NH highways</li></ol>
+<ol><li><strong>Human relay innovation</strong> — creative but honest (no fake mesh)</li></ol>
+<ol><li><strong>Open-source stack</strong> — aligns with CoERS evaluation preference</li></ol>
+<ol><li><strong>Submission-complete</strong> — includes required database artifact</li></ol>
+<ol><li><strong>BIMSTEC-ready</strong> — country packs expandable</li></ol>
+<ol><li><strong>Stage 2 ready</strong> — live demo on two phones, no special hardware</li></ol>
+<ol><li><strong>Clear narrative</strong> — one story judges remember: <em>information survives when network doesn't</em></li></ol>
+
+<hr>
+
+<h2 id="25-glossary-quick-reference">25. Glossary (Quick Reference)</h2>
+
+<table><thead><tr><th>Term</th><th>Brief definition</th></tr></thead><tbody><tr><td><strong>PWA</strong></td><td>Website that installs and works offline</td></tr><tr><td><strong>FSM</strong></td><td>Fixed step-by-step logic (Finite State Machine)</td></tr><tr><td><strong>START</strong></td><td>Standard medical triage protocol for accident scenes</td></tr><tr><td><strong>GHP</strong></td><td>Golden Hour Packet — structured emergency brief for 108</td></tr><tr><td><strong>POI</strong></td><td>Point of Interest — hospital, police, ambulance on map</td></tr><tr><td><strong>SQLite</strong></td><td>Single-file local database</td></tr><tr><td><strong>sql.js</strong></td><td>SQLite running inside the browser</td></tr><tr><td><strong>OSM</strong></td><td>OpenStreetMap — free map/POI data source</td></tr><tr><td><strong>Overpass API</strong></td><td>Server to query OpenStreetMap data</td></tr><tr><td><strong>trauma_tier</strong></td><td>Hospital capability level: 1=trauma center, 2=hospital, 3=clinic</td></tr><tr><td><strong>Haversine</strong></td><td>Formula for distance in km between GPS coordinates</td></tr><tr><td><strong>bbox</strong></td><td>Bounding box — rectangular geo filter for fast SQL</td></tr><tr><td><strong>OSRM</strong></td><td>Open Source Routing Machine — road travel time</td></tr><tr><td><strong>ETA</strong></td><td>Estimated time of arrival in minutes</td></tr><tr><td><strong>IndexedDB</strong></td><td>Browser database for relay packets</td></tr><tr><td><strong>Service Worker</strong></td><td>Script that caches app files for offline use</td></tr><tr><td><strong>QR relay</strong></td><td>Offline handoff via bystander scanning QR code</td></tr><tr><td><strong>Sneakernet</strong></td><td>Data carried by humans, not network</td></tr><tr><td><strong>LLM-as-skin</strong></td><td>AI makes conversation natural</td></tr><tr><td><strong>FSM-as-spine</strong></td><td>Rules make all critical decisions</td></tr><tr><td><strong>lz-string</strong></td><td>Compression library for shrinking QR payloads</td></tr><tr><td><strong>SHA-256</strong></td><td>Hash function for packet integrity check</td></tr><tr><td><strong>Golden hour</strong></td><td>First ~60 minutes after trauma — critical for survival</td></tr><tr><td><strong>108 / 112</strong></td><td>Indian emergency ambulance / unified emergency numbers</td></tr><tr><td><strong>NH km marker</strong></td><td>Highway kilometer marker (e.g. NH48 km 87)</td></tr><tr><td><strong>BIMSTEC</strong></td><td>Bay of Bengal regional countries for international track</td></tr><tr><td><strong>CoERS</strong></td><td>Centre of Excellence for Road Safety, IIT Madras</td></tr><tr><td><strong>RoadSoS</strong></td><td>Our hackathon problem — emergency services access</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="26-open-decisions-team-actions">26. Open Decisions & Team Actions</h2>
+
+<table><thead><tr><th>Decision</th><th>Options</th><th>Deadline</th><th>Owner</th></tr></thead><tbody><tr><td>Primary demo corridor</td><td>Chennai-Bengaluru NH48 vs Delhi-Jaipur</td><td>Week 1 Day 1</td><td>Team lead</td></tr><tr><td>LLM provider</td><td>Groq (cloud) vs Ollama (local)</td><td>Week 3</td><td>AI dev</td></tr><tr><td>BIMSTEC pack</td><td>Add Nepal OR Bangladesh corridor</td><td>Week 4 (if time)</td><td>Data eng</td></tr><tr><td>Backend audit API</td><td>Include FastAPI POST or skip for MVP</td><td>Week 2</td><td>Team vote</td></tr><tr><td>Repo host</td><td>GitHub/GitLab for team collaboration</td><td>Immediately</td><td>All</td></tr></tbody></table>
+
+<h3 id="Immediate Next Steps (This Week)">Immediate Next Steps (This Week)</h3>
+
+<ol><li>Create GitHub repo with folder structure from Section 17</li></ol>
+<ol><li>Register team on Unstop (if not done)</li></ol>
+<ol><li>Run first Overpass ingest for chosen corridor</li></ol>
+<ol><li>Implement </code>startTriageFSM.ts<code> + unit tests</li></ol>
+<ol><li>Schedule daily 15-min standup until submission</li></ol>
+
+<hr>
+
+<h2 id="27-contacts-resources">27. Contacts & Resources</h2>
+
+<table><thead><tr><th>Resource</th><th>Link</th></tr></thead><tbody><tr><td>CoERS event page</td><td>https://coers.iitm.ac.in/event/national-road-safety-hackathon-2026/</td></tr><tr><td>Unstop (Indian track)</td><td>https://unstop.com/hackathons/road-safety-hackathon-2026-iit-madras-1680515</td></tr><tr><td>Hackathon email</td><td>hackathon@rbg.iitm.ac.in</td></tr><tr><td>Coordinator</td><td>Dr. Swathy — +91 9791628414</td></tr><tr><td>OpenStreetMap</td><td>https://www.openstreetmap.org</td></tr><tr><td>Overpass API</td><td>https://overpass-api.de</td></tr><tr><td>OSRM demo server</td><td>http://router.project-osrm.org</td></tr><tr><td>sql.js</td><td>https://sql.js.org</td></tr><tr><td>START triage reference</td><td>https://en.wikipedia.org/wiki/Simple_triage_and_rapid_treatment</td></tr></tbody></table>
+
+<hr>
+
+<h2 id="appendix-a-architecture-comparison-before-vs-after">Appendix A — Architecture Comparison (Before vs After)</h2>
+
+</code>`<code>mermaid
+flowchart LR
+    subgraph Before["Rejected Approach"]
+        B1[Ultrasonic V2V]
+        B2[BLE Mesh]
+        B3[Crash Audio ML]
+        B4[Curvature Engine]
+        B5[Native Hybrid App]
+    end
+
+    subgraph After["RelaySaathi"]
+        A1[START FSM Chatbot]
+        A2[SQLite POI DB]
+        A3[GHP Packet]
+        A4[QR Human Relay]
+        A5[Next.js PWA]
+    end
+
+    Before -.->|replaced by| After
+</code>`<code>
+
+<hr>
+
+<h2 id="appendix-b-full-runtime-sequence-diagram">Appendix B — Full Runtime Sequence Diagram</h2>
+
+</code>`<code>mermaid
+sequenceDiagram
+    participant V as Victim Phone (Offline)
+    participant FSM as START FSM
+    participant DB as SQLite (sql.js)
+    participant GHP as GHP Builder
+    participant B as Bystander Phone
+    participant IDB as IndexedDB
+    participant SMS as 108 SMS
+
+    V->>FSM: Start Emergency + GPS
+    FSM->>FSM: Triage questions
+    FSM->>DB: Query trauma-tier POIs
+    DB-->>FSM: Ranked facilities
+    FSM->>GHP: Build packet + hash
+    GHP-->>V: Display QR + brief
+    B->>V: Scan QR
+    B->>IDB: Store verified GHP
+    Note over B: Drives until signal returns
+    B->>SMS: Auto-compose 108 message
+</code>``
+
+<hr>
+
+<em>End of RelaySaathi Master Team Brief — share freely with all team members.</em>
+
+<strong>Document maintainer:</strong> Update this file when scope, corridor, or demo script changes. Do not re-introduce rejected features without team vote.
+      <div class="footer">
+        RelaySaathi · CoERS Road Safety Hackathon 2026 · Share with all team members
+      </div>
+    </main>
+  </div>
+  <script>
+    if (window.IS_PDF_EXPORT) {
+      document.body.classList.add('pdf-export');
+    }
+    const mermaidTheme = window.IS_PDF_EXPORT ? 'default' : 'dark';
+    const mermaidVars = window.IS_PDF_EXPORT ? {
+      primaryColor: '#fecaca',
+      primaryTextColor: '#0f0f0f',
+      primaryBorderColor: '#374151',
+      lineColor: '#374151',
+      secondaryColor: '#f3f4f6',
+      tertiaryColor: '#ffffff',
+      nodeTextColor: '#0f0f0f'
+    } : {
+      primaryColor: '#ef4444',
+      primaryTextColor: '#e8ecf4',
+      primaryBorderColor: '#2a3347',
+      lineColor: '#8b95a8',
+      secondaryColor: '#1a2030',
+      tertiaryColor: '#141922'
+    };
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: mermaidTheme,
+      themeVariables: mermaidVars,
+      securityLevel: 'loose'
+    });
+  </script>
+</body>
+</html>
