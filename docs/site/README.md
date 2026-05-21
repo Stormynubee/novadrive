@@ -1,32 +1,19 @@
-# RelaySaathi Team Brief — Site & PDF
+# NovaDrive Team Brief — Site & PDF
 
-## Files
+Static site for the hackathon team brief. Deployed on Vercel.
 
-| File | Purpose |
-|------|---------|
-| `index.html` | Dark theme website (browse in browser) |
-| `../RELAYSATHI_MASTER_BRIEF.pdf` | High-contrast PDF for sharing |
-| `../RELAYSATHI_MASTER_BRIEF.md` | Source markdown (edit this) |
+## Build
 
-## Regenerate after editing markdown
-
-```powershell
-cd C:\Users\storm\roadsafetyhackathon\docs\site
-node build-docs.js
-node export-pdf.js
+```bash
+node docs/site/build-docs.js
 ```
 
-## PDF preview in browser (light/print theme)
+Source: [`../NOVADRIVE_MASTER_BRIEF.md`](../NOVADRIVE_MASTER_BRIEF.md) → `index.html`
 
-Open: `index.html?pdf=1` — white background, dark text, cover page.
+## PDF
 
-## Manual PDF from browser
+```bash
+node docs/site/export-pdf.js
+```
 
-1. Open `index.html?pdf=1`
-2. Press **Ctrl+P**
-3. Choose **Save as PDF**
-4. Enable **Background graphics**
-
-## Website only (dark theme)
-
-Open: `index.html` (without `?pdf=1`)
+Or download **NovaDrive-Master-Brief.pdf** from the site sidebar after build.

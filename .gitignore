@@ -1,6 +1,6 @@
 # Dependencies
 node_modules/
-docs/site/node_modules/
+**/node_modules/
 
 # OS / editor
 .DS_Store
@@ -8,13 +8,53 @@ Thumbs.db
 *.log
 .vscode/
 .idea/
+*.swp
 
 # Vercel
 .vercel/
 
-# Env secrets
+# Secrets — never commit
 .env
 .env.*
+!.env.example
+*.pem
+*.p12
+*.jks
+credentials.json
+supabase/.env.local
 
-# Puppeteer cache (optional local)
+# Next.js (novadrive web)
+.next/
+out/
+
+# Expo / React Native (novadrive-mobile)
+.expo/
+dist/
+web-build/
+android/
+ios/
+*.orig.*
+.metro-health-check*
+*.mobileprovision
+
+# Python (POI ingest)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Generated databases (rebuild via scripts)
+data/*.db
+!data/.gitkeep
+
+# Puppeteer / PDF build cache
 .cache/
+docs/site/.cache/
+
+# Test / coverage
+coverage/
+*.lcov
+
+# Misc
+*.tsbuildinfo
+.turbo/

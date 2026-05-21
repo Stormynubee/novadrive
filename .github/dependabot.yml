@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /novadrive-mobile
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3
+  - package-ecosystem: npm
+    directory: /novadrive
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 3

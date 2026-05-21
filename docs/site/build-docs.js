@@ -1,12 +1,12 @@
 /**
- * Builds RelaySaathi team brief as static HTML (+ optional PDF via browser print)
+ * Builds NovaDrive team brief as static HTML (+ optional PDF via browser print)
  * Run: node docs/site/build-docs.js
  */
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const MD_PATH = path.join(ROOT, 'RELAYSATHI_MASTER_BRIEF.md');
+const MD_PATH = path.join(ROOT, 'NOVADRIVE_MASTER_BRIEF.md');
 const OUT_HTML = path.join(__dirname, 'index.html');
 
 const md = fs.readFileSync(MD_PATH, 'utf8').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
@@ -166,7 +166,7 @@ const html = `<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RelaySaathi — Master Team Brief</title>
+  <title>NovaDrive — Master Team Brief</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -478,18 +478,18 @@ const html = `<!DOCTYPE html>
 <body>
   <div class="layout">
     <nav class="sidebar">
-      <div class="sidebar-brand">🚨 RelaySaathi</div>
+      <div class="sidebar-brand">🚨 NovaDrive</div>
       <div class="sidebar-sub">Master Team Brief<br>Road Safety Hackathon 2026</div>
       <div class="toc">${tocHtml}</div>
       <div class="sidebar-actions">
         <button class="btn btn-primary" onclick="window.print()">⬇ Save as PDF</button>
-        <a class="btn btn-secondary" href="./RelaySaathi-Master-Brief.pdf" download>📕 Download PDF</a>
-        <a class="btn btn-secondary" href="./RELAYSATHI_MASTER_BRIEF.md" download>📄 Download Markdown</a>
+        <a class="btn btn-secondary" href="./NovaDrive-Master-Brief.pdf" download>📕 Download PDF</a>
+        <a class="btn btn-secondary" href="./NOVADRIVE_MASTER_BRIEF.md" download>📄 Download Markdown</a>
       </div>
     </nav>
     <main class="main">
       <div class="pdf-cover">
-        <h1>RelaySaathi</h1>
+        <h1>NovaDrive</h1>
         <div class="subtitle">Master Team Brief — Road Safety Hackathon 2026 (RoadSoS Track)</div>
         <div class="meta-grid">
           <div><strong>Organizer:</strong> CoERS & RBG Labs, IIT Madras</div>
@@ -501,7 +501,7 @@ const html = `<!DOCTYPE html>
       </div>
       <div class="hero">
         <span class="badge">RoadSoS Track · IIT Madras</span>
-        <h1>RelaySaathi Master Team Brief</h1>
+        <h1>NovaDrive Master Team Brief</h1>
         <div class="hero-meta">
           <span>📅 May 2026</span>
           <span>👥 Full team document</span>
@@ -511,7 +511,7 @@ const html = `<!DOCTYPE html>
       </div>
       ${bodyContent}
       <div class="footer">
-        RelaySaathi · CoERS Road Safety Hackathon 2026 · Share with all team members
+        NovaDrive · CoERS Road Safety Hackathon 2026 · Share with all team members
       </div>
     </main>
   </div>
@@ -549,13 +549,13 @@ const html = `<!DOCTYPE html>
 fs.writeFileSync(OUT_HTML, html, 'utf8');
 
 // Copy downloadable assets into site folder for Vercel deployment
-const mdSrc = path.join(ROOT, 'RELAYSATHI_MASTER_BRIEF.md');
-const pdfSrc = path.join(ROOT, 'RELAYSATHI_MASTER_BRIEF.pdf');
+const mdSrc = path.join(ROOT, 'NOVADRIVE_MASTER_BRIEF.md');
+const pdfSrc = path.join(ROOT, 'NOVADRIVE_MASTER_BRIEF.pdf');
 if (fs.existsSync(mdSrc)) {
-  fs.copyFileSync(mdSrc, path.join(__dirname, 'RELAYSATHI_MASTER_BRIEF.md'));
+  fs.copyFileSync(mdSrc, path.join(__dirname, 'NOVADRIVE_MASTER_BRIEF.md'));
 }
 if (fs.existsSync(pdfSrc)) {
-  fs.copyFileSync(pdfSrc, path.join(__dirname, 'RelaySaathi-Master-Brief.pdf'));
+  fs.copyFileSync(pdfSrc, path.join(__dirname, 'NovaDrive-Master-Brief.pdf'));
 }
 
 console.log('✅ Built:', OUT_HTML);
