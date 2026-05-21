@@ -1,0 +1,10 @@
+{
+  "name": "NovaDrive",
+  "short_name": "NovaDrive",
+  "description": "Offline emergency triage and dispatch relay",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0e14",
+  "theme_color": "#0a0e14",
+  "orientation": "portrait"
+}

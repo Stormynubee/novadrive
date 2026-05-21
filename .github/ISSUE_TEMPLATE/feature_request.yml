@@ -1,0 +1,25 @@
+name: Feature request
+description: Idea for P1/P2 or hackathon polish
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / user story
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Suggested phase
+      options:
+        - P0 — must ship for hackathon
+        - P1 — post-MVP
+        - P2 — future
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: Does not require auto-dial or always-on mic ML
+        - label: Documented in or aligned with NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md

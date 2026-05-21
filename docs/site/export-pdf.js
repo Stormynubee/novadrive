@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const htmlPath = path.join(__dirname, 'index.html');
-const pdfPath = path.join(__dirname, '..', 'RELAYSATHI_MASTER_BRIEF.pdf');
+const pdfPath = path.join(__dirname, '..', 'NOVADRIVE_MASTER_BRIEF.pdf');
 
 async function main() {
   let puppeteer;
@@ -62,7 +62,7 @@ async function main() {
     headerTemplate: `
       <div style="font-size:8px;width:100%;padding:0 14mm;color:#374151;font-family:Arial,sans-serif;
         display:flex;justify-content:space-between;border-bottom:1px solid #d1d5db;padding-bottom:4px;">
-        <span>RelaySaathi — Master Team Brief</span>
+        <span>NovaDrive — Master Team Brief</span>
         <span>Road Safety Hackathon 2026 · RoadSoS</span>
       </div>`,
     footerTemplate: `

@@ -1,0 +1,34 @@
+name: Bug report
+description: Something broken in NovaDrive mobile or web
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - novadrive-mobile (Expo)
+        - novadrive (web)
+        - docs / brief site
+        - scripts / POI ingest
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+  - type: input
+    id: device
+    attributes:
+      label: Device / OS (if mobile)
+      placeholder: e.g. Android 14, Expo Go
