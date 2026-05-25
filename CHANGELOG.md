@@ -2,6 +2,8 @@
 
 All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 2026, RoadSoS).
 
+**Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
+
 ## [2026-05-23] — Stabilization & GovTech UI
 
 ### Added
@@ -31,6 +33,13 @@ All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 
 
 - Home **ENTER DRIVE MODE** → Trip Plan Corridor (journey starts on **Start Driving** only).
 - Journey complete thank-you copy points to Home.
+
+---
+
+## [2026-05-25] — Publish & repo hygiene
+
+- Git tags: `v0.1.0-p0` → `v1.2.0-hackathon-publish` (see [VERSION_HISTORY.md](docs/VERSION_HISTORY.md)).
+- Removed `.cursor/` from public repo; added to `.gitignore`.
 
 ---
 

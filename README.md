@@ -18,6 +18,8 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 | **Complete UI brief (HTML)** | [novadrive-complete.html](https://roadsafetyhackathon-six.vercel.app/novadrive-complete.html) |
 | **Submission checklist** | [docs/SUBMISSION.md](docs/SUBMISSION.md) |
 | **Changelog (latest work)** | [CHANGELOG.md](CHANGELOG.md) |
+| **All versions & commits** | [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) |
+| **Fork this repo** | [github.com/Stormynubee/novadrive/fork](https://github.com/Stormynubee/novadrive/fork) |
 | **Deadline** | May 31, 2026, 11:59 PM IST |
 
 ---
