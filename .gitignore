@@ -62,3 +62,6 @@ coverage/
 # Misc
 *.tsbuildinfo
 .turbo/
+
+# Cursor IDE (local only — keep out of public repo)
+.cursor/

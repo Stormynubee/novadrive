@@ -20,13 +20,6 @@ For **Team Vortex** and judges using Cursor (or similar) on this repo.
 4. Before claiming “done” on mobile: `npm run typecheck` and `npm test` in `novadrive-mobile`.
 5. Optional device check: [DEVICE_SMOKE_MATRIX.md](../novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md).
 
-## Project subagent
-
-Use the **novadrive-reviewer** subagent (`.cursor/agents/novadrive-reviewer.md`) after edits to:
-
-- `AppContext.tsx`, `crashEngine.ts`, `SafetyMonitorBridge.tsx`, `JourneyVoiceMonitor.tsx`
-- `app/journey/**`, `app/(tabs)/drive.tsx`
-
 ## Recommended Cursor skills (install locally)
 
 Search and install with the Skills CLI:
