@@ -31,6 +31,13 @@ describe('START triage FSM', () => {
     expect(r.result).toBe('RED');
   });
 
+  it('RED when capillary refill fails at perfusion step', () => {
+    const r = applyAnswer('PERFUSION_CHECK', { canWalk: false, breathing: true }, {
+      capillaryRefillOk: false,
+    });
+    expect(r.result).toBe('RED');
+  });
+
   it('YELLOW when all checks pass and non-ambulatory', () => {
     let s = 'MENTAL_STATUS' as const;
     const ctx = {

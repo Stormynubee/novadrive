@@ -2,36 +2,171 @@
 
 **Signal drops. The critical minute doesn't.**
 
-Native Expo app for the IIT Madras Road Safety Hackathon 2026 — RoadSoS track.
+**Team Vortex** · Native Expo app for **IIT Madras Road Safety Hackathon 2026** — **RoadSoS** track (GovTech navy / saffron UI).
 
-> Monorepo root: [../README.md](../README.md) · Submission checklist: [../docs/SUBMISSION.md](../docs/SUBMISSION.md)
+**Expo SDK 54** — matches the current **Play Store Expo Go** app (SDK 56 requires a newer Expo Go not on Play Store yet).
+
+> Monorepo root: [../README.md](../README.md) · Changelog: [../CHANGELOG.md](../CHANGELOG.md) · Submission: [../docs/SUBMISSION.md](../docs/SUBMISSION.md)
+
+## Drive flow
+
+Home → **Trip** (Plan Corridor) → **Start Driving** → calibration → **Live SOS HUD** → journey complete → Home.
+
+Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md](docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md)
 
 ## Features (P0)
 
-- Splash → Auth (Guest) → Medical → Accessibility onboarding
-- Journey HUD with foreground GPS + CrashEngine (simulate for judges)
-- Calm 15s crash dialog — **no auto triage or 108 at countdown 0**
-- Hold-to-SOS (1.5s) → START triage FSM → trauma-tier SQLite routing
+- GovTech tabs: Home, Trip, Community, Profile + Configuration (`/settings`)
+- Plan Corridor map, route cards (Alpha-1 / Beta), offline briefing (`trip/plan`, `trip/discover`)
+- Route calibration screen → live speedometer HUD, sensor status, hold-to-SOS (3s)
+- Foreground GPS + **CrashEngine** (impact/throw) + **Voice watch** (settings-gated; simulate for judges)
+- Calm 15s distress dialog — **no auto triage or 108 at countdown 0**; no backdrop dismiss
+- Hold-to-SOS → START triage FSM → trauma-tier SQLite routing
 - Offline keyword parser on emergency chat
 - Golden Hour Packet (GHP) + lz-string QR + SHA-256 integrity
 - Bystander QR scan + SecureStore relay cache + SMS 108 intent
+
+## Quality gates
+
+```bash
+npm run typecheck    # TypeScript (includes *.test.ts)
+npm test             # 32 unit tests — lib/, FSM, crash, GHP
+npm run test:coverage
+```
+
+Device checklist: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ## Run
 
 ```bash
 cd novadrive-mobile
 npm install --legacy-peer-deps
+npx expo install react-native-worklets babel-preset-expo
+npm run typecheck
 npm test
 npx expo start
 ```
 
-### Android APK / device
+### Connect Expo Go to your PC
+
+Pick **one** method. Tunnel is optional; LAN or USB is often more reliable.
+
+#### A — Same Wi‑Fi (recommended when tunnel fails)
+
+Phone and laptop on the **same router** (not “laptop hotspot → phone” unless you fix firewall — see B).
+
+```bash
+npm run start:lan
+```
+
+In Expo Go → **Enter URL manually**:
+
+```text
+exp://YOUR_LAPTOP_IP:8081
+```
+
+Find `YOUR_LAPTOP_IP` with `ipconfig` (IPv4 on Wi‑Fi), e.g. `exp://192.168.31.122:8081`.
+
+Allow **Node.js** through Windows Firewall for **Private** networks.
+
+#### B — Laptop mobile hotspot
+
+Windows hotspot often blocks phone → laptop on port 8081. Try in order:
+
+1. **Phone hotspot instead** — share internet from the phone, connect the laptop to that Wi‑Fi, then use **A (LAN)**.
+2. **Tunnel** — `npm run start:tunnel` (needs ngrok; see troubleshooting below).
+3. **USB + localhost** — install [Android platform-tools](https://developer.android.com/tools/releases/platform-tools), USB-debug the phone, then:
+
+```bash
+npm run start:localhost
+adb reverse tcp:8081 tcp:8081
+```
+
+Open the QR / URL from the terminal (`exp://127.0.0.1:8081` on the device after `adb reverse`).
+
+#### C — Tunnel (`exp.direct`)
+
+```bash
+npm run start:tunnel
+```
+
+QR URL should contain `exp.direct`. If you see `CommandError: failed to start tunnel` / `remote gone away` / `session closed`:
+
+1. **Stale ngrok config** — remove `%USERPROFILE%\.expo\ngrok.yml`, then retry. If you use your own ngrok account, paste a fresh authtoken from [dashboard.ngrok.com](https://dashboard.ngrok.com/get-started/your-authtoken) into that file as `authtoken: ...` or set env `NGROK_AUTHTOKEN`.
+2. **Only one Metro** — stop other Expo terminals; if port 8081 is busy, run `npx expo start --tunnel --port 8082` in an **interactive** PowerShell window (answer **Y** when asked to use another port).
+3. **Network** — disable VPN; allow Node/ngrok through firewall; check [ngrok status](https://status.ngrok.com/) (outages are rare; “remote gone away” is usually local network or auth).
+4. Reinstall tunnel helper: `npm install @expo/ngrok@^4.1.3`
+
+#### D — No dev server (judge demo)
 
 ```bash
 npx expo run:android
 ```
 
-Grant location (journey) and camera (QR scan) when prompted.
+Installs a debug build on the device; no Expo Go or Metro required.
+
+---
+
+**“Project incompatible with Expo Go”** — this repo uses **SDK 54** for Play Store Expo Go. Run `npx expo install --fix` after `git pull` if versions drift.
+
+**If Metro says `Cannot find module 'react-native-worklets/plugin'`:** run `npx expo install react-native-worklets`, then restart Expo (Ctrl+C first).
+
+**If Metro says `Cannot find module 'babel-preset-expo'`:** run `npx expo install babel-preset-expo`, then restart Expo.
+
+**If port 8081 is busy:** close other Expo windows, or:
+
+```powershell
+netstat -ano | findstr :8081
+taskkill /PID <pid_from_above> /F
+```
+
+### Android APK / device (USB, like Android Studio)
+
+**Phone:** Enable **Developer options** → **USB debugging**, plug in cable, tap **Allow** on the phone.
+
+**PC:** `adb` must be on your PATH. If PowerShell says `adb is not recognized`, run this once per terminal session (typical Android Studio SDK location):
+
+```powershell
+$env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk"
+$env:Path = "$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\emulator;$env:Path"
+adb devices
+```
+
+You should see your phone as `device` (not `unauthorized`). Install [platform-tools](https://developer.android.com/tools/releases/platform-tools) only if that folder is missing.
+
+**Java:** Gradle needs **JDK 17+**. If you see `Gradle requires JVM 17 or later` and your PC only has Java 8, either:
+
+- Use Android Studio’s bundled JDK (already wired in `android/gradle.properties` if Studio is at `C:\Program Files\Android\Android Studio`), or
+- In PowerShell before building:
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+$env:Path = "$env:JAVA_HOME\bin;$env:Path"
+java -version
+```
+
+You should see `openjdk version "17"` or `21`, not `1.8`.
+
+```bash
+cd novadrive-mobile
+npx expo run:android
+```
+
+First build downloads Gradle/SDK and can take 10–20 minutes. Later builds are faster. Grant location (journey), microphone, and camera when prompted.
+
+**Gradle `IBM_SEMERU` error:** Gradle 9 + React Native’s old foojay plugin — fixed via `npm install` → `postinstall` runs `scripts/patch-foojay-gradle.js`. If it returns after `npm install`, run `node scripts/patch-foojay-gradle.js` once.
+
+**`hermes-compiler` / `getAbsolutePath() on null`:** Install dev dep `hermes-compiler` (in `package.json`) and ensure `android/local.properties` contains `sdk.dir=...` pointing at your Android SDK (create it if missing; path is machine-specific).
+
+**`build.ninja` / file used by another process (Reanimated CMake):** Two Gradle builds ran at once (e.g. double `npx expo run:android`, or Android Studio + CLI). Fix:
+
+```powershell
+npm run android:clean-native
+# wait ~5 seconds
+npx expo run:android
+```
+
+Run only **one** build at a time. Close Android Studio during CLI builds if locks persist.
 
 ## Airplane-mode acceptance test
 
