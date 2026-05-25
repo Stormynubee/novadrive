@@ -1,8 +1,13 @@
-# NovaDrive
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner.svg">
+    <img src="docs/assets/banner-light.svg" alt="NovaDrive — Signal drops. The critical minute doesn't. Team Vortex · IIT Madras RoadSoS 2026" width="100%">
+  </picture>
+</p>
 
-**Signal drops. The critical minute doesn't.**
-
-**Team Vortex** · **IIT Madras Road Safety Hackathon 2026** · **RoadSoS** (CoERS & RBG Labs / MoRTH)
+<p align="center">
+  <strong>Team Vortex</strong> · <strong>IIT Madras Road Safety Hackathon 2026</strong> · <strong>RoadSoS</strong> (CoERS &amp; RBG Labs / MoRTH)
+</p>
 
 [![RoadSoS Hackathon 2026](https://img.shields.io/badge/IIT%20Madras-RoadSoS%202026-amber?style=flat-square)](https://roadsafetyhackathon-six.vercel.app)
 [![CI](https://img.shields.io/github/actions/workflow/status/Stormynubee/novadrive/ci.yml?branch=master&label=CI&style=flat-square)](https://github.com/Stormynubee/novadrive/actions/workflows/ci.yml)
