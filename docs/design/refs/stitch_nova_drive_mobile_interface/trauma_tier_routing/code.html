@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(21, 29, 46, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid #1C2636;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.15);
+            border-color: #fbbf24 !important;
+        }
+        body {
+            background-color: #0c1321;
+            scrollbar-width: none;
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        .hud-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #1C2636, transparent);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#5c4300",
+                        "surface-tint": "#f9bd22",
+                        "primary-container": "#fbbf24",
+                        "on-tertiary-fixed": "#002115",
+                        "on-tertiary-container": "#006045",
+                        "tertiary-fixed-dim": "#62dcad",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#2e3544",
+                        "surface-container-low": "#151b2a",
+                        "on-primary-container": "#6c4f00",
+                        "surface-container-lowest": "#070e1c",
+                        "outline": "#9c8f79",
+                        "on-secondary-container": "#00515d",
+                        "on-secondary": "#00363e",
+                        "primary-fixed": "#ffdf9f",
+                        "on-background": "#dce2f6",
+                        "surface": "#0c1321",
+                        "on-surface-variant": "#d3c5ac",
+                        "surface-dim": "#0c1321",
+                        "surface-container": "#19202e",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "inverse-primary": "#795900",
+                        "secondary-container": "#00cbe6",
+                        "inverse-surface": "#dce2f6",
+                        "background": "#0c1321",
+                        "tertiary-container": "#64deaf",
+                        "surface-bright": "#323949",
+                        "secondary": "#5de6ff",
+                        "on-primary": "#402d00",
+                        "on-primary-fixed": "#261a00",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#2e3544",
+                        "tertiary": "#82fbca",
+                        "primary-fixed-dim": "#f9bd22",
+                        "inverse-on-surface": "#2a3040",
+                        "outline-variant": "#4f4633",
+                        "on-secondary-fixed-variant": "#004e5a",
+                        "secondary-fixed": "#a2eeff",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#2fd9f4",
+                        "tertiary-fixed": "#80f9c8",
+                        "on-secondary-fixed": "#001f25",
+                        "surface-container-high": "#232a39",
+                        "on-surface": "#dce2f6",
+                        "primary": "#ffe1a7",
+                        "on-tertiary": "#003827"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "data-value": ["JetBrains Mono"],
+                        "data-label": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Sora"],
+                        "body-lg": ["DM Sans"],
+                        "body-sm": ["DM Sans"],
+                        "headline-md": ["Sora"],
+                        "display-lg": ["Sora"],
+                        "body-md": ["DM Sans"],
+                        "headline-lg": ["Sora"]
+                    },
+                    "fontSize": {
+                        "data-value": ["14px", {"lineHeight": "16px", "fontWeight": "700"}],
+                        "data-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface">
+<!-- Top Navigation Anchor -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 z-50 bg-surface-dim border-b border-outline-variant fixed top-0 left-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-2xl">polyline</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary tracking-tight">NovaDrive</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">signal_cellular_alt</span>
+<span class="material-symbols-outlined text-on-surface-variant">battery_charging_90</span>
+</div>
+</header>
+<main class="pt-20 pb-32 px-margin-mobile min-h-screen">
+<!-- Header Section -->
+<section class="mb-stack-lg">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-secondary text-sm">emergency_share</span>
+<span class="font-data-label text-data-label text-secondary uppercase tracking-widest">Pipeline Step 03</span>
+</div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">Trauma-tier routing</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Not nearest pin — tier-matched from offline SQLite POIs.</p>
+</section>
+<!-- Stepper HUD -->
+<section class="mb-stack-lg overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+<div class="flex items-center justify-between min-w-[480px]">
+<!-- Step 1 -->
+<div class="flex flex-col items-center gap-2 opacity-50">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Locate</span>
+</div>
+<div class="flex-1 h-[1px] bg-outline-variant mx-2"></div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center gap-2 opacity-50">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Triage</span>
+</div>
+<div class="flex-1 h-[1px] bg-outline-variant mx-2"></div>
+<!-- Step 3 (Active) -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary-container ring-4 ring-primary-container/20"></div>
+<span class="font-data-label text-data-label text-primary-container font-bold">Route</span>
+</div>
+<div class="flex-1 h-[1px] bg-outline-variant/30 mx-2"></div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center gap-2 opacity-20">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Packet</span>
+</div>
+<div class="flex-1 h-[1px] bg-outline-variant/30 mx-2"></div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center gap-2 opacity-20">
+<div class="w-2 h-2 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Relay</span>
+</div>
+</div>
+</section>
+<!-- Facility List -->
+<section class="space-y-stack-md">
+<!-- Featured Recommendation Card -->
+<div class="glass-card active-glow rounded-xl p-5 relative overflow-hidden transition-all duration-300">
+<div class="absolute top-0 right-0 p-3">
+<span class="material-symbols-outlined text-primary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<div class="mb-3">
+<h3 class="font-headline-md text-headline-md text-primary-container">NH48 Primary Health Centre</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">clinic • tier 3</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-secondary">801.0 km</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface">~2003 min</span>
+</div>
+</div>
+<div class="hud-line my-4 opacity-30"></div>
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-lg">call</span>
+<span class="font-data-value text-data-value text-on-surface">044-27420001</span>
+</div>
+<div class="flex items-center gap-3 bg-error-container/20 p-2 rounded-lg border border-error/10">
+<span class="material-symbols-outlined text-error text-lg">warning</span>
+<p class="font-body-sm text-body-sm text-error">Phone unverified — confirm before calling</p>
+</div>
+</div>
+</div>
+<!-- Standard List Items -->
+<div class="glass-card rounded-xl p-5 opacity-80 hover:opacity-100 transition-opacity">
+<div class="mb-3">
+<h3 class="font-body-lg font-bold text-on-surface">Corridor Facility 30</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">clinic • tier 3</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">812.8 km</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">~2032 min</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">cancel</span>
+<span class="font-data-value text-data-value text-on-surface-variant italic">Phone: unverified</span>
+</div>
+</div>
+<div class="glass-card rounded-xl p-5 opacity-70">
+<div class="mb-3">
+<h3 class="font-body-lg font-bold text-on-surface">Corridor Facility 39</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">clinic • tier 3</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">813.6 km</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">~2034 min</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">cancel</span>
+<span class="font-data-value text-data-value text-on-surface-variant italic">Phone: unverified</span>
+</div>
+</div>
+<div class="glass-card rounded-xl p-5 opacity-60">
+<div class="mb-3">
+<h3 class="font-body-lg font-bold text-on-surface">Corridor Facility 9</h3>
+<div class="flex items-center gap-2 mt-1">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">clinic • tier 3</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">817.2 km</span>
+<span class="text-outline-variant">•</span>
+<span class="font-data-value text-data-value text-on-surface-variant">~2043 min</span>
+</div>
+</div>
+<div class="flex items-center gap-3 mt-4">
+<span class="material-symbols-outlined text-on-surface-variant text-lg">cancel</span>
+<span class="font-data-value text-data-value text-on-surface-variant italic">Phone: unverified</span>
+</div>
+</div>
+</section>
+<!-- Dynamic Map Widget (Background Atmosphere) -->
+<div class="mt-stack-lg relative h-48 rounded-xl overflow-hidden border border-outline-variant/30 group">
+<img alt="HUD Navigation Map" class="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 transition-all duration-700" data-alt="A futuristic dark-mode satellite navigation map with glowing cyan and amber route lines. The terrain is rendered in deep navies and charcoal blacks, resembling a high-tech night-vision display. Minimalist UI overlays like coordinates and speedometers are visible at the edges, creating a professional dashboard atmosphere for a performance driving application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCY9XfLw_vu_2nkV8NmYIpIIijHGlYE_DxvyxkVumer-KHdvJGYPzxZkY05fXqQNeOBRPuOFLRD6gQ8pp3qvkATzSdC9FfvB_Da87acVHJeDEE2TWIQyN_tcYs5EG1nWYK_tx9yd672JVsf1atLfT_i62e843aUtseSOPbIgOP1Z9MNJEHEkbpuR1bJlBtqJn7IgY_fTiM7isR7UbsoY3dbctCiAOLvc_h6jdiH_o7a4A0pI0SCjTfaV5tdtE0tkwOdlQG7Nx5DkSk"/>
+<div class="absolute inset-0 bg-gradient-to-t from-surface to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+<span class="font-data-label text-data-label text-secondary">LIVE ROUTE OPTIMIZATION</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Actions & Navigation -->
+<div class="fixed bottom-0 left-0 w-full z-50">
+<!-- Floating Primary Action -->
+<div class="px-margin-mobile pb-24">
+<button class="w-full h-14 bg-primary-container text-on-primary font-bold rounded-xl flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-[0_8px_32px_rgba(251,191,36,0.3)]">
+<span class="material-symbols-outlined">construction</span>
+<span class="uppercase tracking-widest font-data-label">Select &amp; Build GHP</span>
+</button>
+</div>
+<!-- Global Shell Navigation -->
+<nav class="bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant/30 flex justify-around items-center px-4 py-2 pb-safe shadow-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 scale-95 duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="font-body-sm text-body-sm">Discovery</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body-sm text-body-sm">History</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</nav>
+</div>
+<script>
+        // Micro-interactions for the cards
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.glass-card').forEach(c => c.classList.remove('active-glow'));
+                card.classList.add('active-glow');
+                
+                // Haptic feedback simulation
+                if (window.navigator.vibrate) {
+                    window.navigator.vibrate(10);
+                }
+            });
+        });
+
+        // Atmospheric scanline effect simulation
+        const style = document.createElement('style');
+        style.textContent = `
+            body::after {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+                background-size: 100% 2px, 3px 100%;
+                pointer-events: none;
+                z-index: 9999;
+                opacity: 0.3;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body></html>

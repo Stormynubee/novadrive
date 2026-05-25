@@ -33,12 +33,30 @@ node docs/site/build-docs.js
 
 1. Branch from `master`: `feat/short-description` or `fix/short-description`
 2. Keep PRs focused — one capability per PR when possible
-3. Run `npm test` in `novadrive-mobile` before opening
+3. Before opening, in `novadrive-mobile`:
+   ```bash
+   npm run typecheck
+   npm test
+   ```
 4. Do not commit secrets, `.env`, or generated `data/*.db`
+5. For journey/safety UI changes, run the [device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) on a physical device when you can
+
+## Test-driven development (`src/lib`)
+
+For new behavior or bug fixes in `novadrive-mobile/src/lib/`:
+
+1. Write a failing test in `*.test.ts`
+2. Run `npm test` and confirm the failure is for the right reason
+3. Implement the minimal fix
+4. Confirm all tests pass
 
 ## Medical / safety changes
 
-Changes to `startTriageFSM.ts` **must** include or update unit tests in `startTriageFSM.test.ts`. Follow START rules in [`docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md`](docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md) §8.
+Changes to `startTriageFSM.ts`, `crashEngine.ts`, `ghp.ts`, or `parseEmergencyText.ts` **must** include or update unit tests. Follow START rules in [`docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md`](docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md) §8.
+
+## AI assistants
+
+See [docs/AGENTS.md](docs/AGENTS.md) for Cursor subagents and recommended skills.
 
 ## Scope guard (hackathon)
 

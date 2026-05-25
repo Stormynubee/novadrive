@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nova Drive Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Sora:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#2e3544",
+                        "primary-fixed": "#ffdf9f",
+                        "on-surface-variant": "#d3c5ac",
+                        "secondary-container": "#00cbe6",
+                        "tertiary-fixed-dim": "#62dcad",
+                        "primary-container": "#fbbf24",
+                        "background": "#0c1321",
+                        "tertiary": "#82fbca",
+                        "primary-fixed-dim": "#f9bd22",
+                        "secondary-fixed": "#a2eeff",
+                        "surface-dim": "#0c1321",
+                        "outline-variant": "#4f4633",
+                        "on-surface": "#dce2f6",
+                        "on-secondary-container": "#00515d",
+                        "secondary": "#5de6ff",
+                        "primary": "#ffe1a7",
+                        "on-secondary-fixed": "#001f25",
+                        "on-secondary-fixed-variant": "#004e5a",
+                        "on-error-container": "#ffdad6",
+                        "surface-tint": "#f9bd22",
+                        "tertiary-container": "#64deaf",
+                        "on-primary-container": "#6c4f00",
+                        "surface-variant": "#2e3544",
+                        "on-tertiary-fixed": "#002115",
+                        "surface-container-high": "#232a39",
+                        "on-tertiary-container": "#006045",
+                        "inverse-primary": "#795900",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "on-primary-fixed-variant": "#5c4300",
+                        "on-background": "#dce2f6",
+                        "on-error": "#690005",
+                        "inverse-surface": "#dce2f6",
+                        "on-secondary": "#00363e",
+                        "surface-container-low": "#151b2a",
+                        "surface": "#0c1321",
+                        "outline": "#9c8f79",
+                        "tertiary-fixed": "#80f9c8",
+                        "on-primary": "#402d00",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#261a00",
+                        "inverse-on-surface": "#2a3040",
+                        "surface-container-lowest": "#070e1c",
+                        "surface-bright": "#323949",
+                        "surface-container": "#19202e",
+                        "on-tertiary": "#003827",
+                        "secondary-fixed-dim": "#2fd9f4",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "40px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Sora"],
+                        "body-md": ["DM Sans"],
+                        "display-lg": ["Sora"],
+                        "body-lg": ["DM Sans"],
+                        "headline-lg-mobile": ["Sora"],
+                        "headline-lg": ["Sora"],
+                        "data-label": ["JetBrains Mono"],
+                        "data-value": ["JetBrains Mono"],
+                        "body-sm": ["DM Sans"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "data-value": ["14px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .map-bg {
+            background-color: #0c1321;
+            background-image: radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.05) 0%, transparent 70%);
+        }
+        .hud-border {
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(251, 191, 36, 0.02);
+        }
+        .hex-pulse {
+            animation: pulse-hex 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-hex {
+            0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.5)); }
+            50% { opacity: 0.7; transform: scale(0.95); filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.2)); }
+        }
+        .status-glow {
+            text-shadow: 0 0 8px rgba(98, 220, 173, 0.6);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen w-screen overflow-hidden flex flex-col font-body-md text-body-md antialiased map-bg relative">
+<!-- Header -->
+<header class="bg-surface-container-low/60 backdrop-blur-xl border-b border-white/5 fixed top-0 w-full z-50 flex items-center justify-between px-margin-mobile h-[64px] md:px-margin-desktop">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 flex items-center justify-center hex-pulse">
+<span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings: 'FILL' 1;">hexagon</span>
+</div>
+<div class="flex flex-col -gap-1">
+<h1 class="font-headline-md text-primary tracking-tighter leading-none">NOVADRIVE</h1>
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 bg-tertiary-fixed-dim rounded-full shadow-[0_0_5px_rgba(98,220,173,0.8)]"></span>
+<p class="text-[10px] font-data-label text-tertiary-fixed-dim uppercase tracking-widest status-glow">System Secure</p>
+</div>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center w-10 h-10 rounded-full hover:bg-white/5 active:scale-95">
+<span class="material-symbols-outlined">sensors</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="relative z-10 flex-1 pt-[88px] pb-[96px] px-margin-mobile w-full max-w-2xl mx-auto flex flex-col gap-6 pointer-events-auto overflow-y-auto">
+<!-- Greeting -->
+<div class="flex flex-col">
+<p class="text-primary/60 font-data-label uppercase tracking-[0.2em] text-[10px] mb-1">Navigation System v2.4</p>
+<h2 class="font-headline-lg-mobile text-on-surface">Good afternoon, Guest.</h2>
+</div>
+<!-- Hero Card -->
+<div class="surface-container-high hud-border rounded-2xl p-6 flex flex-col gap-6 relative overflow-hidden">
+<div class="absolute -right-12 -top-12 w-32 h-32 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="flex flex-col gap-2 relative z-10">
+<h3 class="font-headline-md text-primary flex items-center gap-2">
+                Ready for the highway?
+            </h3>
+<p class="font-body-md text-on-surface-variant leading-relaxed">
+                Golden hour is approaching. All maps are <span class="text-primary-fixed">downloaded locally</span> and the system is ready for offline navigation.
+            </p>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md h-[64px] rounded-xl flex items-center justify-center gap-3 hover:bg-primary-fixed transition-all active:scale-[0.98] shadow-lg shadow-primary-container/10 border border-primary/20 group relative z-10">
+<span class="material-symbols-outlined text-[32px] group-hover:translate-x-1 transition-transform" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+            Start Journey
+        </button>
+</div>
+<!-- Action Grid -->
+<div class="grid grid-cols-2 gap-4">
+<!-- SOS Button -->
+<button class="surface-container-low hud-border rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:bg-error-container/20 transition-all active:scale-95 border-l-4 border-l-error/40 group">
+<div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">sos</span>
+</div>
+<span class="font-data-label text-on-surface text-center leading-tight tracking-wide uppercase text-[11px]">Emergency<br/>(SOS)</span>
+</button>
+<!-- QR Button -->
+<button class="surface-container-low hud-border rounded-xl p-5 flex flex-col items-center justify-center gap-3 hover:bg-white/5 transition-all active:scale-95 border-l-4 border-l-secondary-container/40 group">
+<div class="w-12 h-12 rounded-full bg-secondary-container/20 text-secondary-container flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[28px]">qr_code_scanner</span>
+</div>
+<span class="font-data-label text-on-surface text-center leading-tight tracking-wide uppercase text-[11px]">Scan Bystander<br/>QR</span>
+</button>
+</div>
+<!-- Footer -->
+<div class="mt-auto py-8 flex flex-col items-center gap-4">
+<a class="text-on-surface-variant font-data-label text-[11px] uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 opacity-60 hover:opacity-100" href="#">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span>
+            Replay onboarding (from splash)
+        </a>
+</div>
+</main>
+<!-- Bottom Nav -->
+<nav class="md:hidden bg-surface-container-lowest/80 backdrop-blur-2xl border-t border-white/5 fixed bottom-0 w-full z-50 left-0 flex justify-around items-center px-4 py-2 pb-6">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-2xl w-14 h-12 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">speed</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-14 h-12 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">explore</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-14 h-12 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">history</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant w-14 h-12 hover:text-primary transition-colors active:scale-90" href="#">
+<span class="material-symbols-outlined">settings</span>
+</a>
+</nav>
+</body></html>

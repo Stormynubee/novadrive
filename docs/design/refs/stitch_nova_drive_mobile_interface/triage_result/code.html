@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NovaDrive - Triage Result</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-primary-fixed-variant": "#5c4300",
+                  "surface-tint": "#f9bd22",
+                  "primary-container": "#fbbf24",
+                  "on-tertiary-fixed": "#002115",
+                  "on-tertiary-container": "#006045",
+                  "tertiary-fixed-dim": "#62dcad",
+                  "error": "#ffb4ab",
+                  "surface-variant": "#2e3544",
+                  "surface-container-low": "#151b2a",
+                  "on-primary-container": "#6c4f00",
+                  "surface-container-lowest": "#070e1c",
+                  "outline": "#9c8f79",
+                  "on-secondary-container": "#00515d",
+                  "on-secondary": "#00363e",
+                  "primary-fixed": "#ffdf9f",
+                  "on-background": "#dce2f6",
+                  "surface": "#0c1321",
+                  "on-surface-variant": "#d3c5ac",
+                  "surface-dim": "#0c1321",
+                  "surface-container": "#19202e",
+                  "on-tertiary-fixed-variant": "#00513a",
+                  "inverse-primary": "#795900",
+                  "secondary-container": "#00cbe6",
+                  "inverse-surface": "#dce2f6",
+                  "background": "#0c1321",
+                  "tertiary-container": "#64deaf",
+                  "surface-bright": "#323949",
+                  "secondary": "#5de6ff",
+                  "on-primary": "#402d00",
+                  "on-primary-fixed": "#261a00",
+                  "on-error-container": "#ffdad6",
+                  "on-error": "#690005",
+                  "surface-container-highest": "#2e3544",
+                  "tertiary": "#82fbca",
+                  "primary-fixed-dim": "#f9bd22",
+                  "inverse-on-surface": "#2a3040",
+                  "outline-variant": "#4f4633",
+                  "on-secondary-fixed-variant": "#004e5a",
+                  "secondary-fixed": "#a2eeff",
+                  "error-container": "#93000a",
+                  "secondary-fixed-dim": "#2fd9f4",
+                  "tertiary-fixed": "#80f9c8",
+                  "on-secondary-fixed": "#001f25",
+                  "surface-container-high": "#232a39",
+                  "on-surface": "#dce2f6",
+                  "primary": "#ffe1a7",
+                  "on-tertiary": "#003827"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "stack-md": "16px",
+                  "stack-sm": "8px",
+                  "stack-lg": "32px",
+                  "margin-desktop": "40px",
+                  "base": "8px",
+                  "margin-mobile": "16px",
+                  "gutter": "24px"
+          },
+          "fontFamily": {
+                  "data-value": ["JetBrains Mono"],
+                  "data-label": ["JetBrains Mono"],
+                  "headline-lg-mobile": ["Sora"],
+                  "body-lg": ["DM Sans"],
+                  "body-sm": ["DM Sans"],
+                  "headline-md": ["Sora"],
+                  "display-lg": ["Sora"],
+                  "body-md": ["DM Sans"],
+                  "headline-lg": ["Sora"]
+          },
+          "fontSize": {
+                  "data-value": ["14px", { "lineHeight": "16px", "fontWeight": "700" }],
+                  "data-label": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                  "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                  "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                  "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                  "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                  "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                  "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                  "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #0c1321;
+      color: #dce2f6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .glass-surface {
+      background: rgba(21, 29, 46, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(28, 38, 54, 1);
+    }
+    .pulse-green {
+      box-shadow: 0 0 0 0 rgba(98, 220, 173, 0.7);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(98, 220, 173, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(98, 220, 173, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(98, 220, 173, 0); }
+    }
+    .hud-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(34, 211, 238, 0.3), transparent);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 z-50 bg-surface-dim dark:bg-surface-dim border-b border-outline-variant dark:border-outline-variant fixed top-0 left-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">polyline</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary tracking-tight">NovaDrive</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">signal_cellular_alt</span>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-grow pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-2xl mx-auto w-full">
+<!-- Hero Heading Section -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-2">Triage complete</h2>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">
+        START FSM result — trauma-tier routing next.
+      </p>
+</section>
+<!-- Progress Stepper (HUD Style) -->
+<section class="mb-stack-lg flex justify-between items-start relative px-2">
+<!-- Active Line Background -->
+<div class="absolute top-2 left-0 w-full h-0.5 bg-surface-container-highest -z-10 rounded-full"></div>
+<div class="absolute top-2 left-0 w-[37.5%] h-0.5 bg-primary-container -z-10 rounded-full"></div>
+<!-- Stepper Items -->
+<div class="flex flex-col items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-primary-container ring-4 ring-primary-container/20"></div>
+<span class="font-data-label text-data-label text-primary uppercase">Locate</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-primary-container ring-4 ring-primary-container/20 relative">
+<div class="absolute inset-0 rounded-full bg-primary-container animate-ping opacity-75"></div>
+</div>
+<span class="font-data-label text-data-label text-primary uppercase">Triage</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">Route</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">Packet</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-4 h-4 rounded-full bg-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant uppercase">Relay</span>
+</div>
+</section>
+<!-- Result Card -->
+<section class="glass-surface p-6 rounded-xl border-l-4 border-l-tertiary-container shadow-2xl mb-stack-lg transition-transform active:scale-[0.98]">
+<div class="flex items-center gap-4 mb-4">
+<div class="w-4 h-4 rounded-full bg-tertiary-container pulse-green"></div>
+<h3 class="font-headline-md text-headline-md text-tertiary-container tracking-widest font-bold">MINOR</h3>
+</div>
+<div class="hud-line mb-4"></div>
+<div class="space-y-2">
+<p class="font-body-lg text-body-lg text-on-surface">Walking wounded</p>
+<div class="flex items-center gap-2 text-on-surface-variant/60">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="font-data-label text-data-label">Auto-verified via START protocol v4.2</span>
+</div>
+</div>
+</section>
+<!-- Contextual Telemetry -->
+<div class="grid grid-cols-2 gap-4 mb-stack-lg">
+<div class="glass-surface p-4 rounded-xl">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase block mb-1">Heart Rate</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-[24px] text-primary">78</span>
+<span class="font-data-label text-data-label text-on-surface-variant">BPM</span>
+</div>
+</div>
+<div class="glass-surface p-4 rounded-xl">
+<span class="font-data-label text-data-label text-on-surface-variant uppercase block mb-1">SpO2</span>
+<div class="flex items-baseline gap-1">
+<span class="font-display-lg text-[24px] text-secondary">98</span>
+<span class="font-data-label text-data-label text-on-surface-variant">%</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-gradient-to-t from-surface to-transparent z-40 md:static md:bg-transparent md:px-margin-desktop md:max-w-2xl md:mx-auto">
+<button class="w-full bg-primary-container text-on-primary h-14 rounded-xl font-bold font-headline-md flex items-center justify-center gap-3 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary-container/20">
+<span>Route to facility</span>
+<span class="material-symbols-outlined">navigation</span>
+</button>
+</div>
+<!-- BottomNavBar (Hidden on desktop as per Shell Visibility Rules for sub-page/task-focused) -->
+<!-- We'll keep the logic as requested for top-level, but this is a specific task screen. 
+       However, the prompt includes BottomNavBar in JSON, so I will render it for consistency if needed. 
+       Usually suppressed on sub-pages, but providing a subtle version. -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-2 pb-safe bg-surface-container/80 dark:bg-surface-container/80 backdrop-blur-xl border-t border-outline-variant/30 md:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-sm text-body-sm">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl px-4 py-1 scale-95 duration-150">
+<span class="material-symbols-outlined">explore</span>
+<span class="font-body-sm text-body-sm">Discovery</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body-sm text-body-sm">History</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</div>
+</nav>
+<script>
+    // Micro-interaction for the primary button
+    const btn = document.querySelector('button');
+    btn.addEventListener('click', () => {
+        btn.innerHTML = `
+            <span class="material-symbols-outlined animate-spin">refresh</span>
+            <span>Calculating Route...</span>
+        `;
+        setTimeout(() => {
+            btn.innerHTML = `
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>En Route to Central Gen</span>
+            `;
+            btn.classList.replace('bg-primary-container', 'bg-tertiary-container');
+            btn.classList.replace('text-on-primary', 'text-on-tertiary-container');
+        }, 1500);
+    });
+  </script>
+</body></html>

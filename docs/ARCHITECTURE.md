@@ -6,7 +6,7 @@ NovaDrive is a **client-heavy** emergency system: medical decisions and routing 
 
 | Layer | Technology | Role |
 |-------|------------|------|
-| Mobile (primary) | Expo SDK 56 + Expo Router | APK, sensors, camera, SMS intents |
+| Mobile (primary) | Expo SDK 54 + Expo Router | APK, sensors, camera, SMS intents |
 | Offline POI | `expo-sqlite` | Trauma-tier facility ranking |
 | Web mirror | Next.js (`novadrive/`) | Team demos without device |
 | Brief site | Static HTML (`docs/site/`) | Vercel-hosted hackathon narrative |

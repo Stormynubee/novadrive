@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NovaDrive - Golden Hour Packet</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0b1220;
+            color: #dce2f6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-card {
+            background: rgba(21, 29, 46, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(28, 38, 54, 1);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .terminal-glow {
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.05);
+        }
+        .qr-container {
+            background: #fff; /* High contrast for QR scanning */
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .stepper-line {
+            height: 2px;
+            background: #1c2636;
+            flex-grow: 1;
+            margin: 0 8px;
+        }
+        .pulse-green {
+            box-shadow: 0 0 0 0 rgba(98, 220, 173, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(98, 220, 173, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(98, 220, 173, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(98, 220, 173, 0); }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#5c4300",
+                        "surface-tint": "#f9bd22",
+                        "primary-container": "#fbbf24",
+                        "on-tertiary-fixed": "#002115",
+                        "on-tertiary-container": "#006045",
+                        "tertiary-fixed-dim": "#62dcad",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#2e3544",
+                        "surface-container-low": "#151b2a",
+                        "on-primary-container": "#6c4f00",
+                        "surface-container-lowest": "#070e1c",
+                        "outline": "#9c8f79",
+                        "on-secondary-container": "#00515d",
+                        "on-secondary": "#00363e",
+                        "primary-fixed": "#ffdf9f",
+                        "on-background": "#dce2f6",
+                        "surface": "#0c1321",
+                        "on-surface-variant": "#d3c5ac",
+                        "surface-dim": "#0c1321",
+                        "surface-container": "#19202e",
+                        "on-tertiary-fixed-variant": "#00513a",
+                        "inverse-primary": "#795900",
+                        "secondary-container": "#00cbe6",
+                        "inverse-surface": "#dce2f6",
+                        "background": "#0c1321",
+                        "tertiary-container": "#64deaf",
+                        "surface-bright": "#323949",
+                        "secondary": "#5de6ff",
+                        "on-primary": "#402d00",
+                        "on-primary-fixed": "#261a00",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "surface-container-highest": "#2e3544",
+                        "tertiary": "#82fbca",
+                        "primary-fixed-dim": "#f9bd22",
+                        "inverse-on-surface": "#2a3040",
+                        "outline-variant": "#4f4633",
+                        "on-secondary-fixed-variant": "#004e5a",
+                        "secondary-fixed": "#a2eeff",
+                        "error-container": "#93000a",
+                        "secondary-fixed-dim": "#2fd9f4",
+                        "tertiary-fixed": "#80f9c8",
+                        "on-secondary-fixed": "#001f25",
+                        "surface-container-high": "#232a39",
+                        "on-surface": "#dce2f6",
+                        "primary": "#ffe1a7",
+                        "on-tertiary": "#003827"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px",
+                        "margin-desktop": "40px",
+                        "base": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "data-value": ["JetBrains Mono"],
+                        "data-label": ["JetBrains Mono"],
+                        "headline-lg-mobile": ["Sora"],
+                        "body-lg": ["DM Sans"],
+                        "body-sm": ["DM Sans"],
+                        "headline-md": ["Sora"],
+                        "display-lg": ["Sora"],
+                        "body-md": ["DM Sans"],
+                        "headline-lg": ["Sora"]
+                    },
+                    "fontSize": {
+                        "data-value": ["14px", {"lineHeight": "16px", "fontWeight": "700"}],
+                        "data-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex flex-col font-body-md">
+<!-- Top Navigation -->
+<header class="flex justify-between items-center w-full px-margin-mobile h-16 z-50 bg-surface-dim dark:bg-surface-dim border-b border-outline-variant dark:border-outline-variant">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">polyline</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary tracking-tight">NovaDrive</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">signal_cellular_alt</span>
+</div>
+</header>
+<main class="flex-1 px-margin-mobile py-stack-lg max-w-lg mx-auto w-full pb-32">
+<!-- Header Section -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-2">Golden Hour Packet</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Human-readable SMS + compressed QR for bystander relay.
+            </p>
+</section>
+<!-- Progress Stepper -->
+<section class="mb-stack-lg">
+<div class="flex items-center justify-between text-center">
+<div class="flex flex-col items-center gap-1 group">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="font-data-label text-[10px] text-on-surface-variant">Locate</span>
+</div>
+<div class="stepper-line bg-primary-container/40"></div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="font-data-label text-[10px] text-on-surface-variant">Triage</span>
+</div>
+<div class="stepper-line bg-primary-container/40"></div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-primary-container"></div>
+<span class="font-data-label text-[10px] text-on-surface-variant">Route</span>
+</div>
+<div class="stepper-line bg-primary-container/40"></div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-3 h-3 rounded-full bg-primary-container ring-4 ring-primary-container/20"></div>
+<span class="font-data-label text-[10px] text-primary">Packet</span>
+</div>
+<div class="stepper-line"></div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-surface-container-highest"></div>
+<span class="font-data-label text-[10px] text-on-surface-variant/50">Relay</span>
+</div>
+</div>
+</section>
+<!-- Triage Status Card -->
+<section class="mb-stack-md">
+<div class="glass-card rounded-xl p-4 flex items-center gap-4 border-l-4 border-l-tertiary">
+<div class="w-3 h-3 rounded-full bg-tertiary pulse-green"></div>
+<div>
+<h3 class="font-headline-md text-headline-md text-tertiary leading-tight">MINOR</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Walking wounded</p>
+</div>
+</div>
+</section>
+<!-- Terminal Data Box -->
+<section class="mb-stack-lg">
+<div class="terminal-glow bg-surface-container-lowest rounded-xl p-5 font-data-label text-data-label leading-6 overflow-hidden relative">
+<div class="absolute top-2 right-2 opacity-10">
+<span class="material-symbols-outlined text-4xl">terminal</span>
+</div>
+<p class="text-on-surface-variant border-b border-outline-variant/20 pb-2 mb-2">NOVADRIVE GHP v4.0</p>
+<div class="space-y-1">
+<div class="flex"><span class="w-20 text-on-surface-variant">Triage:</span> <span class="text-tertiary">GREEN</span></div>
+<div class="flex"><span class="w-20 text-on-surface-variant">Location:</span> <span class="text-on-surface">NH48 km 87 (19.8609, 82.8073)</span></div>
+<div class="flex"><span class="w-20 text-on-surface-variant">Facility:</span> <span class="text-on-surface">NH48 Primary Health Centre</span></div>
+<div class="flex"><span class="w-20 text-on-surface-variant">ETA/Dist:</span> <span class="text-secondary">~801.01 km / ~2003min</span></div>
+<div class="flex"><span class="w-20 text-on-surface-variant">Phone:</span> <span class="text-primary">044-27420001</span></div>
+<div class="flex mt-2 pt-2 border-t border-outline-variant/20"><span class="w-20 text-on-surface-variant">Hash:</span> <span class="text-on-surface opacity-70">nd-6682e160</span></div>
+</div>
+</div>
+</section>
+<!-- QR Code Section -->
+<section class="flex flex-col items-center">
+<div class="qr-container shadow-2xl transition-transform hover:scale-[1.02] duration-300">
+<img alt="Golden Hour Packet QR Code" class="w-60 h-60" data-alt="A high-density black QR code displayed on a clean white square background with rounded corners. The QR code is intended for emergency medical data relay. The visual style is crisp and professional, fitting a high-performance nocturnal driving application interface with deep navy and amber accents. The lighting is neutral and even to ensure high legibility for scanning devices in low-light environments." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTldPvG5c5NCJyK_gvPWBFw1R8tPFxKPyBgdSct6E5EJKsmZPTd7HyBNwAlAxnx6rJmHebAYOBQI8D5L7DXkXbczrBZ6uyS255E76EN3fuO1uXVWupgizFVl6gwYJfxns84VqEsNRs00Lv5zDTokpGvmawbbyL1-T13bTOy80JsjOifpy7Z2VMvtwV2ak8fXSDXU3ubqyO8ZdE5tqSYz2p-9EOhbD0uj98p3W72c7Wj_bd7vJVfgTNxyEuxGVwOf5MSEfJv7V5-3Y"/>
+</div>
+<p class="mt-4 font-data-label text-data-label text-on-surface-variant text-center px-8">
+                Ask a bystander to scan this code to relay medical data if cellular signal is weak.
+            </p>
+</section>
+</main>
+<!-- Fixed Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full z-50 px-4 py-6 bg-gradient-to-t from-surface-dim via-surface-dim/95 to-transparent">
+<div class="max-w-lg mx-auto">
+<button class="w-full bg-primary-container text-on-primary font-headline-md text-headline-md py-4 rounded-xl shadow-[0_8px_20px_-4px_rgba(251,191,36,0.4)] active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                Continue to Relay
+                <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Background Atmospheric Effect -->
+<div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+<div class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="absolute top-[40%] -right-[10%] w-[30%] h-[30%] bg-secondary/5 blur-[100px] rounded-full"></div>
+</div>
+<script>
+        // Simple micro-interaction for the QR code container
+        const qrBox = document.querySelector('.qr-container');
+        qrBox.addEventListener('click', () => {
+            qrBox.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                qrBox.style.transform = 'scale(1)';
+            }, 150);
+        });
+
+        // Simulating some dynamic "terminal" cursor blink
+        const terminalHash = document.querySelector('.terminal-glow span:last-child');
+        setInterval(() => {
+            terminalHash.style.opacity = terminalHash.style.opacity === '0.4' ? '1' : '0.4';
+        }, 800);
+    </script>
+</body></html>

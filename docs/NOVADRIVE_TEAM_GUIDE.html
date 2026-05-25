@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NovaDrive — Complete Team Guide (Architecture, Analogies & Hackathon)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0B1220;
+      --surface: #151D2E;
+      --surface2: #1C2636;
+      --border: #2A3A52;
+      --text: #E8EDF4;
+      --muted: #8B9BB0;
+      --amber: #FBBF24;
+      --cyan: #22D3EE;
+      --safe: #6EE7B7;
+      --urgent: #FB7185;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .layout { display: flex; min-height: 100vh; }
+    nav {
+      width: 280px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    nav h2 {
+      font-size: 1.1rem;
+      color: var(--amber);
+      margin: 0 0 8px;
+    }
+    nav .tagline { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+    nav a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    nav a:hover { background: var(--surface2); color: var(--text); }
+    main {
+      flex: 1;
+      max-width: 920px;
+      padding: 40px 48px 80px;
+    }
+    h1 { font-size: 2.2rem; margin: 0 0 8px; }
+    h2 {
+      font-size: 1.5rem;
+      margin: 48px 0 16px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--amber);
+    }
+    h2:first-of-type { border-top: none; margin-top: 24px; padding-top: 0; }
+    h3 { font-size: 1.15rem; margin: 28px 0 12px; color: var(--cyan); }
+    p, li { color: var(--text); }
+    .muted { color: var(--muted); }
+    .hero {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+    }
+    .hero .tag { color: var(--amber); font-weight: 700; font-size: 1.25rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.92rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+    th { background: var(--surface2); color: var(--amber); }
+    tr:nth-child(even) td { background: rgba(21, 29, 46, 0.5); }
+    .analogy {
+      background: var(--surface);
+      border-left: 4px solid var(--cyan);
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 12px 12px 0;
+    }
+    .analogy strong { color: var(--cyan); }
+    .reject {
+      border-left-color: var(--urgent);
+    }
+    .chip {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    .chip-red { background: rgba(251,113,133,0.2); color: var(--urgent); }
+    .chip-yellow { background: rgba(251,191,36,0.2); color: var(--amber); }
+    .chip-green { background: rgba(110,231,183,0.2); color: var(--safe); }
+    .chip-black { background: rgba(100,116,139,0.3); color: #94a3b8; }
+    pre, code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+    }
+    pre {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 16px;
+      border-radius: 12px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+    .mermaid { background: var(--surface); padding: 20px; border-radius: 12px; margin: 20px 0; }
+    .steps { counter-reset: step; list-style: none; padding: 0; }
+    .steps li {
+      counter-increment: step;
+      margin: 12px 0;
+      padding-left: 40px;
+      position: relative;
+    }
+    .steps li::before {
+      content: counter(step);
+      position: absolute;
+      left: 0;
+      width: 28px;
+      height: 28px;
+      background: var(--amber);
+      color: var(--bg);
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    @media (max-width: 900px) {
+      .layout { flex-direction: column; }
+      nav { width: 100%; height: auto; position: relative; }
+      main { padding: 24px; }
+    }
+    @media print {
+      nav { display: none; }
+      main { max-width: 100%; }
+      body { background: #fff; color: #111; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <h2>NovaDrive</h2>
+      <p class="tagline">Signal drops. The critical minute doesn't.</p>
+      <a href="#vision">Vision &amp; analogies</a>
+      <a href="#hackathon">Hackathon alignment</a>
+      <a href="#architecture">System architecture</a>
+      <a href="#pipeline">Emergency pipeline</a>
+      <a href="#fsm">START triage FSM</a>
+      <a href="#ghp">Golden Hour Packet</a>
+      <a href="#relay">QR human relay</a>
+      <a href="#crash">CrashEngine</a>
+      <a href="#ai">AI chatbot layer</a>
+      <a href="#data">Data &amp; SQLite POI</a>
+      <a href="#repo">Repo &amp; how to run</a>
+      <a href="#demo">90s demo script</a>
+      <a href="#roles">Team roles</a>
+      <a href="#slides">7 slide outline</a>
+      <a href="#rejected">What we rejected</a>
+      <a href="#glossary">Glossary</a>
+    </nav>
+
+    <main>
+      <div class="hero">
+        <p class="tag">NovaDrive — Complete Team Guide</p>
+        <h1>Architecture, deep analogies &amp; everything for RoadSoS 2026</h1>
+        <p class="muted">
+          IIT Madras National Road Safety Hackathon · CoERS &amp; RBG Labs · Deadline <strong>May 31, 2026</strong><br />
+          Share this file with every teammate — open in any browser · Print to PDF via Ctrl+P
+        </p>
+        <p>
+          <strong>Live brief site:</strong> <a href="https://roadsafetyhackathon-six.vercel.app" style="color:var(--cyan)">roadsafetyhackathon-six.vercel.app</a><br />
+          <strong>GitHub:</strong> <a href="https://github.com/Stormynubee/novadrive" style="color:var(--cyan)">github.com/Stormynubee/novadrive</a><br />
+          <strong>Primary app:</strong> <code>novadrive-mobile/</code> (Expo SDK 54 + Play Store Expo Go)
+        </p>
+      </div>
+
+      <h2 id="vision">1. Vision &amp; deep analogies (memorize these)</h2>
+
+      <p>
+        NovaDrive is not “another maps app with hospital pins.” It is a <strong>calm emergency co-pilot</strong> that keeps working when the highway has no signal — because that is exactly when the golden hour matters most.
+      </p>
+
+      <div class="analogy">
+        <strong>Analogy — The dead zone phone call:</strong><br />
+        Imagine you're hurt on NH48. You try to call 108 — one bar, then nothing. The operator asks “where are you?” and “how bad is it?” but you cannot explain lat/lng or medical terms. <em>NovaDrive is the friend who already wrote the perfect handoff note before the call dropped.</em>
+      </div>
+
+      <div class="analogy">
+        <strong>Analogy — Wrong hospital = wrong fire station:</strong><br />
+        Sending a critical patient to the nearest clinic (no trauma surgeon) is like sending a house fire to a garden hose. <em>Trauma-tier routing</em> means RED patients go to trauma centers (tier 1–2), not the closest pin on the map.
+      </div>
+
+      <div class="analogy">
+        <strong>Analogy — Golden Hour Packet (GHP):</strong><br />
+        Dispatchers need a <em>story</em>, not raw GPS. GHP is a one-screen brief: triage color, NH km marker, facility, ETA, integrity hash — like a pilot's mayday readout, readable in 10 seconds on a crackly line.
+      </div>
+
+      <div class="analogy">
+        <strong>Analogy — QR human relay (sneakernet for emergencies):</strong><br />
+        Your phone has no signal; a truck driver's phone might have 4G 2 km ahead. You show a QR on your screen; they scan it; the packet lives in <em>their</em> phone until they can SMS 108. Like passing a sealed envelope hand-to-hand through a crowd — the network failed, the message didn't.
+      </div>
+
+      <div class="analogy">
+        <strong>Analogy — LLM vs FSM (skin vs spine):</strong><br />
+        The AI chatbot is the <em>friendly voice</em> that understands “not breathing, can't walk.” The <strong>START FSM</strong> is the <em>spine</em> — deterministic medical law. The LLM never overrides triage; it only fills slots. Judges hear: “AI assists; medicine decides.”
+      </div>
+
+      <div class="analogy">
+        <strong>Analogy — Calm crash dialog (no screaming app):</strong><br />
+        Panic UX kills clarity. We don't blare sirens or auto-dial 108 at second zero. We detect a <em>possible</em> incident, pause 15 seconds, and let the human choose. Like a co-pilot saying “possible impact — you okay?” not grabbing the wheel.
+      </div>
+
+      <p><strong>Tagline:</strong> <em>Signal drops. The critical minute doesn't.</em></p>
+
+      <h2 id="hackathon">2. Hackathon alignment (RoadSoS)</h2>
+
+      <table>
+        <tr><th>Item</th><th>Detail</th></tr>
+        <tr><td>Track</td><td><strong>RoadSoS</strong> — AI emergency chatbot + location-based services</td></tr>
+        <tr><td>Organizer</td><td>CoERS &amp; RBG Labs, IIT Madras (MoRTH)</td></tr>
+        <tr><td>Deadline</td><td>May 31, 2026, 11:59 PM IST (Unstop)</td></tr>
+        <tr><td>Stage 1</td><td>Prototype + code + DB + <strong>7 slides</strong> + Word doc</td></tr>
+        <tr><td>Stage 2</td><td>Live demo at IIT Madras (shortlisted)</td></tr>
+      </table>
+
+      <h3>How we score on judge criteria</h3>
+      <table>
+        <tr><th>Criterion</th><th>NovaDrive answer</th></tr>
+        <tr><td>Geographic accuracy</td><td>SQLite POI from OSM + corridor seed (50+ nodes); Haversine sort</td></tr>
+        <tr><td>Valid emergency contacts</td><td>Real phones where verified; <code>unverified</code> if missing — never fake “108” as hospital line</td></tr>
+        <tr><td>Offline capability</td><td>FSM + SQLite + GHP + QR on device; SMS when online</td></tr>
+        <tr><td>AI chatbot</td><td>Text UI + offline keyword parser; optional LLM slot-fill online (P1)</td></tr>
+        <tr><td>Innovation</td><td>Trauma-tier routing + GHP + human QR relay + calm crash UX</td></tr>
+      </table>
+
+      <h2 id="architecture">3. System architecture (high level)</h2>
+
+      <p>NovaDrive is <strong>client-heavy</strong>: medical decisions and routing run on the phone. The cloud is optional (auth, future LLM).</p>
+
+      <div class="mermaid">
+flowchart TB
+  subgraph User["User on highway"]
+    J[Journey mode + GPS HUD]
+    SOS[Hold SOS 1.5s]
+    J --> SOS
+  end
+  subgraph Brain["On-device brain"]
+    CE[CrashEngine sensors]
+    FSM[START Triage FSM]
+    AI[Keyword / LLM slot-fill]
+    DB[(SQLite emergency_nodes)]
+    GHP[Golden Hour Packet]
+    FSM --> DB
+    DB --> GHP
+    AI -.-> FSM
+    CE -.->|calm dialog only| SOS
+  end
+  subgraph Relay["Bystander chain"]
+    QR[QR encode lz-string]
+    Scan[Scan + SecureStore]
+    SMS[SMS 108 human text]
+    GHP --> QR --> Scan --> SMS
+  end
+  SOS --> FSM
+      </div>
+
+      <h3>Monorepo layout</h3>
+      <pre>roadsafetyhackathon/
+├── novadrive-mobile/     ← PRIMARY (Expo SDK 54, Android APK)
+├── novadrive/            ← Web UI mirror (Next.js)
+├── docs/
+│   ├── NOVADRIVE_TEAM_GUIDE.html   ← this file
+│   ├── NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md
+│   ├── NOVADRIVE_MASTER_BRIEF.md
+│   └── site/             ← Vercel team brief
+└── scripts/ingestCorridors.py</pre>
+
+      <h3>Tech stack (current P0)</h3>
+      <table>
+        <tr><th>Layer</th><th>Technology</th></tr>
+        <tr><td>Mobile</td><td>Expo SDK <strong>54</strong>, Expo Router, React Native 0.81</td></tr>
+        <tr><td>Offline DB</td><td>expo-sqlite (<code>emergency_nodes</code>)</td></tr>
+        <tr><td>Location / sensors</td><td>expo-location, expo-sensors (journey only)</td></tr>
+        <tr><td>QR / integrity</td><td>react-native-qrcode-svg, lz-string, expo-crypto SHA-256</td></tr>
+        <tr><td>Relay storage</td><td>expo-secure-store + AsyncStorage</td></tr>
+        <tr><td>Web mirror</td><td>Next.js 14 in <code>novadrive/</code></td></tr>
+        <tr><td>Auth (future)</td><td>Supabase + Guest mode for judges</td></tr>
+      </table>
+
+      <h2 id="pipeline">4. End-to-end emergency pipeline</h2>
+
+      <ol class="steps">
+        <li><strong>Onboarding</strong> — Splash → Guest auth → Medical profile → Accessibility</li>
+        <li><strong>Journey</strong> — Foreground GPS HUD, speed, optional CrashEngine watch</li>
+        <li><strong>SOS</strong> — Hold 1.5s or crash dialog confirm → emergency flow</li>
+        <li><strong>Locate</strong> — Capture lat/lng + NH km landmark (works offline after fix)</li>
+        <li><strong>Triage</strong> — START FSM + optional chat prefill</li>
+        <li><strong>Route</strong> — Trauma-tier filter + distance sort (not nearest clinic only)</li>
+        <li><strong>Packet</strong> — Build GHP + show QR</li>
+        <li><strong>Relay</strong> — Cache for bystander; SMS 108 when online</li>
+      </ol>
+
+      <div class="mermaid">
+stateDiagram-v2
+  [*] --> Journey
+  Journey --> SOS: Hold SOS / confirm crash
+  SOS --> Locate
+  Locate --> Triage
+  Triage --> Route: TAGGED
+  Route --> Packet
+  Packet --> Relay
+  Relay --> [*]
+      </div>
+
+      <h2 id="fsm">5. START triage FSM (medical spine)</h2>
+
+      <p>International <strong>Simple Triage And Rapid Treatment</strong> — implemented in <code>startTriageFSM.ts</code>. Unit tests required; 5 tests in repo.</p>
+
+      <p><strong>States:</strong> AMBULATORY → BREATHING_CHECK → AIRWAY_REPOSITION → RESPIRATORY_RATE → PERFUSION_CHECK → MENTAL_STATUS → TAGGED</p>
+
+      <table>
+        <tr><th>Condition</th><th>Result</th></tr>
+        <tr><td>Can walk</td><td><span class="chip chip-green">GREEN</span> done</td></tr>
+        <tr><td>Not breathing, airway fails</td><td><span class="chip chip-black">BLACK</span> done</td></tr>
+        <tr><td>Airway succeeds after reposition</td><td>→ RESPIRATORY_RATE (NOT instant RED)</td></tr>
+        <tr><td>RR &gt; 30 / min</td><td><span class="chip chip-red">RED</span></td></tr>
+        <tr><td>Bad perfusion</td><td><span class="chip chip-red">RED</span></td></tr>
+        <tr><td>Cannot follow commands</td><td><span class="chip chip-red">RED</span></td></tr>
+        <tr><td>All checks pass, non-ambulatory</td><td><span class="chip chip-yellow">YELLOW</span></td></tr>
+      </table>
+
+      <h3>Trauma-tier routing (after triage)</h3>
+      <table>
+        <tr><th>Triage</th><th>Route to</th><th>trauma_tier</th></tr>
+        <tr><td>RED</td><td>Trauma center</td><td>1, 2</td></tr>
+        <tr><td>YELLOW</td><td>Hospital with ER</td><td>2, 3</td></tr>
+        <tr><td>GREEN</td><td>Clinic / minor</td><td>3</td></tr>
+        <tr><td>BLACK</td><td>Notify 108 / police</td><td>No hospital routing</td></tr>
+      </table>
+
+      <h2 id="ghp">6. Golden Hour Packet (GHP)</h2>
+
+      <p>Human-readable dispatch brief — ≤800 bytes for SMS. Operators cannot decode Base64; we send plain language.</p>
+
+      <pre>NOVADRIVE GHP
+Triage: RED
+Location: NH48 km 87 (13.08270, 80.27070)
+Facility: Apollo Highway Trauma (~12km, ~18min)
+Phone: 044-27428888
+Hash: nd-a3f2c891</pre>
+
+      <p><strong>QR payload:</strong> minimal JSON → lz-string compress → prefix <code>ND1:</code> → SHA-256 integrity. If QR too large, QR carries id + triage + lat/lng + hash; full GHP stays on screen.</p>
+
+      <h2 id="relay">7. QR human relay (bystander flow)</h2>
+
+      <div class="mermaid">
+sequenceDiagram
+  participant V as Victim phone offline
+  participant B as Bystander phone
+  participant OP as 108 operator
+  V->>V: Build GHP + show QR
+  B->>B: Scan QR verify hash
+  B->>B: SecureStore cache
+  Note over B: Drives until signal returns
+  B->>OP: SMS human-readable GHP
+      </div>
+
+      <h2 id="crash">8. CrashEngine (honest sensor fusion)</h2>
+
+      <p><strong>Active only when journey = ACTIVE.</strong> We do not claim Apple/Google crash APIs unless entitled and tested.</p>
+
+      <table>
+        <tr><th>Rule</th><th>Threshold</th></tr>
+        <tr><td>Speed before incident</td><td>&gt; 25 km/h</td></tr>
+        <tr><td>Accel peak</td><td>&gt; threshold in 8s window</td></tr>
+        <tr><td>Speed after</td><td>&lt; 5 km/h</td></tr>
+        <tr><td>On candidate</td><td>Calm 15s dialog — <strong>no auto triage or 108 at 0s</strong></td></tr>
+        <tr><td>Judges</td><td>“Simulate crash” button → same dialog</td></tr>
+      </table>
+
+      <h2 id="ai">9. AI chatbot layer</h2>
+
+      <p><strong>P0:</strong> Text field “Describe the emergency” → offline <code>parseEmergencyText</code> on Send → pre-fills FSM slots (e.g. “not breathing”, “can't walk”). Toast: “Understood — we'll use this in triage.”</p>
+
+      <p><strong>P1 (optional online):</strong> Groq/Ollama slot-fill — still FSM decides RED/YELLOW/GREEN/BLACK.</p>
+
+      <p><strong>Slide line:</strong> <em>LLM is the skin; FSM is the spine.</em></p>
+
+      <h2 id="data">10. Data &amp; SQLite POI</h2>
+
+      <pre>CREATE TABLE emergency_nodes (
+  id TEXT PRIMARY KEY,
+  name TEXT,
+  type TEXT,           -- trauma | hospital | clinic
+  trauma_tier INTEGER, -- 1-3
+  phone TEXT,
+  lat REAL, lng REAL,
+  verified INTEGER
+);</pre>
+
+      <p>Build: <code>python scripts/ingestCorridors.py --corridor NH48 --min-pois 50</code><br />
+      App seeds 50+ nodes on first launch if DB empty.</p>
+
+      <h2 id="repo">11. How to run (every teammate)</h2>
+
+      <h3>Mobile (required for demo)</h3>
+      <pre>cd novadrive-mobile
+npm install --legacy-peer-deps
+npm test
+npm run start:tunnel    # laptop hotspot: use tunnel
+# Scan QR in Expo Go (SDK 54 on Play Store)</pre>
+
+      <p class="muted">Tunnel needs <code>@expo/ngrok</code> in project (already in package.json). First bundle ~1–2 min.</p>
+
+      <h3>Airplane-mode acceptance test</h3>
+      <ol class="steps">
+        <li>Guest onboarding → Start journey → Hold SOS</li>
+        <li>Triage → pick facility → GHP + QR</li>
+        <li>Enable airplane mode — GHP + QR still visible</li>
+        <li>Second phone: Scan QR → relay → SMS 108 when online</li>
+      </ol>
+
+      <h3>Web mirror (optional)</h3>
+      <pre>cd novadrive && npm install && npm run dev</pre>
+
+      <h2 id="demo">12. 90-second demo script</h2>
+
+      <table>
+        <tr><th>Sec</th><th>Beat</th></tr>
+        <tr><td>0–15</td><td>Problem: highway blackout, 108 can't hear you</td></tr>
+        <tr><td>15–30</td><td>Start journey — calm HUD, not panic alarm</td></tr>
+        <tr><td>30–45</td><td>Simulate crash → 15s calm dialog — nothing auto-sent</td></tr>
+        <tr><td>45–60</td><td>Hold SOS → triage → RED → trauma center routing</td></tr>
+        <tr><td>60–75</td><td>GHP on screen + QR for bystander</td></tr>
+        <tr><td>75–90</td><td>Airplane mode + second phone scan → SMS when online</td></tr>
+      </table>
+
+      <h2 id="roles">13. Team roles checklist</h2>
+
+      <table>
+        <tr><th>Role</th><th>Owns</th></tr>
+        <tr><td>Mobile lead</td><td><code>novadrive-mobile/</code>, Expo, airplane test</td></tr>
+        <tr><td>Medical / FSM</td><td><code>startTriageFSM.ts</code> + tests — no simplified rules</td></tr>
+        <tr><td>Data / POI</td><td><code>ingestCorridors.py</code>, verify phones, NH corridors</td></tr>
+        <tr><td>Presenter</td><td>7 slides + 90s script + live demo on device</td></tr>
+        <tr><td>Docs / Unstop</td><td>Word doc, GitHub, Vercel brief, submission form</td></tr>
+      </table>
+
+      <h2 id="slides">14. Seven slides (outline)</h2>
+      <ol>
+        <li>Welcome — Team + NovaDrive + RoadSoS</li>
+        <li>Problem — Golden hour, dead zones, wrong hospital</li>
+        <li>Solution — Offline triage + GHP + QR relay</li>
+        <li>Architecture — FSM spine + SQLite + diagram</li>
+        <li>Innovation — Trauma-tier, calm crash, honest sensors</li>
+        <li>Demo — POI count, airplane test, sample GHP</li>
+        <li>Thank you + roadmap (Rah-Veer, buses, Supabase)</li>
+      </ol>
+
+      <h2 id="rejected">15. What we rejected (scope guard)</h2>
+
+      <div class="analogy reject">
+        <strong>Do not demo or promise these in P0:</strong> PWA-only core app · always-on scream ML · auto-dial at crash countdown · background GPS like Uber · BLE mesh / ultrasonic V2V · Base64 SMS to 108 · fake OS crash API claims · dummy buttons · NGO ambulance marketplace
+      </div>
+
+      <h2 id="glossary">16. Glossary</h2>
+
+      <table>
+        <tr><th>Term</th><th>Meaning</th></tr>
+        <tr><td>START</td><td>Simple Triage And Rapid Treatment protocol</td></tr>
+        <tr><td>GHP</td><td>Golden Hour Packet — dispatch brief for 108</td></tr>
+        <tr><td>FSM</td><td>Finite state machine — medical decision spine</td></tr>
+        <tr><td>POI</td><td>Point of interest — hospital / trauma / clinic</td></tr>
+        <tr><td>Trauma tier</td><td>1 = best trauma center … 3 = minor / clinic</td></tr>
+        <tr><td>Relay</td><td>Bystander carries packet via QR until online</td></tr>
+        <tr><td>P0 / P1 / P2</td><td>Hackathon MVP / post-MVP / future production</td></tr>
+        <tr><td>RoadSoS</td><td>Our hackathon problem track</td></tr>
+        <tr><td>Rah-Veer</td><td>MoRTH ₹25k Good Samaritan award (P1 explainer)</td></tr>
+      </table>
+
+      <h2>17. P1 / P2 roadmap (after airplane test passes)</h2>
+      <ul>
+        <li><strong>P1:</strong> Trip info cards, Rah-Veer claim log, bus mode, TTS, OSM offline tiles</li>
+        <li><strong>P2:</strong> Supabase production auth, NGO registry, OS crash APIs if entitled</li>
+      </ul>
+
+      <div class="footer">
+        <p>NovaDrive · CoERS Road Safety Hackathon 2026 · Share freely with all team members.</p>
+        <p>Source docs: <code>docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md</code> · <code>docs/NOVADRIVE_MASTER_BRIEF.md</code></p>
+        <p>Generated team guide — open locally: <code>docs/NOVADRIVE_TEAM_GUIDE.html</code></p>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { primaryColor: '#FBBF24', primaryTextColor: '#E8EDF4', lineColor: '#8B9BB0', secondaryColor: '#151D2E' } });
+  </script>
+</body>
+</html>

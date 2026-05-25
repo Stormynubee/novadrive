@@ -1,0 +1,225 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>NovaDrive | Secure Sign-In</title>
+<!-- Font Imports -->
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&amp;family=DM+Sans:wght@400;500;700&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#2e3544",
+                    "on-primary-fixed-variant": "#5c4300",
+                    "error-container": "#93000a",
+                    "surface": "#0c1321",
+                    "surface-container-high": "#232a39",
+                    "inverse-surface": "#dce2f6",
+                    "on-secondary-fixed": "#001f25",
+                    "outline-variant": "#4f4633",
+                    "secondary-fixed-dim": "#2fd9f4",
+                    "primary-container": "#fbbf24",
+                    "on-primary-fixed": "#261a00",
+                    "outline": "#9c8f79",
+                    "surface-dim": "#0c1321",
+                    "secondary": "#5de6ff",
+                    "on-tertiary-fixed": "#002115",
+                    "tertiary-fixed-dim": "#62dcad",
+                    "tertiary-container": "#64deaf",
+                    "surface-bright": "#323949",
+                    "primary": "#ffe1a7",
+                    "on-surface-variant": "#d3c5ac",
+                    "on-error": "#690005",
+                    "background": "#0c1321",
+                    "surface-variant": "#2e3544",
+                    "primary-fixed-dim": "#f9bd22",
+                    "on-secondary-container": "#00515d",
+                    "primary-fixed": "#ffdf9f",
+                    "on-secondary-fixed-variant": "#004e5a",
+                    "surface-container": "#19202e",
+                    "on-primary": "#402d00",
+                    "inverse-on-surface": "#2a3040",
+                    "on-error-container": "#ffdad6",
+                    "tertiary": "#82fbca",
+                    "on-tertiary-fixed-variant": "#00513a",
+                    "on-surface": "#dce2f6",
+                    "secondary-fixed": "#a2eeff",
+                    "inverse-primary": "#795900",
+                    "surface-tint": "#f9bd22",
+                    "secondary-container": "#00cbe6",
+                    "on-background": "#dce2f6",
+                    "tertiary-fixed": "#80f9c8",
+                    "surface-container-lowest": "#070e1c",
+                    "error": "#ffb4ab",
+                    "surface-container-low": "#151b2a",
+                    "on-tertiary": "#003827",
+                    "on-secondary": "#00363e",
+                    "on-tertiary-container": "#006045",
+                    "on-primary-container": "#6c4f00"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "stack-md": "16px",
+                    "stack-lg": "32px",
+                    "stack-sm": "8px",
+                    "margin-desktop": "40px",
+                    "gutter": "24px",
+                    "base": "8px"
+            },
+            "fontFamily": {
+                    "body-md": ["DM Sans"],
+                    "headline-lg-mobile": ["Sora"],
+                    "data-label": ["JetBrains Mono"],
+                    "body-sm": ["DM Sans"],
+                    "headline-lg": ["Sora"],
+                    "data-value": ["JetBrains Mono"],
+                    "body-lg": ["DM Sans"],
+                    "headline-md": ["Sora"],
+                    "display-lg": ["Sora"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "data-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "data-value": ["14px", {"lineHeight": "16px", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body {
+        background-color: #0c1321;
+        overflow-x: hidden;
+      }
+      .glass-card {
+        background: rgba(21, 29, 46, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(28, 38, 54, 1);
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      }
+      .glow-amber:focus-within {
+        box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+        border-color: #fbbf24;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        vertical-align: middle;
+      }
+      .hud-line {
+        background: linear-gradient(90deg, transparent 0%, #1c2636 50%, transparent 100%);
+        height: 1px;
+        width: 100%;
+      }
+      .bg-blur-effect {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        background: radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 20% 80%, rgba(251, 191, 36, 0.05) 0%, transparent 50%);
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body-md text-on-surface">
+<div class="bg-blur-effect"></div>
+<div class="min-h-screen flex flex-col justify-center items-center px-margin-mobile py-12 md:px-margin-desktop">
+<!-- Logo Section -->
+<header class="flex flex-col items-center mb-stack-lg animate-in fade-in slide-in-from-top duration-700">
+<div class="w-20 h-20 mb-4 flex items-center justify-center relative">
+<!-- Decorative Glow for Logo -->
+<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full scale-110"></div>
+<img alt="NovaDrive Hex Logo" class="w-full h-full relative z-10" data-alt="A stylized geometric hexagon logo for a technology brand named NovaDrive. The logo features sharp, futuristic lines with a gradient of cyan and amber, set against a deep navy background. The overall aesthetic is professional, high-tech, and evocative of a modern vehicle dashboard or heads-up display." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDCKesa60_mPINkuv-lS3rM5wpxSV5PmJmCG2pCYBWA99TlrXlfAjh0u2OS32CzdfzZPtIRnx_24bl6olBGzyjGjKdaW0bw0i_ncOIsEeDK1CDx78C8rqbG11mOy8x412ULk57HvoFSxzM47N58PRP1JEhTGV6CWPXXMBdS0QlbGejjT6qfDJ2Z8hajaqGc2z5O-LKkvkDPEaxMFjInvlwZFe2fBPKiI6VO8KmJy9l74Vs0XgUzq1VTwKj77_suHbjXa8LLbSSiFJI">
+</div>
+<h1 class="font-headline-md text-headline-md text-primary font-bold tracking-tight">NovaDrive</h1>
+</header>
+<!-- Main Container -->
+<main class="w-full max-w-md animate-in fade-in slide-in-from-bottom duration-1000">
+<div class="glass-card rounded-xl p-8 md:p-10">
+<!-- Headline & Content -->
+<div class="mb-stack-lg text-center md:text-left">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Welcome</h2>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+                        Sign in to access your saved medical profile and journey history.
+                    </p>
+</div>
+<!-- Form Section -->
+<form class="space-y-6" onsubmit="event.preventDefault();">
+<div class="flex flex-col gap-2">
+<label class="font-data-label text-data-label text-on-surface-variant uppercase tracking-widest" for="email">
+                            EMAIL ADDRESS
+                        </label>
+<div class="relative group">
+<input class="w-full bg-surface-container-lowest border border-outline/30 rounded-lg px-4 py-3.5 text-on-surface placeholder:text-on-surface-variant/40 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all duration-300 glow-amber" id="email" placeholder="Enter your email" type="email">
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full bg-primary-container text-on-primary-container font-headline-md text-body-lg h-14 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all group">
+<span>Continue with email</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</form>
+<!-- Divider -->
+<div class="relative my-8 flex items-center justify-center">
+<div class="hud-line"></div>
+<span class="absolute px-4 bg-surface-container text-data-label font-data-label text-on-surface-variant">OR</span>
+</div>
+<!-- Secondary CTA -->
+<button class="w-full border border-secondary text-secondary font-body-lg h-14 rounded-lg flex items-center justify-center gap-2 hover:bg-secondary/10 active:scale-[0.98] transition-all mb-8">
+<span>Continue as Guest (demo)</span>
+</button>
+<!-- Footer / Privacy Note -->
+<div class="flex items-start gap-3 p-4 bg-surface-container-high/50 rounded-lg border border-outline-variant/20">
+<span class="material-symbols-outlined text-secondary text-[20px] mt-0.5" data-icon="lock" data-weight="fill" style="font-variation-settings: 'FILL' 1;">lock</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant/80">
+                        No passwords stored on device. Medical data stays local in guest mode.
+                    </p>
+</div>
+</div>
+<!-- Context Hint (Optional atmospheric text) -->
+<div class="mt-8 text-center">
+<p class="font-data-label text-data-label text-on-surface-variant opacity-40 uppercase tracking-[0.2em]">
+                    System Status: <span class="text-tertiary">Secure</span> • 256-bit Encryption
+                </p>
+</div>
+</main>
+</div>
+<!-- Background Decoration: Light Pipe Lines -->
+<div class="fixed top-0 left-0 w-full h-1 pointer-events-none bg-gradient-to-r from-transparent via-secondary/20 to-transparent"></div>
+<div class="fixed bottom-0 left-0 w-full h-1 pointer-events-none bg-gradient-to-r from-transparent via-primary/10 to-transparent"></div>
+<script>
+        // Simple micro-interaction for the guest mode button
+        document.querySelector('button.border-secondary').addEventListener('click', () => {
+            console.log('Guest session initiated...');
+            // Add visual feedback
+            const btn = document.querySelector('button.border-secondary');
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="progress_activity">progress_activity</span>';
+            setTimeout(() => {
+                btn.innerHTML = '<span>Entering Demo...</span>';
+            }, 800);
+        });
+    </script>
+</body></html>

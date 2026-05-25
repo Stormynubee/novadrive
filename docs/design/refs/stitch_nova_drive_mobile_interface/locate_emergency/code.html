@@ -1,0 +1,302 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
+<title>NovaDrive | Locate Emergency</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;family=Sora:wght@100..800&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body {
+            background-color: #0c1321;
+            color: #dce2f6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(21, 29, 46, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(28, 38, 54, 1);
+        }
+        .radar-pulse {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .radar-ring {
+            position: absolute;
+            border: 1px solid #22D3EE;
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulse 4s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        .radar-ring:nth-child(2) { animation-delay: 1s; }
+        .radar-ring:nth-child(3) { animation-delay: 2s; }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .scanning-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(to right, rgba(34, 211, 238, 0), rgba(34, 211, 238, 0.8));
+            transform-origin: left center;
+            animation: rotate 3s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-fixed-variant": "#5c4300",
+                      "surface-tint": "#f9bd22",
+                      "primary-container": "#fbbf24",
+                      "on-tertiary-fixed": "#002115",
+                      "on-tertiary-container": "#006045",
+                      "tertiary-fixed-dim": "#62dcad",
+                      "error": "#ffb4ab",
+                      "surface-variant": "#2e3544",
+                      "surface-container-low": "#151b2a",
+                      "on-primary-container": "#6c4f00",
+                      "surface-container-lowest": "#070e1c",
+                      "outline": "#9c8f79",
+                      "on-secondary-container": "#00515d",
+                      "on-secondary": "#00363e",
+                      "primary-fixed": "#ffdf9f",
+                      "on-background": "#dce2f6",
+                      "surface": "#0c1321",
+                      "on-surface-variant": "#d3c5ac",
+                      "surface-dim": "#0c1321",
+                      "surface-container": "#19202e",
+                      "on-tertiary-fixed-variant": "#00513a",
+                      "inverse-primary": "#795900",
+                      "secondary-container": "#00cbe6",
+                      "inverse-surface": "#dce2f6",
+                      "background": "#0c1321",
+                      "tertiary-container": "#64deaf",
+                      "surface-bright": "#323949",
+                      "secondary": "#5de6ff",
+                      "on-primary": "#402d00",
+                      "on-primary-fixed": "#261a00",
+                      "on-error-container": "#ffdad6",
+                      "on-error": "#690005",
+                      "surface-container-highest": "#2e3544",
+                      "tertiary": "#82fbca",
+                      "primary-fixed-dim": "#f9bd22",
+                      "inverse-on-surface": "#2a3040",
+                      "outline-variant": "#4f4633",
+                      "on-secondary-fixed-variant": "#004e5a",
+                      "secondary-fixed": "#a2eeff",
+                      "error-container": "#93000a",
+                      "secondary-fixed-dim": "#2fd9f4",
+                      "tertiary-fixed": "#80f9c8",
+                      "on-secondary-fixed": "#001f25",
+                      "surface-container-high": "#232a39",
+                      "on-surface": "#dce2f6",
+                      "primary": "#ffe1a7",
+                      "on-tertiary": "#003827"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "stack-sm": "8px",
+                      "stack-lg": "32px",
+                      "margin-desktop": "40px",
+                      "base": "8px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "data-value": ["JetBrains Mono"],
+                      "data-label": ["JetBrains Mono"],
+                      "headline-lg-mobile": ["Sora"],
+                      "body-lg": ["DM Sans"],
+                      "body-sm": ["DM Sans"],
+                      "headline-md": ["Sora"],
+                      "display-lg": ["Sora"],
+                      "body-md": ["DM Sans"],
+                      "headline-lg": ["Sora"]
+              },
+              "fontSize": {
+                      "data-value": ["14px", {"lineHeight": "16px", "fontWeight": "700"}],
+                      "data-label": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- Top Navigation Bar (Shared Component: TopAppBar) -->
+<header class="bg-surface-dim dark:bg-surface-dim border-b border-outline-variant dark:border-outline-variant flex justify-between items-center w-full px-margin-mobile h-16 z-50 sticky top-0">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary" data-icon="polyline">polyline</span>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary tracking-tight">NovaDrive</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant dark:text-on-surface-variant" data-icon="signal_cellular_alt">signal_cellular_alt</span>
+<div class="h-8 w-8 rounded-full glass-panel flex items-center justify-center">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="emergency">emergency</span>
+</div>
+</div>
+</header>
+<main class="flex-grow flex flex-col px-margin-mobile pt-stack-lg max-w-xl mx-auto w-full">
+<!-- Headline Section -->
+<div class="space-y-stack-sm mb-stack-lg">
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Locate</h1>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">Capture coordinates for Golden Hour Packet — works offline after fix.</p>
+</div>
+<!-- Stepper Component (Derived from visual analysis) -->
+<nav class="flex justify-between items-start mb-stack-lg relative px-2">
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-3 h-3 rounded-full bg-primary-container shadow-[0_0_8px_rgba(251,191,36,0.6)]"></div>
+<span class="font-data-label text-data-label text-primary-container">Locate</span>
+</div>
+<div class="flex flex-col items-center gap-2 group opacity-40">
+<div class="w-3 h-3 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Triage</span>
+</div>
+<div class="flex flex-col items-center gap-2 group opacity-40">
+<div class="w-3 h-3 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Route</span>
+</div>
+<div class="flex flex-col items-center gap-2 group opacity-40">
+<div class="w-3 h-3 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Packet</span>
+</div>
+<div class="flex flex-col items-center gap-2 group opacity-40">
+<div class="w-3 h-3 rounded-full bg-on-surface-variant"></div>
+<span class="font-data-label text-data-label text-on-surface-variant">Relay</span>
+</div>
+</nav>
+<!-- Radar / Pulse Area -->
+<div class="flex-grow flex flex-col items-center justify-center py-stack-lg">
+<div class="radar-pulse w-64 h-64 md:w-80 md:h-80">
+<div class="radar-ring w-full h-full"></div>
+<div class="radar-ring w-full h-full" style="animation-delay: 1.5s;"></div>
+<div class="radar-ring w-full h-full" style="animation-delay: 3s;"></div>
+<div class="scanning-line"></div>
+<div class="relative z-10 glass-panel rounded-full w-48 h-48 md:w-56 md:h-56 flex flex-col items-center justify-center shadow-[inset_0_0_20px_rgba(34,211,238,0.1)]">
+<span class="material-symbols-outlined text-4xl text-secondary mb-2" data-icon="location_searching" style="font-variation-settings: 'FILL' 1;">location_searching</span>
+<div class="text-center">
+<p class="font-data-label text-data-label text-secondary uppercase tracking-widest mb-1">GPS Fixing</p>
+<p class="font-data-value text-data-value text-on-surface" id="coordinates">19.86092, 82.80733</p>
+</div>
+</div>
+</div>
+<!-- Telemetry Chip -->
+<div class="mt-stack-lg glass-panel px-4 py-2 rounded-full flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+<span class="font-data-label text-data-label text-on-surface">Precision: <span class="text-secondary">± 4.2m</span></span>
+</div>
+</div>
+<!-- Instructions Panel -->
+<div class="glass-panel p-4 rounded-xl mb-32">
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary" data-icon="info">info</span>
+</div>
+<div class="space-y-1">
+<h3 class="font-data-value text-data-value text-on-surface">Offline Capability Active</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant opacity-70">No data connection required. Airplane mode uses last known high-accuracy fix.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full p-margin-mobile glass-panel rounded-t-2xl border-t border-outline-variant/30 z-50">
+<button class="w-full bg-[#fbbf24] hover:bg-[#f9bd22] active:scale-[0.98] transition-all text-on-primary py-4 rounded-xl font-headline-md text-headline-md font-bold shadow-[0_4px_20px_rgba(251,191,36,0.3)] flex items-center justify-center gap-2" id="captureBtn">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+            Capture Location
+        </button>
+</div>
+<!-- Navigation Overlay (Mobile optimized) -->
+<nav class="hidden md:flex fixed right-margin-desktop top-1/2 -translate-y-1/2 flex-col gap-4">
+<button class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center text-primary-container border-primary-container/30 border">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</button>
+<button class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+</button>
+<button class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<button class="w-12 h-12 rounded-xl glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</nav>
+<script>
+        // Micro-interaction for Coordinate Simulation
+        const coordsDisplay = document.getElementById('coordinates');
+        const captureBtn = document.getElementById('captureBtn');
+
+        function updateCoords() {
+            const lat = (19.8609 + (Math.random() * 0.0001)).toFixed(5);
+            const lng = (82.8073 + (Math.random() * 0.0001)).toFixed(5);
+            coordsDisplay.textContent = `${lat}, ${lng}`;
+        }
+
+        const coordInterval = setInterval(updateCoords, 2000);
+
+        captureBtn.addEventListener('click', () => {
+            captureBtn.innerHTML = '<span class="material-symbols-outlined animate-spin" data-icon="progress_activity">progress_activity</span> CAPTURING...';
+            captureBtn.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                captureBtn.innerHTML = '<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span> LOCATION SAVED';
+                captureBtn.style.backgroundColor = '#62dcad';
+                captureBtn.style.color = '#002115';
+                captureBtn.classList.remove('opacity-80');
+                
+                // Haptic feedback simulation
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(50);
+                }
+
+                setTimeout(() => {
+                    alert("Location Captured. Proceeding to Triage step...");
+                    // In a real app, window.location would change here
+                }, 800);
+            }, 1200);
+        });
+    </script>
+</body></html>
