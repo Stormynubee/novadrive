@@ -1,8 +1,7 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner.svg">
-    <img src="docs/assets/banner-light.svg" alt="NovaDrive — Signal drops. The critical minute doesn't. Team Vortex · IIT Madras RoadSoS 2026" width="100%">
-  </picture>
+  <a href="https://github.com/Stormynubee/novadrive">
+    <img src="docs/assets/banner.png" alt="NovaDrive — Signal drops. The critical minute doesn't. Team Vortex · IIT Madras RoadSoS 2026" width="100%" />
+  </a>
 </p>
 
 <p align="center">
