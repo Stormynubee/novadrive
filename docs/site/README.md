@@ -10,10 +10,17 @@ node docs/site/build-docs.js
 
 Source: [`../NOVADRIVE_MASTER_BRIEF.md`](../NOVADRIVE_MASTER_BRIEF.md) → `index.html`
 
+## Complete UI brief (HTML)
+
+**Live:** [roadsafetyhackathon-six.vercel.app/novadrive-complete.html](https://roadsafetyhackathon-six.vercel.app/novadrive-complete.html)
+
+**Local file:** `docs/site/novadrive-complete.html`
+
 ## PDF
 
 ```bash
-node docs/site/export-pdf.js
+node docs/site/export-pdf.js              # Master brief
+node docs/site/export-complete-pdf.js     # Complete project + UI brief
 ```
 
-Or download **NovaDrive-Master-Brief.pdf** from the site sidebar after build.
+Or download PDFs from the site sidebar after deploy.

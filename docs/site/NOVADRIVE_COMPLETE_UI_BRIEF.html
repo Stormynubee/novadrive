@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NovaDrive — Complete Project & UI Brief (PDF)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0B1220;
+      --surface: #151D2E;
+      --amber: #FBBF24;
+      --cyan: #22D3EE;
+      --text: #E8EDF4;
+      --muted: #8B9BB0;
+      --urgent: #FB7185;
+      --safe: #6EE7B7;
+    }
+    body {
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.55;
+      color: #1a1a1a;
+      margin: 0;
+      padding: 0;
+    }
+    body.pdf-export { background: #fff; color: #111; }
+    .cover {
+      min-height: 90vh;
+      background: linear-gradient(160deg, #0B1220 0%, #151D2E 60%, #1a2744 100%);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 48px;
+      page-break-after: always;
+    }
+    .cover h1 { font-size: 42pt; color: var(--amber); margin: 0 0 12px; }
+    .cover .sub { font-size: 16pt; opacity: 0.9; }
+    .cover .meta { margin-top: 40px; font-size: 11pt; opacity: 0.75; line-height: 1.8; }
+    .page { padding: 32px 40px; max-width: 210mm; margin: 0 auto; }
+    h2 {
+      font-size: 18pt;
+      color: #b45309;
+      border-bottom: 2px solid #fcd34d;
+      padding-bottom: 6px;
+      margin-top: 28px;
+      page-break-after: avoid;
+    }
+    h3 { font-size: 13pt; color: #0e7490; margin-top: 20px; }
+    h4 { font-size: 11pt; color: #374151; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+    th, td { border: 1px solid #d1d5db; padding: 8px 10px; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; font-weight: 700; }
+    pre, code { font-family: 'JetBrains Mono', monospace; font-size: 8.5pt; }
+    pre {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      page-break-inside: avoid;
+    }
+    .swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; vertical-align: middle; margin-right: 6px; border: 1px solid #ccc; }
+    .box { background: #f0f9ff; border-left: 4px solid #0ea5e9; padding: 12px 16px; margin: 14px 0; }
+    .box-warn { background: #fff7ed; border-left-color: #f59e0b; }
+    .box-red { background: #fef2f2; border-left-color: #ef4444; }
+    .mermaid { margin: 16px 0; text-align: center; }
+    .screen-mock {
+      border: 2px solid #374151;
+      border-radius: 12px;
+      padding: 16px;
+      margin: 12px 0;
+      background: #0B1220;
+      color: #E8EDF4;
+      min-height: 120px;
+      page-break-inside: avoid;
+    }
+    .screen-mock .title { color: #FBBF24; font-weight: 700; font-size: 12pt; }
+    .toc { page-break-after: always; }
+    .toc li { margin: 6px 0; }
+    ul { padding-left: 20px; }
+    .chip { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 8pt; font-weight: 700; margin: 2px; }
+    .red { background: #fecdd3; color: #9f1239; }
+    .yellow { background: #fef08a; color: #854d0e; }
+    .green { background: #bbf7d0; color: #166534; }
+    .phase { background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-size: 8pt; font-weight: 700; }
+    @media print {
+      .page { padding: 0; }
+      h2 { page-break-before: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cover">
+    <div style="font-size:48pt;margin-bottom:16px;">⬡</div>
+    <h1>NovaDrive</h1>
+    <p class="sub">Complete Project & UI Design Brief</p>
+    <p class="sub" style="color:#FBBF24;font-weight:600;">Signal drops. The critical minute doesn't.</p>
+    <div class="meta">
+      Road Safety Hackathon 2026 · RoadSoS Track<br />
+      IIT Madras · CoERS & RBG Labs · MoRTH<br />
+      Document for UI/UX design · Includes P0 shipped + Refinement plan<br />
+      Generated May 2026 · github.com/Stormynubee/novadrive
+    </div>
+  </div>
+
+  <div class="page toc">
+    <h2>Table of contents</h2>
+    <ol>
+      <li>Executive summary & product vision</li>
+      <li>Deep analogies (present to judges)</li>
+      <li>Hackathon alignment & deliverables</li>
+      <li>System architecture</li>
+      <li>Design system — Night-Highway HUD</li>
+      <li>Screen inventory (current + planned)</li>
+      <li>User flows & navigation map</li>
+      <li>START triage FSM (medical)</li>
+      <li>Golden Hour Packet & QR relay</li>
+      <li>Journey, CrashEngine, Trip Info</li>
+      <li>AI chatbot layer</li>
+      <li>Data, SQLite POI, location fixes</li>
+      <li>Refinement plan (full — R1–R9)</li>
+      <li>P0 file map & known bugs</li>
+      <li>What we rejected</li>
+      <li>Tech stack & repo map</li>
+      <li>Demo script & acceptance tests</li>
+      <li>Glossary & related documents</li>
+    </ol>
+  </div>
+
+  <div class="page">
+    <h2>1. Executive summary</h2>
+    <p><strong>NovaDrive</strong> is an offline-first emergency co-pilot for Indian highways. When mobile signal fails after a crash, victims and bystanders still get START medical triage, trauma-tier hospital routing (not “nearest pin”), a human-readable <strong>Golden Hour Packet (GHP)</strong> for 108, and a <strong>QR bystander relay</strong> until any phone regains network.</p>
+    <table>
+      <tr><th>Item</th><th>Detail</th></tr>
+      <tr><td>Primary app</td><td><code>novadrive-mobile/</code> — Expo SDK 54, Android via Expo Go / APK</td></tr>
+      <tr><td>Web mirror</td><td><code>novadrive/</code> — Next.js prototype</td></tr>
+      <tr><td>Deadline</td><td>May 31, 2026, 11:59 PM IST (Unstop)</td></tr>
+      <tr><td>P0 status</td><td>Built & working — airplane-mode demo path</td></tr>
+      <tr><td>Next</td><td>Refinement plan (UI polish) — pending “go” from product owner</td></tr>
+    </table>
+
+    <h2>2. Deep analogies</h2>
+    <div class="box"><strong>Dead-zone phone call:</strong> You try 108 — one bar, then silence. NovaDrive writes the perfect handoff note before the call drops.</div>
+    <div class="box"><strong>Wrong fire station:</strong> Nearest clinic ≠ trauma center. RED patients route to tier-1/2 trauma, not closest pin.</div>
+    <div class="box"><strong>GHP = pilot mayday:</strong> One screen a dispatcher reads in 10 seconds — triage, location, facility, ETA, hash.</div>
+    <div class="box"><strong>QR sneakernet:</strong> Your phone offline; bystander scans QR; packet rides on their phone until SMS to 108 works.</div>
+    <div class="box"><strong>LLM skin, FSM spine:</strong> Chat understands “not breathing”; START FSM alone decides RED/YELLOW/GREEN/BLACK.</div>
+    <div class="box"><strong>Calm co-pilot:</strong> No screaming alarms or auto-dial at crash countdown zero — user always confirms.</div>
+
+    <h2>3. Hackathon (RoadSoS)</h2>
+    <table>
+      <tr><th>Criterion</th><th>NovaDrive response</th></tr>
+      <tr><td>Offline</td><td>FSM + SQLite POI + GHP + QR on device</td></tr>
+      <tr><td>AI chatbot</td><td>Text UI + offline keyword parser; optional LLM online</td></tr>
+      <tr><td>Location services</td><td>GPS + trauma-tier routing + Trip Info corridor (planned)</td></tr>
+      <tr><td>Valid contacts</td><td>Verified phones in DB; “unverified” if missing — never fake hospital as 108</td></tr>
+    </table>
+    <p><strong>Submit:</strong> GitHub, emergency_seed.db, 7 slides, Word doc, working APK demo.</p>
+
+    <h2>4. System architecture</h2>
+    <div class="mermaid">
+flowchart TB
+  subgraph mobile [novadrive-mobile]
+    J[Journey GPS HUD]
+    FSM[START FSM]
+    DB[(SQLite POI)]
+    GHP[GHP + QR]
+    J --> FSM --> DB --> GHP
+  end
+  subgraph relay [Bystander]
+    QR[Scan QR] --> SMS[SMS 108]
+  end
+  GHP --> QR
+    </div>
+
+    <h2>5. Design system — Night-Highway HUD</h2>
+    <p><strong>Tone:</strong> Calm, authoritative, night-driving HUD. Not panic red fullscreen loops.</p>
+    <table>
+      <tr><th>Token</th><th>Hex</th><th>Use</th></tr>
+      <tr><td>Background</td><td><span class="swatch" style="background:#0B1220"></span>#0B1220</td><td>App bg</td></tr>
+      <tr><td>Surface</td><td><span class="swatch" style="background:#151D2E"></span>#151D2E</td><td>Cards</td></tr>
+      <tr><td>Surface 2</td><td><span class="swatch" style="background:#1C2636"></span>#1C2636</td><td>Inputs</td></tr>
+      <tr><td>Border</td><td><span class="swatch" style="background:#2A3A52"></span>#2A3A52</td><td>Dividers</td></tr>
+      <tr><td>Text</td><td><span class="swatch" style="background:#E8EDF4"></span>#E8EDF4</td><td>Primary text</td></tr>
+      <tr><td>Muted</td><td><span class="swatch" style="background:#8B9BB0"></span>#8B9BB0</td><td>Secondary / grey lines on splash</td></tr>
+      <tr><td>Amber</td><td><span class="swatch" style="background:#FBBF24"></span>#FBBF24</td><td>Primary CTA, logo accent</td></tr>
+      <tr><td>Cyan</td><td><span class="swatch" style="background:#22D3EE"></span>#22D3EE</td><td>Online, GPS, coords</td></tr>
+      <tr><td>Safe green</td><td><span class="swatch" style="background:#6EE7B7"></span>#6EE7B7</td><td>GREEN triage</td></tr>
+      <tr><td>Urgent</td><td><span class="swatch" style="background:#FB7185"></span>#FB7185</td><td>RED triage, SOS (sparingly)</td></tr>
+    </table>
+    <h3>Typography (refinement)</h3>
+    <ul>
+      <li><strong>Display / logo:</strong> Barlow Condensed or DM Sans Bold</li>
+      <li><strong>Body:</strong> DM Sans</li>
+      <li><strong>GHP / dispatch:</strong> JetBrains Mono</li>
+      <li><strong>Accessibility slider:</strong> 100%–145% font scale (planned R3)</li>
+    </ul>
+    <h3>Components</h3>
+    <table>
+      <tr><th>Component</th><th>Variants / rules</th></tr>
+      <tr><td>NovaButton</td><td>primary (amber), secondary, ghost, danger — min height 48dp</td></tr>
+      <tr><td>SeverityChip</td><td>RED/YELLOW/GREEN/BLACK — always text + color</td></tr>
+      <tr><td>ProgressRail</td><td>Locate → Triage → Route → Packet → Relay</td></tr>
+      <tr><td>HoldSOSButton</td><td>Hold 1.5s — not tap</td></tr>
+      <tr><td>DispatchCard</td><td>Monospace GHP block</td></tr>
+      <tr><td>FacilityCard</td><td>Distance km, tier, verified badge</td></tr>
+      <tr><td>CrashCandidateModal</td><td>Calm 15s — no auto action at 0</td></tr>
+      <tr><td>NovaLogo (planned R1)</td><td>SVG highway + pulse mark</td></tr>
+    </table>
+
+    <h2>6. Screen inventory</h2>
+    <h3>6.1 Onboarding (current + planned)</h3>
+    <div class="screen-mock">
+      <div class="title">Splash — CURRENT → REFINEMENT R1</div>
+      <p style="color:#8B9BB0">CURRENT: Text “NovaDrive”, tagline, grey body copy, Get started.</p>
+      <p style="color:#FBBF24">PLANNED: Logo animation 0.8s → wordmark → tagline → grey subline “Offline triage · trauma routing · QR relay” → Get started button fade-in.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Auth — REFINEMENT R2</div>
+      <p>CURRENT: “Email optional”, Continue as Guest, Continue.</p>
+      <p style="color:#FBBF24">PLANNED: Email (required for Login), “Continue with email”, “Continue as Guest (demo)”, footer legal line.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Medical profile</div>
+      <p>Blood type, allergies, conditions, emergency contact — stored local/Guest.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Accessibility — REFINEMENT R3</div>
+      <p>CURRENT: Toggles for large text, high contrast, reduce motion, TTS stub.</p>
+      <p style="color:#FBBF24">PLANNED: <strong>Slider</strong> for text size with live preview line.</p>
+    </div>
+
+    <h3>6.2 Home & journey</h3>
+    <div class="screen-mock">
+      <div class="title">Home — REFINEMENT R4</div>
+      <p>CURRENT: “Happy journey, Guest”, Start journey, Emergency, Scan QR, Replay onboarding.</p>
+      <p style="color:#FBBF24">PLANNED: Hero dashboard — greeting, hero card “Ready for the highway?”, large Start journey, secondary actions row.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Journey depart — NEW R5</div>
+      <p style="color:#FBBF24">Transition screen 1.2–1.8s: “Starting journey…”, animated route line, then auto-enter HUD.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Journey HUD — CURRENT</div>
+      <p>Large speed km/h, status ACTIVE, Hold for SOS (1.5s), Simulate crash, End journey.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Trip plan A→B — NEW R6</div>
+      <p>Point A (GPS) / Point B → Plan trip → scroll cards: trauma centers, accident zones, dead zones, precautions, contacts. Chat: “Ask about this route”.</p>
+    </div>
+
+    <h3>6.3 Emergency flow</h3>
+    <div class="screen-mock">
+      <div class="title">Locate — FIX R7</div>
+      <p>CURRENT BUG: Shows “Chennai–Trichy corridor (demo)” and facilities 800km away if user not in Chennai.</p>
+      <p style="color:#FBBF24">FIX: Real reverse geocode; POI bbox 100km; honest message if no local POIs.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Triage</div>
+      <p>START questions + chat “Describe emergency” → offline keywords prefill FSM.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Route</div>
+      <p>Trauma-tier sorted facilities — tap to select → Packet.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Packet</div>
+      <p>GHP monospace text + QR code (lz-string + SHA-256).</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Relay</div>
+      <p>Cache for bystander, SMS 108 when online, link to Scan QR.</p>
+    </div>
+    <div class="screen-mock">
+      <div class="title">Scan QR (bystander)</div>
+      <p>Camera scan → verify hash → SecureStore → SMS 108.</p>
+    </div>
+
+    <h2>7. Navigation map</h2>
+    <div class="mermaid">
+flowchart LR
+  splash --> auth --> medical --> a11y --> home
+  home --> journeyDepart --> journeyHUD
+  home --> tripPlan
+  home --> emergencyLocate
+  journeyHUD --> emergencyLocate
+  emergencyLocate --> triage --> route --> packet --> relay
+  home --> scanQR
+    </div>
+
+    <h2>8. START triage FSM</h2>
+    <p>States: AMBULATORY → BREATHING_CHECK → AIRWAY_REPOSITION → RESPIRATORY_RATE → PERFUSION_CHECK → MENTAL_STATUS → TAGGED</p>
+    <table>
+      <tr><th>Condition</th><th>Result</th></tr>
+      <tr><td>Can walk</td><td><span class="chip green">GREEN</span></td></tr>
+      <tr><td>Airway fails</td><td><span class="chip red">BLACK</span></td></tr>
+      <tr><td>Airway OK after reposition</td><td>→ RR check (NOT instant RED)</td></tr>
+      <tr><td>RR &gt; 30</td><td><span class="chip red">RED</span></td></tr>
+      <tr><td>Bad perfusion</td><td><span class="chip red">RED</span></td></tr>
+      <tr><td>No commands</td><td><span class="chip red">RED</span></td></tr>
+      <tr><td>All pass, non-ambulatory</td><td><span class="chip yellow">YELLOW</span></td></tr>
+    </table>
+
+    <h2>9. Golden Hour Packet</h2>
+    <pre>NOVADRIVE GHP
+Triage: RED
+Location: NH48 km 87 (13.08270, 80.27070)
+Facility: Apollo Highway Trauma (~12km, ~18min)
+Phone: 044-27428888
+Hash: nd-a3f2c891</pre>
+    <p>QR: <code>ND1:</code> + lz-string compressed JSON { id, triage, lat, lng, integrity }.</p>
+
+    <h2>10. Journey & CrashEngine</h2>
+    <table>
+      <tr><th>Rule</th><th>Value</th></tr>
+      <tr><td>Active when</td><td>Journey status = ACTIVE only</td></tr>
+      <tr><td>Speed before</td><td>&gt; 25 km/h</td></tr>
+      <tr><td>Accel peak</td><td>&gt; threshold in 8s window</td></tr>
+      <tr><td>Speed after</td><td>&lt; 5 km/h</td></tr>
+      <tr><td>On trigger</td><td>15s calm dialog — user confirms — NO auto 108</td></tr>
+      <tr><td>Judges</td><td>Simulate crash button</td></tr>
+    </table>
+    <div class="box-warn"><strong>Scream / voice crash:</strong> NOT in scope — battery, privacy, false positives. Optional P1 push-to-talk on SOS only.</div>
+    <div class="box-warn"><strong>Phone throw on desk:</strong> Will NOT trigger (no 25 km/h). Use Simulate crash for demo.</div>
+
+    <h2>11. Trip Info cards (R6)</h2>
+    <table>
+      <tr><th>Card type</th><th>Content</th></tr>
+      <tr><td>Route summary</td><td>Distance, est. time A→B</td></tr>
+      <tr><td>Trauma centers en route</td><td>Top 3 from SQLite along corridor</td></tr>
+      <tr><td>Accident-prone zones</td><td>corridor_hazards table</td></tr>
+      <tr><td>Low-network zones</td><td>dead_zones table</td></tr>
+      <tr><td>Precautions</td><td>Night, rain, NH rules</td></tr>
+      <tr><td>Contacts</td><td>108 + verified hospital</td></tr>
+    </table>
+
+    <h2>12. AI chatbot</h2>
+    <ul>
+      <li>Emergency flow: offline keywords → FSM slots</li>
+      <li>Trip flow (R6): keywords → show relevant cards</li>
+      <li>Online optional: LLM fills slots only — never overrides triage</li>
+    </ul>
+    <p>Keywords: can't walk, not breathing, unconscious, breathing fast, weak pulse, etc.</p>
+
+    <h2>13. Refinement plan — FULL SPEC (R1–R9)</h2>
+    <div class="box"><strong>Status:</strong> Design / planning only — <strong>do not code until you say <code>go</code> or <code>continue</code></strong>. Builds on P0 shipped in <code>novadrive-mobile/</code> (Expo SDK 54).</div>
+
+    <h3>13.0 Executive summary</h3>
+    <p>P0 proved the <strong>medical spine</strong> (START FSM, GHP, QR relay, airplane mode). Refinement covers: brand splash, auth/accessibility UX, <strong>Happy Journey</strong> home, journey <strong>transition</strong>, <strong>Trip Info (A→B)</strong> for judges, <strong>real GPS + sensible routing distances</strong>, CrashEngine tuning, cohesive UI pass.</p>
+    <p><strong>Out of this pass:</strong> always-on scream/voice crash (battery, privacy, false positives); production Supabase auth (stub only); NGO marketplace, OS crash APIs (P2).</p>
+
+    <h3>13.1 Your feedback → mapped work</h3>
+    <table>
+      <tr><th>#</th><th>Your ask</th><th>Root cause today</th><th>Phase</th></tr>
+      <tr><td>1</td><td>Splash: logo popup, tagline, Get Started</td><td>Text-only splash, no motion/brand mark</td><td><span class="phase">R1</span></td></tr>
+      <tr><td>2</td><td>Real email + Login; accessibility <strong>slider</strong></td><td>“Email optional” + toggle not slider</td><td><span class="phase">R2, R3</span></td></tr>
+      <tr><td>3</td><td>Happy Journey home; Start → transition → HUD</td><td>Plain home + abrupt navigation</td><td><span class="phase">R4, R5</span></td></tr>
+      <tr><td>4</td><td>Trip info A→B + chatbot retrieval</td><td>P1 deferred; not built</td><td><span class="phase">R6</span></td></tr>
+      <tr><td>5</td><td>Real location; facilities not 800 km away</td><td>Hardcoded NH48 landmark; POI seeded Chennai only</td><td><span class="phase">R7</span></td></tr>
+      <tr><td>6</td><td>UI inspiration / reference images</td><td>Minimal components beyond tokens</td><td><span class="phase">R9</span></td></tr>
+      <tr><td>7</td><td>Scream on loud sound; crash on phone throw</td><td>Scream not implemented; CrashEngine too strict</td><td><span class="phase">R8</span></td></tr>
+      <tr><td>8</td><td>Replay full onboarding from splash</td><td>Added “Replay onboarding” on home</td><td><strong>Keep</strong></td></tr>
+    </table>
+
+    <h3>13.2 Design direction (locked)</h3>
+    <ul>
+      <li><strong>Aesthetic:</strong> Night-Highway HUD — calm, not panic. Navy, amber actions, cyan for online/live.</li>
+      <li><strong>Motion:</strong> One hero moment per flow (splash reveal, journey handoff). Respect <code>reduceMotion</code>.</li>
+      <li><strong>Typography:</strong> Barlow Condensed or DM Sans (display); DM Sans (body); JetBrains Mono (GHP).</li>
+      <li><strong>Logo (in-app SVG):</strong> Highway lane + pulse node in shield/hex; wordmark Nova (white) + Drive (amber); 2s scale + fade on splash.</li>
+    </ul>
+
+    <h3>13.3 Phase R1 — Splash screen</h3>
+    <p><strong>Sequence (~2.5s before button enabled):</strong></p>
+    <ol>
+      <li><strong>0–0.8s:</strong> Logo mark scales in (spring), subtle amber glow ring</li>
+      <li><strong>0.8–1.4s:</strong> Wordmark “NovaDrive” fades up</li>
+      <li><strong>1.4–2.0s:</strong> Tagline: <em>“Signal drops. The critical minute doesn’t.”</em></li>
+      <li><strong>2.0s+:</strong> Grey subline: <em>“Offline triage · trauma routing · QR relay for 108”</em></li>
+      <li><strong>Get started</strong> button fades in (primary amber)</li>
+    </ol>
+    <table>
+      <tr><th>File</th><th>Change</th></tr>
+      <tr><td><code>app/splash.tsx</code></td><td>Reanimated sequence; use NovaLogo</td></tr>
+      <tr><td><code>src/components/NovaLogo.tsx</code></td><td><strong>New</strong> — SVG mark + wordmark</td></tr>
+    </table>
+    <p><strong>Acceptance:</strong> First launch feels like a product; reduceMotion skips animations; Get started → <code>/auth</code>.</p>
+
+    <h3>13.4 Phase R2 — Sign-in</h3>
+    <ul>
+      <li>Email field <strong>required</strong> (valid format)</li>
+      <li>Primary: <strong>Continue with email</strong> (stores in profile; Supabase later)</li>
+      <li>Secondary: <strong>Continue as Guest (demo)</strong> for judges</li>
+      <li>Footer: <em>“No password stored on device.”</em></li>
+    </ul>
+
+    <h3>13.5 Phase R3 — Accessibility slider</h3>
+    <ul>
+      <li>Replace boolean “Larger text” with slider <strong>100% → 145%</strong></li>
+      <li>Live preview: <em>“Can the injured person walk?”</em></li>
+      <li>Persist <code>a11y.fontScale</code>; <code>ScreenShell</code> applies globally</li>
+      <li>High contrast toggle unchanged</li>
+    </ul>
+
+    <h3>13.6 Phase R4 — Home (“Happy Journey”) hero</h3>
+    <ul>
+      <li>Top: Nova mark + time-of-day greeting (<em>Good evening, Guest</em>)</li>
+      <li>Hero card: <em>“Ready for the highway?”</em> + golden hour / offline subcopy</li>
+      <li>Large <strong>Start journey</strong> CTA</li>
+      <li>Secondary: Emergency · Scan QR</li>
+      <li>Tertiary: Replay onboarding (existing)</li>
+      <li>Optional chip: last journey / POI count in region</li>
+    </ul>
+    <p><strong>Note:</strong> Start journey does <strong>not</strong> start GPS yet — only after R5 transition.</p>
+
+    <h3>13.7 Phase R5 — Journey transition → HUD</h3>
+    <pre>Home [Start journey]
+  → /journey/depart (new, 1.2–1.8s)
+      “Starting journey…” + route line anim + progress bar
+  → /journey (HUD, auto-start GPS + CrashEngine)</pre>
+    <table>
+      <tr><th>File</th><th>Change</th></tr>
+      <tr><td><code>app/journey/depart.tsx</code></td><td><strong>New</strong> — Reanimated transition</td></tr>
+      <tr><td><code>app/home.tsx</code></td><td>Navigate to depart, not journey directly</td></tr>
+      <tr><td><code>app/journey.tsx</code></td><td>On mount: startJourney() if not ACTIVE</td></tr>
+    </table>
+
+    <h3>13.8 Phase R6 — Trip Info (A → B)</h3>
+    <p>New screen <code>/trip/plan</code> from Home before Start journey.</p>
+    <table>
+      <tr><th>Field</th><th>Behavior</th></tr>
+      <tr><td>Point A</td><td>Default = current GPS; editable</td></tr>
+      <tr><td>Point B</td><td>Text / preset corridors (Chennai → Trichy)</td></tr>
+      <tr><td>Plan trip</td><td>Builds corridor briefing cards</td></tr>
+    </table>
+    <p><strong>Briefing cards (scroll):</strong> Route summary · Trauma centers en route (top 3) · Accident-prone zones (<code>corridor_hazards</code>) · Low-network zones (<code>dead_zones</code>) · Precautions · Emergency contacts (108 + verified hospital).</p>
+    <p><strong>Chatbot:</strong> “Ask about this route” — offline keywords → cards; online LLM only selects cards, text from DB.</p>
+    <pre>corridor_hazards (id, name, lat, lng, severity, nh_code, note);
+dead_zones (id, name, lat, lng, radius_km, note);</pre>
+
+    <h3>13.9 Phase R7 — Real location (fix 800 km bug) — BUILD FIRST</h3>
+    <div class="box-red"><strong>Current bugs:</strong> <code>locate.tsx</code> forces <code>landmark: 'Chennai–Trichy corridor (demo)'</code> and NH48 km 87. POI DB centers Chennai (~13.08, 80.27) — users elsewhere see facilities hundreds of km away.</div>
+    <table>
+      <tr><th>Fix</th><th>Detail</th></tr>
+      <tr><td>A. Reverse geocode</td><td>expo-location geocode OR offline NH lookup</td></tr>
+      <tr><td>B. Remove demo strings</td><td>City/district from geocode; NH km only if matched</td></tr>
+      <tr><td>C. Bbox filter</td><td>Only POIs within 100 km; honest message if none</td></tr>
+      <tr><td>D. Regional POI seed</td><td>ingestCorridors.py for user’s state or Overpass on first online launch</td></tr>
+      <tr><td>E. Cap display</td><td>Warn if facility &gt; 150 km: “Outside offline pack — verify by phone”</td></tr>
+    </table>
+
+    <h3>13.10 Phase R8 — CrashEngine & scream (honest scope)</h3>
+    <table>
+      <tr><th>Approach</th><th>Verdict</th></tr>
+      <tr><td>Always-on mic + scream ML</td><td><strong>Rejected</strong> — battery, privacy, false positives</td></tr>
+      <tr><td>Push-to-talk “I need help”</td><td>P1 optional</td></tr>
+      <tr><td>Accel + speed crash</td><td><strong>Keep</strong> — honest for hackathon</td></tr>
+    </table>
+    <p><strong>Why phone throw fails:</strong> Requires speed before &gt;25 km/h AND accel peak &gt;~2.8g AND speed after &lt;5 km/h. Sofa drop: speed ≈ 0 → by design no crash. Use <strong>Simulate crash</strong> for judges.</p>
+    <p><strong>Tuning:</strong> Driving mode keeps gates; Dev overlay shows accel peak; High sensitivity lowers accel to ~2.0g (lab only).</p>
+
+    <h3>13.11 Phase R9 — UI polish</h3>
+    <ol>
+      <li>Share reference images in <code>docs/design/refs/</code></li>
+      <li>Extract spacing, radius, icon style, CTA hierarchy</li>
+      <li>Apply via NovaButton, ScreenShell, FacilityCard, ProgressRail, DispatchCard</li>
+      <li>Test 5.5" and 6.7" Android; safe areas; 48dp touch targets</li>
+    </ol>
+
+    <h3>13.12 Recommended build order</h3>
+    <table>
+      <tr><th>Order</th><th>Phase</th><th>Est.</th><th>Why</th></tr>
+      <tr><td>1</td><td><span class="phase">R7</span> Real GPS + POI bbox</td><td>2d</td><td>Wrong distances kill trust</td></tr>
+      <tr><td>2</td><td><span class="phase">R1</span> Splash + logo</td><td>1d</td><td>Brand entrance</td></tr>
+      <tr><td>3</td><td><span class="phase">R2</span> Auth</td><td>0.5d</td><td></td></tr>
+      <tr><td>4</td><td><span class="phase">R3</span> A11y slider</td><td>0.5d</td><td></td></tr>
+      <tr><td>5</td><td><span class="phase">R4</span> Home hero</td><td>1d</td><td></td></tr>
+      <tr><td>6</td><td><span class="phase">R5</span> Journey transition</td><td>1d</td><td></td></tr>
+      <tr><td>7</td><td><span class="phase">R6</span> Trip Info A→B</td><td>2d</td><td>Judges wow</td></tr>
+      <tr><td>8</td><td><span class="phase">R8</span> CrashEngine tune</td><td>1d</td><td></td></tr>
+      <tr><td>9</td><td><span class="phase">R9</span> UI pass</td><td>2d</td><td>Last</td></tr>
+    </table>
+    <p>Say <strong>go</strong> for full refinement or <strong>go slim</strong> to skip R6 (R1–R5, R7, R8 only, ~4–5 days).</p>
+
+    <h3>13.13 Files touched (estimate)</h3>
+    <table>
+      <tr><th>Area</th><th>New</th><th>Modified</th></tr>
+      <tr><td>Splash / brand</td><td>NovaLogo.tsx</td><td>splash.tsx</td></tr>
+      <tr><td>Auth / a11y</td><td>—</td><td>auth.tsx, accessibility.tsx, ScreenShell.tsx</td></tr>
+      <tr><td>Home / journey</td><td>journey/depart.tsx, trip/plan.tsx</td><td>home.tsx, journey.tsx</td></tr>
+      <tr><td>Location / POI</td><td>geocode.ts</td><td>locate.tsx, facilitiesDb.ts, ingestCorridors.py</td></tr>
+      <tr><td>Trip / chat</td><td>tripBriefing.ts, parseTripQuery.ts</td><td>AppContext.tsx</td></tr>
+      <tr><td>Crash</td><td>—</td><td>crashEngine.ts, dev overlay</td></tr>
+    </table>
+
+    <h3>13.14 Before you say go — decisions needed</h3>
+    <ol>
+      <li>Reference images in repo or linked (3+ screenshots)</li>
+      <li>Logo: in-app SVG (fast) vs external PNG (Anti-Gravity)</li>
+      <li>Your region for POI seed priority (state/highway)</li>
+      <li>Trip Info: full R6 vs slim static NH48 corridor only</li>
+      <li>Scream: confirm reject for May vs P1.5 push-to-talk on SOS only</li>
+    </ol>
+
+    <h3>13.15 Refinement sprint acceptance</h3>
+    <ul>
+      <li>Full onboarding replay: splash animation → auth → medical → a11y slider → home hero</li>
+      <li>Start journey → transition → HUD</li>
+      <li>Trip plan A→B shows corridor cards (if R6 in scope)</li>
+      <li>Real GPS; nearest facility distance believable</li>
+      <li>Airplane mode test still passes</li>
+      <li><code>npm test</code> FSM tests still pass</li>
+    </ul>
+
+    <h2>14. P0 shipped — file map (novadrive-mobile)</h2>
+    <table>
+      <tr><th>Path</th><th>Purpose</th></tr>
+      <tr><td><code>app/splash.tsx</code></td><td>Onboarding entry</td></tr>
+      <tr><td><code>app/auth.tsx</code></td><td>Guest / email stub</td></tr>
+      <tr><td><code>app/medical.tsx</code></td><td>Blood type, allergies, emergency contact</td></tr>
+      <tr><td><code>app/accessibility.tsx</code></td><td>A11y toggles (slider planned R3)</td></tr>
+      <tr><td><code>app/home.tsx</code></td><td>Happy journey hub + replay onboarding</td></tr>
+      <tr><td><code>app/journey.tsx</code></td><td>GPS HUD, Hold SOS, Simulate crash</td></tr>
+      <tr><td><code>app/emergency/locate.tsx</code></td><td>GPS capture (demo landmark bug)</td></tr>
+      <tr><td><code>app/emergency/triage.tsx</code></td><td>START FSM + chat</td></tr>
+      <tr><td><code>app/emergency/route.tsx</code></td><td>Trauma-tier facility list</td></tr>
+      <tr><td><code>app/emergency/packet.tsx</code></td><td>GHP + QR</td></tr>
+      <tr><td><code>app/emergency/relay.tsx</code></td><td>Bystander cache + SMS 108</td></tr>
+      <tr><td><code>app/scan.tsx</code></td><td>QR scan bystander flow</td></tr>
+      <tr><td><code>src/lib/startTriageFSM.ts</code></td><td>Medical decision machine</td></tr>
+      <tr><td><code>src/lib/ghp.ts</code></td><td>GHP build, lz-string QR, SHA-256 (expo-crypto)</td></tr>
+      <tr><td><code>src/lib/facilitiesDb.ts</code></td><td>SQLite ~50 POIs Chennai corridor</td></tr>
+      <tr><td><code>src/lib/crashEngine.ts</code></td><td>Accel + speed fusion</td></tr>
+      <tr><td><code>src/lib/parseEmergencyText.ts</code></td><td>Offline keyword → FSM slots</td></tr>
+      <tr><td><code>src/context/AppContext.tsx</code></td><td>Journey, crash dialog, triage, GHP state</td></tr>
+      <tr><td><code>src/theme/colors.ts</code></td><td>Night-Highway HUD tokens</td></tr>
+    </table>
+
+    <h2>15. Known bugs & limitations (today)</h2>
+    <table>
+      <tr><th>Issue</th><th>Impact</th><th>Fix phase</th></tr>
+      <tr><td>Locate shows Chennai–Trichy demo landmark</td><td>Judges see fake location</td><td>R7</td></tr>
+      <tr><td>POI DB Chennai-only</td><td>800+ km distances elsewhere</td><td>R7</td></tr>
+      <tr><td>Phone throw won’t trigger crash</td><td>Needs driving speed context</td><td>R8 / use Simulate</td></tr>
+      <tr><td>Scream detection</td><td>Not implemented (by design)</td><td>Rejected / P1.5 optional</td></tr>
+      <tr><td>Onboarding skips splash after first run</td><td>AsyncStorage nd_onboarded</td><td>Replay onboarding button</td></tr>
+    </table>
+
+    <h2>16. What we rejected</h2>
+    <div class="box-red">
+      PWA-only core demo · always-on scream ML · auto-dial at crash 0s · background GPS like Uber · BLE mesh · Base64 SMS to 108 · fake OS crash APIs · dummy buttons · NGO marketplace (P2)
+    </div>
+
+    <h2>17. Tech & repo</h2>
+    <pre>novadrive-mobile/     Expo SDK 54, Expo Router (PRIMARY)
+novadrive/            Next.js mirror
+docs/                 Plans + this PDF source
+scripts/              ingestCorridors.py → POI DB</pre>
+
+    <h2>18. Demo & tests</h2>
+    <p><strong>90s script:</strong> Problem → Journey → Simulate crash (calm) → SOS → Triage RED → GHP + QR → Airplane mode → Second phone scan → SMS.</p>
+    <p><strong>Replay onboarding:</strong> Home → “Replay onboarding (from splash)”.</p>
+    <p><strong>Run:</strong> <code>npm run start:tunnel</code> in novadrive-mobile (hotspot); Expo Go SDK 54.</p>
+
+    <h2>19. Glossary</h2>
+    <table>
+      <tr><th>Term</th><th>Meaning</th></tr>
+      <tr><td>START</td><td>Simple Triage And Rapid Treatment</td></tr>
+      <tr><td>GHP</td><td>Golden Hour Packet for 108</td></tr>
+      <tr><td>FSM</td><td>Medical decision state machine</td></tr>
+      <tr><td>Trauma tier</td><td>1=best trauma center … 3=clinic</td></tr>
+      <tr><td>Relay</td><td>Bystander QR handoff</td></tr>
+      <tr><td>RoadSoS</td><td>Hackathon track</td></tr>
+      <tr><td>Rah-Veer</td><td>MoRTH ₹25k Good Samaritan (P1)</td></tr>
+    </table>
+
+    <h2>20. Related documents</h2>
+    <ul>
+      <li><code>docs/NOVADRIVE_REFINEMENT_PLAN.md</code> — full refinement spec</li>
+      <li><code>docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md</code> — P0 implementation</li>
+      <li><code>docs/NOVADRIVE_MASTER_BRIEF.md</code> — master brief</li>
+      <li><code>docs/NOVADRIVE_TEAM_GUIDE.html</code> — team share (browser)</li>
+      <li><code>docs/NOVADRIVE_COMPLETE_PROJECT.pdf</code> — this PDF</li>
+    </ul>
+  </div>
+
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral' });</script>
+</body>
+</html>

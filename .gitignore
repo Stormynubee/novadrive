@@ -51,6 +51,10 @@ data/*.db
 .cache/
 docs/site/.cache/
 
+# Large generated PDFs (use HTML brief on Vercel / docs/site)
+docs/NOVADRIVE_COMPLETE_PROJECT.pdf
+docs/site/NOVADRIVE_COMPLETE_PROJECT.pdf
+
 # Test / coverage
 coverage/
 *.lcov
