@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { NovaTabBar } from '../../src/components/NovaTabBar';
+import { SarthiOverlayBridge } from '../../src/components/sarthi/SarthiOverlayBridge';
 import { tokens } from '../../src/theme/tokens';
 
 export default function TabsLayout() {
@@ -20,6 +21,7 @@ export default function TabsLayout() {
         <Tabs.Screen name="profile" />
       </Tabs>
       <NovaTabBar />
+      <SarthiOverlayBridge />
     </View>
   );
 }

@@ -1,0 +1,122 @@
+import type {
+  SarthiChatResponse,
+  SarthiMessage,
+  SarthiThread,
+  SarthiUserContext,
+} from './sarthiTypes';
+import { getOfflineReply, matchKnowledgeBase, shouldUseOfflineFirst } from './sarthiOffline';
+import { getWelcomeMessage } from './sarthi/sarthiStrings';
+
+export type SarthiEngineDeps = {
+  isOnline: () => Promise<boolean>;
+  fetchChat: (
+    messages: { role: 'user' | 'assistant'; content: string }[],
+    context: SarthiUserContext
+  ) => Promise<SarthiChatResponse>;
+  getOfflineReply: (text: string, context: SarthiUserContext) => SarthiChatResponse;
+  now: () => number;
+  randomId: () => string;
+};
+
+let idCounter = 0;
+
+export function defaultRandomId(): string {
+  idCounter += 1;
+  return `sarthi-${idCounter}-${Date.now()}`;
+}
+
+export function createThread(deps: SarthiEngineDeps, context: SarthiUserContext): SarthiThread {
+  const welcome: SarthiMessage = {
+    id: deps.randomId(),
+    role: 'assistant',
+    text: getWelcomeMessage(context),
+    createdAt: deps.now(),
+  };
+  return {
+    id: deps.randomId(),
+    messages: [welcome],
+    createdAt: deps.now(),
+  };
+}
+
+export async function sendMessage(
+  thread: SarthiThread,
+  userText: string,
+  context: SarthiUserContext,
+  deps: SarthiEngineDeps
+): Promise<SarthiThread> {
+  const trimmed = userText.trim();
+  if (!trimmed) return thread;
+
+  const userMsg: SarthiMessage = {
+    id: deps.randomId(),
+    role: 'user',
+    text: trimmed,
+    createdAt: deps.now(),
+  };
+
+  let response: SarthiChatResponse;
+  const history = [...thread.messages, userMsg]
+    .filter((m) => m.role === 'user' || m.role === 'assistant')
+    .map((m) => ({
+      role: m.role as 'user' | 'assistant',
+      content: m.text,
+    }));
+
+  const kbMatch = matchKnowledgeBase(trimmed);
+  const offlineFirst = shouldUseOfflineFirst(kbMatch);
+
+  try {
+    const online = await deps.isOnline();
+    if (online && !offlineFirst) {
+      response = await deps.fetchChat(history, context);
+    } else {
+      response = deps.getOfflineReply(trimmed, context);
+    }
+  } catch {
+    response = deps.getOfflineReply(trimmed, context);
+  }
+
+  const assistantMsg: SarthiMessage = {
+    id: deps.randomId(),
+    role: 'assistant',
+    text: response.reply,
+    createdAt: deps.now(),
+    actionCard: response.actionCard,
+  };
+
+  return {
+    ...thread,
+    messages: [...thread.messages, userMsg, assistantMsg],
+  };
+}
+
+export function createProductionDeps(apiBaseUrl: string): SarthiEngineDeps {
+  return {
+    isOnline: async () => {
+      try {
+        const NetInfo = await import('@react-native-community/netinfo');
+        const state = await NetInfo.default.fetch();
+        return Boolean(state.isConnected && state.isInternetReachable !== false);
+      } catch {
+        return false;
+      }
+    },
+    fetchChat: async (messages, context) => {
+      const url = `${apiBaseUrl.replace(/\/$/, '')}/api/sarthi/chat`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages, context }),
+      });
+      if (!res.ok) throw new Error(`Sarthi API ${res.status}`);
+      return (await res.json()) as SarthiChatResponse;
+    },
+    getOfflineReply: (text, ctx) => {
+      const r = getOfflineReply(text, ctx);
+      return { reply: r.reply, actionCard: r.actionCard };
+    },
+    now: () => Date.now(),
+    randomId: defaultRandomId,
+  };
+}

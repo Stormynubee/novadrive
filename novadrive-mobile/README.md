@@ -25,12 +25,32 @@ Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpower
 - Offline keyword parser on emergency chat
 - Golden Hour Packet (GHP) + lz-string QR + SHA-256 integrity
 - Bystander QR scan + SecureStore relay cache + SMS 108 intent
+- **Sarthi** floating AI assistant (mini window on tabs, full `/sarthi` screen) — live LLM via Next.js BFF when online, offline rules when not
+
+## Sarthi assistant
+
+| Piece | Location |
+|-------|----------|
+| Mobile UI | `src/components/sarthi/*`, `app/sarthi.tsx`, overlay in `app/(tabs)/_layout.tsx` |
+| Chat engine | `src/lib/sarthiEngine.ts`, `sarthiOffline.ts` |
+| BFF (API keys server-side only) | [`../novadrive/app/api/sarthi/chat`](../novadrive/app/api/sarthi/chat/route.ts) |
+
+1. Copy env examples:
+   - `novadrive/.env.example` → `novadrive/.env` with `GOOGLE_GENERATIVE_AI_API_KEY` (Google AI Studio → **Gemini 2.0 Flash**)
+   - `novadrive-mobile/.env.example` → `.env` with `EXPO_PUBLIC_SARTHI_API_URL` (e.g. `http://192.168.x.x:3000` for LAN dev)
+2. Start BFF: `cd ../novadrive && npm run dev`
+3. Start mobile: `npm run start:lan` — Sarthi FAB on main tabs; hidden during journey / emergency / scan.
+4. **Language:** Profile → Settings → Regional & Language (`en` / `hi` / `ta`) — Sarthi offline KB and Gemini replies follow this.
+5. **First Home visit each session:** Sarthi banner — *"I'm here to help you"* (localized).
+6. **Offline:** 24+ crisis/FAQ playbooks in `src/lib/sarthi/sarthiKnowledgeBase.ts`; high-priority matches skip the network for speed.
+
+Design spec: [docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md](docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md)
 
 ## Quality gates
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 32 unit tests — lib/, FSM, crash, GHP
+npm test             # 45+ unit tests — lib/, FSM, crash, GHP, Sarthi KB/engine
 npm run test:coverage
 ```
 

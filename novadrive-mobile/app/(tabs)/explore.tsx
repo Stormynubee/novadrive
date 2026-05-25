@@ -3,6 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
+import { SarthiGreetingBridge } from '../../src/components/sarthi/SarthiGreetingBridge';
 import { DashboardHeader } from '../../src/components/DashboardHeader';
 import { DriveModeIgnition } from '../../src/components/DriveModeIgnition';
 import { HudText } from '../../src/components/HudText';
@@ -26,6 +27,7 @@ export default function HomeTabScreen() {
   return (
     <View style={styles.root}>
       <DashboardHeader />
+      <SarthiGreetingBridge />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -81,6 +83,24 @@ export default function HomeTabScreen() {
             </HudText>
           </Pressable>
         </View>
+
+        <Pressable
+          style={({ pressed }) => [styles.sarthiTile, pressed && styles.pressed]}
+          onPress={() => router.push('/sarthi' as Href)}
+        >
+          <View style={styles.sarthiIconWrap}>
+            <MaterialIcons name="shield" size={26} color={tokens.onSecondary} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <HudText variant="bodyMd" style={styles.sarthiLabel}>
+              Ask Sarthi
+            </HudText>
+            <HudText variant="bodySm" style={styles.sarthiSub}>
+              AI assistant · Powered by NovaDrive
+            </HudText>
+          </View>
+          <MaterialIcons name="chevron-right" size={24} color={tokens.onSurfaceVariant} />
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -157,4 +177,28 @@ const styles = StyleSheet.create({
   },
   sosLabel: { color: tokens.error, fontFamily: 'PublicSans_700Bold' },
   qrLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
+  sarthiTile: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: tokens.surface,
+    borderRadius: tokens.radius.card,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+    zIndex: 1,
+    ...tokens.elevation.card,
+  },
+  sarthiIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: tokens.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sarthiLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
+  sarthiSub: { color: tokens.onSurfaceVariant, marginTop: 2 },
 });

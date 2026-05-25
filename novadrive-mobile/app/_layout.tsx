@@ -14,6 +14,7 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { AppProvider } from '../src/context/AppContext';
+import { SarthiProvider } from '../src/context/SarthiContext';
 import { SafetyMonitorBridge } from '../src/components/SafetyMonitorBridge';
 import { tokens } from '../src/theme/tokens';
 
@@ -45,6 +46,7 @@ export default function RootLayout() {
 
   return (
     <AppProvider>
+      <SarthiProvider>
       <SafetyMonitorBridge />
       <StatusBar style="light" />
       <Stack
@@ -75,9 +77,14 @@ export default function RootLayout() {
         <Stack.Screen name="emergency/packet" options={{ headerShown: false }} />
         <Stack.Screen name="emergency/relay" options={{ headerShown: false }} />
         <Stack.Screen name="scan" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="sarthi"
+          options={{ headerShown: false, animation: 'slide_from_bottom' }}
+        />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="emergency-contacts" options={{ headerShown: false }} />
       </Stack>
+      </SarthiProvider>
     </AppProvider>
   );
 }
