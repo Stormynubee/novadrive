@@ -16,6 +16,7 @@ const baseCtx: SarthiUserContext = {
 
 function makeDeps(overrides: Partial<SarthiEngineDeps> = {}): SarthiEngineDeps {
   return {
+    apiBaseUrl: 'http://test.local',
     isOnline: async () => true,
     fetchChat: async () => ({
       reply: 'Online assistant reply.',

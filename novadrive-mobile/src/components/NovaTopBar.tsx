@@ -45,19 +45,25 @@ export function NovaTopBar({
         styles.bar,
         onPrimary ? styles.barPrimary : styles.barSurface,
         { paddingTop: insets.top + 10 },
-        style,
-      ]}
-    >
+      style,
+    ]}
+    pointerEvents="box-none"
+  >
       {showBack ? (
         <Pressable
           onPress={onBack ?? (() => router.back())}
-          style={styles.iconBtn}
+          style={[styles.iconBtn, styles.iconBtnRaised]}
           accessibilityLabel="Back"
         >
           <MaterialIcons name="arrow-back" size={24} color={fg} />
         </Pressable>
       ) : onMenu ? (
-        <Pressable onPress={onMenu} style={styles.iconBtn} accessibilityLabel="Menu">
+        <Pressable
+          onPress={onMenu}
+          style={[styles.iconBtn, styles.iconBtnRaised]}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          accessibilityLabel="Menu"
+        >
           <MaterialIcons name="menu" size={24} color={fg} />
         </Pressable>
       ) : (
@@ -68,7 +74,7 @@ export function NovaTopBar({
         </View>
       )}
 
-      <View style={styles.titleWrap}>
+      <View style={styles.titleWrap} pointerEvents="box-none">
         <HudText
           variant="headlineMd"
           style={[
@@ -94,7 +100,7 @@ export function NovaTopBar({
         {trailingIcon && onTrailingIcon ? (
           <Pressable
             onPress={onTrailingIcon}
-            style={styles.iconBtn}
+            style={[styles.iconBtn, styles.iconBtnRaised]}
             accessibilityLabel="Settings"
           >
             <MaterialIcons name={trailingIcon} size={24} color={fg} />
@@ -103,7 +109,7 @@ export function NovaTopBar({
         {onEmergency ? (
           <Pressable
             onPress={onEmergency}
-            style={styles.iconBtn}
+            style={[styles.iconBtn, styles.iconBtnRaised]}
             accessibilityLabel="Emergency"
           >
             <MaterialIcons name="emergency-share" size={26} color={tokens.secondary} />
@@ -141,7 +147,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 1,
   },
-  titleWrap: { flex: 1, minWidth: 0 },
+  titleWrap: { flex: 1, minWidth: 0, pointerEvents: 'none' },
+  iconBtnRaised: { zIndex: 10, elevation: 6 },
   title: {
     fontFamily: 'HankenGrotesk_800ExtraBold',
     fontSize: 18,

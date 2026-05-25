@@ -2,10 +2,12 @@ import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
 import { NovaTabBar } from '../../src/components/NovaTabBar';
 import { SarthiOverlayBridge } from '../../src/components/sarthi/SarthiOverlayBridge';
+import { QuickMenuProvider } from '../../src/context/QuickMenuContext';
 import { tokens } from '../../src/theme/tokens';
 
 export default function TabsLayout() {
   return (
+    <QuickMenuProvider>
     <View style={styles.root}>
       <Tabs
         screenOptions={{
@@ -23,6 +25,7 @@ export default function TabsLayout() {
       <NovaTabBar />
       <SarthiOverlayBridge />
     </View>
+    </QuickMenuProvider>
   );
 }
 

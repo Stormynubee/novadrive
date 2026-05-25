@@ -9,11 +9,11 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  TextInput,
   useWindowDimensions,
   View,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { CorridorAtbInputs } from './CorridorAtbInputs';
 import { DashboardHeader } from './DashboardHeader';
 import { HudText } from './HudText';
 import { LiveChip } from './LiveChip';
@@ -45,7 +45,7 @@ const ROUTE_CATALOG: Record<RoutePreference, CorridorRoute[]> = {
     },
     {
       id: 'beta',
-      name: 'Route Beta',
+      name: 'Route Beta (Express)',
       distanceKm: 14.1,
       minutes: 32,
       safetyPct: 82,
@@ -55,7 +55,7 @@ const ROUTE_CATALOG: Record<RoutePreference, CorridorRoute[]> = {
   fastest: [
     {
       id: 'beta',
-      name: 'Route Beta',
+      name: 'Route Beta (Express)',
       distanceKm: 14.1,
       minutes: 32,
       safetyPct: 82,
@@ -143,7 +143,7 @@ function RouteCard({
  */
 export function PlanCorridorScreen() {
   const { height: windowH } = useWindowDimensions();
-  const mapHeight = Math.round(windowH * 0.34);
+  const mapHeight = Math.round(windowH * 0.37);
 
   const { journeyStatus, plannedDestination, setPlannedDestination } = useApp();
   const live = journeyStatus === 'ACTIVE';
@@ -220,7 +220,11 @@ export function PlanCorridorScreen() {
       <DashboardHeader planCorridorChrome />
 
       <View style={[styles.mapRegion, { height: mapHeight }]}>
-        <PlanCorridorMap />
+        <PlanCorridorMap
+          routeId={selectedRoute.id === 'beta' ? 'beta' : 'alpha'}
+          preference={preference}
+          hasDestination={destination.trim().length > 0}
+        />
         {live ? (
           <View style={styles.liveBanner}>
             <LiveChip label="Live journey" tone="safe" />
@@ -276,30 +280,11 @@ export function PlanCorridorScreen() {
                 Select authorized route and dispatch.
               </HudText>
 
-              <View style={styles.atbCard}>
-                <View style={styles.atbLine} pointerEvents="none" />
-                <View style={styles.atbRow}>
-                  <MaterialIcons name="my-location" size={20} color={tokens.primary} />
-                  <TextInput
-                    style={styles.atbInput}
-                    value={origin}
-                    editable={false}
-                    selectTextOnFocus={false}
-                  />
-                </View>
-                <View style={styles.atbDivider} />
-                <View style={styles.atbRow}>
-                  <MaterialIcons name="location-on" size={20} color={tokens.secondary} />
-                  <TextInput
-                    style={styles.atbInput}
-                    value={destination}
-                    onChangeText={setDestination}
-                    placeholder="Enter Destination ID or Area"
-                    placeholderTextColor={tokens.outline}
-                    returnKeyType="done"
-                  />
-                </View>
-              </View>
+              <CorridorAtbInputs
+                origin={origin}
+                destination={destination}
+                onDestinationChange={setDestination}
+              />
 
               <View style={styles.prefRow}>
                 <Pressable
@@ -383,6 +368,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: tokens.background },
   mapRegion: {
     minHeight: 160,
+    backgroundColor: tokens.surfaceContainerHigh,
     borderBottomWidth: 1,
     borderBottomColor: tokens.outlineVariant,
   },
@@ -434,48 +420,6 @@ const styles = StyleSheet.create({
     color: tokens.onSurfaceVariant,
     marginTop: 4,
     marginBottom: tokens.spacing.stackMd,
-  },
-  atbCard: {
-    backgroundColor: tokens.surfaceContainerLowest,
-    borderRadius: tokens.radius.card,
-    borderWidth: 1,
-    borderColor: tokens.outlineVariant,
-    padding: 12,
-    marginBottom: tokens.spacing.stackMd,
-    ...tokens.elevation.card,
-  },
-  atbLine: {
-    position: 'absolute',
-    left: 27,
-    top: 44,
-    bottom: 44,
-    width: 2,
-    borderLeftWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: tokens.outlineVariant,
-  },
-  atbRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    height: 48,
-    backgroundColor: tokens.surface,
-    borderRadius: tokens.radius.card,
-    paddingHorizontal: 12,
-    zIndex: 1,
-  },
-  atbDivider: {
-    height: 1,
-    backgroundColor: 'rgba(196,198,207,0.35)',
-    marginVertical: 6,
-    marginLeft: 40,
-  },
-  atbInput: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: 'PublicSans_400Regular',
-    color: tokens.onSurface,
-    paddingVertical: 0,
   },
   prefRow: {
     flexDirection: 'row',

@@ -25,7 +25,7 @@ function sessionLabel() {
 
 export default function SarthiScreen() {
   const insets = useSafeAreaInsets();
-  const { thread, loading, offlineMode, send, clearThread } = useSarthi();
+  const { thread, loading, offlineMode, bffUnavailable, send, clearThread } = useSarthi();
   const [draft, setDraft] = useState('');
   const sessionTime = useMemo(() => sessionLabel(), []);
 
@@ -47,7 +47,11 @@ export default function SarthiScreen() {
       </View>
       {offlineMode ? (
         <HudText variant="bodySm" style={styles.offlineBanner}>
-          Offline mode — Sarthi is using on-device rules
+          No network — Sarthi is using on-device safety rules
+        </HudText>
+      ) : bffUnavailable ? (
+        <HudText variant="bodySm" style={styles.offlineBanner}>
+          BFF not configured — on-device rules (set EXPO_PUBLIC_SARTHI_API_URL in .env)
         </HudText>
       ) : null}
       <FlatList

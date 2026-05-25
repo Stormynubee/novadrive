@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { buildSarthiUserContext } from '../lib/sarthi/buildSarthiContext';
 import {
@@ -17,8 +17,10 @@ export function useSarthiChat() {
   const deps = useMemo(() => createProductionDeps(apiBase), [apiBase]);
 
   const [thread, setThread] = useState<SarthiThread | null>(null);
+  const threadRef = useRef<SarthiThread | null>(null);
   const [loading, setLoading] = useState(false);
-  const [offlineMode, setOfflineMode] = useState(false);
+  const [networkOffline, setNetworkOffline] = useState(false);
+  const [bffUnavailable, setBffUnavailable] = useState(!apiBase.trim());
   const [hydrated, setHydrated] = useState(false);
 
   const context: SarthiUserContext = useMemo(
@@ -31,17 +33,33 @@ export function useSarthiChat() {
   );
 
   useEffect(() => {
+    threadRef.current = thread;
+  }, [thread]);
+
+  useEffect(() => {
+    setBffUnavailable(!apiBase.trim());
+  }, [apiBase]);
+
+  useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(STORAGE_KEY);
         if (raw && !cancelled) {
-          setThread(JSON.parse(raw) as SarthiThread);
+          const parsed = JSON.parse(raw) as SarthiThread;
+          setThread(parsed);
+          threadRef.current = parsed;
         } else if (!cancelled) {
-          setThread(createThread(deps, context));
+          const fresh = createThread(deps, context);
+          setThread(fresh);
+          threadRef.current = fresh;
         }
       } catch {
-        if (!cancelled) setThread(createThread(deps, context));
+        if (!cancelled) {
+          const fresh = createThread(deps, context);
+          setThread(fresh);
+          threadRef.current = fresh;
+        }
       } finally {
         if (!cancelled) setHydrated(true);
       }
@@ -59,40 +77,67 @@ export function useSarthiChat() {
 
   const send = useCallback(
     async (text: string) => {
-      if (!thread || !text.trim()) return;
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
       setLoading(true);
       try {
         const online = await deps.isOnline();
-        setOfflineMode(!online || !apiBase);
-        const next = await sendMessage(thread, text, context, deps);
+        setNetworkOffline(!online);
+        setBffUnavailable(!apiBase.trim());
+
+        const base = threadRef.current ?? createThread(deps, context);
+        if (!threadRef.current) {
+          setThread(base);
+          threadRef.current = base;
+        }
+
+        const next = await sendMessage(base, trimmed, context, deps);
+        threadRef.current = next;
         setThread(next);
+      } catch {
+        const base = threadRef.current ?? createThread(deps, context);
+        const fallback = await sendMessage(base, trimmed, context, {
+          ...deps,
+          isOnline: async () => false,
+        });
+        threadRef.current = fallback;
+        setThread(fallback);
+        setNetworkOffline(true);
       } finally {
         setLoading(false);
       }
     },
-    [thread, context, deps, apiBase]
+    [context, deps, apiBase, hydrated]
   );
 
   const clearThread = useCallback(() => {
     const fresh = createThread(deps, context);
+    threadRef.current = fresh;
     setThread(fresh);
     AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
   }, [deps, context]);
 
   const refreshWelcomeIfNeeded = useCallback(() => {
     setThread((t) => {
-      if (!t || t.messages.length === 0) return createThread(deps, context);
-      const [first, ...rest] = t.messages;
-      if (first.role !== 'assistant') return t;
+      const current = t ?? threadRef.current ?? createThread(deps, context);
+      if (current.messages.length === 0) return createThread(deps, context);
+      const [first, ...rest] = current.messages;
+      if (first.role !== 'assistant') return current;
       const welcome = createThread(deps, context).messages[0];
-      return { ...t, messages: [welcome, ...rest] };
+      const updated = { ...current, messages: [welcome, ...rest] };
+      threadRef.current = updated;
+      return updated;
     });
   }, [deps, context]);
 
+  const displayThread = thread ?? createThread(deps, context);
+
   return {
-    thread: thread ?? createThread(deps, context),
+    thread: displayThread,
     loading,
-    offlineMode,
+    offlineMode: networkOffline,
+    bffUnavailable,
     hydrated,
     send,
     clearThread,

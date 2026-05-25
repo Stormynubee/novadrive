@@ -8,6 +8,7 @@ import { getOfflineReply, matchKnowledgeBase, shouldUseOfflineFirst } from './sa
 import { getWelcomeMessage } from './sarthi/sarthiStrings';
 
 export type SarthiEngineDeps = {
+  apiBaseUrl?: string;
   isOnline: () => Promise<boolean>;
   fetchChat: (
     messages: { role: 'user' | 'assistant'; content: string }[],
@@ -66,9 +67,11 @@ export async function sendMessage(
   const kbMatch = matchKnowledgeBase(trimmed);
   const offlineFirst = shouldUseOfflineFirst(kbMatch);
 
+  const hasBff = Boolean(deps.apiBaseUrl?.trim());
+
   try {
     const online = await deps.isOnline();
-    if (online && !offlineFirst) {
+    if (online && !offlineFirst && hasBff) {
       response = await deps.fetchChat(history, context);
     } else {
       response = deps.getOfflineReply(trimmed, context);
@@ -92,18 +95,23 @@ export async function sendMessage(
 }
 
 export function createProductionDeps(apiBaseUrl: string): SarthiEngineDeps {
+  const base = apiBaseUrl.trim();
   return {
+    apiBaseUrl: base,
     isOnline: async () => {
       try {
         const NetInfo = await import('@react-native-community/netinfo');
         const state = await NetInfo.default.fetch();
-        return Boolean(state.isConnected && state.isInternetReachable !== false);
+        const connected = Boolean(state.isConnected);
+        const reachable = state.isInternetReachable;
+        return connected && (reachable === null || reachable === true);
       } catch {
         return false;
       }
     },
     fetchChat: async (messages, context) => {
-      const url = `${apiBaseUrl.replace(/\/$/, '')}/api/sarthi/chat`;
+      if (!base) throw new Error('Sarthi BFF URL not configured');
+      const url = `${base.replace(/\/$/, '')}/api/sarthi/chat`;
       const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -27,7 +27,7 @@ export function SarthiMiniWindow({
   onClose: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const { thread, loading, offlineMode, send } = useSarthi();
+  const { thread, loading, offlineMode, bffUnavailable, send } = useSarthi();
   const [draft, setDraft] = useState('');
   const height = Dimensions.get('window').height * 0.4;
 
@@ -56,7 +56,11 @@ export function SarthiMiniWindow({
       <SarthiChatHeader compact onClose={onClose} />
       {offlineMode ? (
         <HudText variant="bodySm" style={styles.banner}>
-          Offline mode — on-device rules
+          No network — using on-device safety rules
+        </HudText>
+      ) : bffUnavailable ? (
+        <HudText variant="bodySm" style={styles.banner}>
+          BFF not configured — on-device rules (set EXPO_PUBLIC_SARTHI_API_URL)
         </HudText>
       ) : null}
       <FlatList

@@ -131,26 +131,35 @@ export default function ProfileTabScreen() {
       <DashboardHeader />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
-          <Pressable
-            onPress={pickAvatar}
-            style={({ pressed }) => [styles.avatar, pressed && styles.avatarPressed]}
-            accessibilityRole="button"
-            accessibilityLabel="Change profile photo"
-          >
-            {profile.avatarUri ? (
-              <Image source={{ uri: profile.avatarUri }} style={styles.avatarImage} />
-            ) : (
-              <HudText variant="headlineMd" style={styles.avatarText}>
-                {displayName.slice(0, 1).toUpperCase()}
-              </HudText>
-            )}
-            <View style={styles.avatarEdit}>
+          <View style={styles.avatarStack}>
+            <Pressable
+              onPress={pickAvatar}
+              style={({ pressed }) => [styles.avatarTouch, pressed && styles.avatarPressed]}
+              accessibilityRole="button"
+              accessibilityLabel="Change profile photo"
+            >
+              <View style={styles.avatar}>
+                {profile.avatarUri ? (
+                  <Image source={{ uri: profile.avatarUri }} style={styles.avatarImage} />
+                ) : (
+                  <HudText variant="headlineMd" style={styles.avatarText}>
+                    {displayName.slice(0, 1).toUpperCase()}
+                  </HudText>
+                )}
+              </View>
+            </Pressable>
+            <Pressable
+              onPress={pickAvatar}
+              style={styles.avatarEdit}
+              accessibilityRole="button"
+              accessibilityLabel="Change profile photo"
+            >
               <MaterialIcons name="photo-camera" size={14} color={tokens.onSecondary} />
-            </View>
-            <View style={styles.avatarBadge}>
+            </Pressable>
+            <View style={styles.avatarBadge} accessible={false}>
               <MaterialIcons name="verified" size={14} color={tokens.onSecondary} />
             </View>
-          </Pressable>
+          </View>
           <HudText variant="bodySm" style={styles.avatarHint}>
             Tap photo to change
           </HudText>
@@ -299,6 +308,19 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: tokens.background },
   scroll: { padding: 20, paddingBottom: 120, gap: 4 },
   hero: { alignItems: 'center', marginBottom: 16, gap: 6 },
+  avatarStack: {
+    width: 100,
+    height: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+    overflow: 'visible',
+  },
+  avatarTouch: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+  },
   avatar: {
     width: 88,
     height: 88,
@@ -308,7 +330,6 @@ const styles = StyleSheet.create({
     borderColor: tokens.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
     overflow: 'hidden',
   },
   avatarPressed: { opacity: 0.92 },
@@ -320,29 +341,33 @@ const styles = StyleSheet.create({
   },
   avatarEdit: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    width: 26,
-    height: 26,
-    borderRadius: 6,
+    bottom: 2,
+    left: 2,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: tokens.primary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: tokens.surface,
+    zIndex: 3,
+    elevation: 4,
   },
   avatarBadge: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 26,
-    height: 26,
-    borderRadius: 6,
+    bottom: 2,
+    right: 2,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
     backgroundColor: tokens.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: tokens.surface,
+    zIndex: 3,
+    elevation: 4,
   },
   avatarHint: { color: tokens.onSurfaceVariant, marginBottom: 4 },
   name: { color: tokens.primary, fontFamily: 'HankenGrotesk_700Bold' },
