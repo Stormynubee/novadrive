@@ -19,7 +19,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 | [`v0.1.0-p0`](https://github.com/Stormynubee/novadrive/releases/tag/v0.1.0-p0) | `7b5b25a` | 2026-05-22 | Expo P0 app, triage FSM, GHP/QR, monorepo CI |
 | [`v1.0.0-govtech-ui`](https://github.com/Stormynubee/novadrive/releases/tag/v1.0.0-govtech-ui) | `108e716` | 2026-05-25 | GovTech tabs, Plan Corridor, calibration, SOS HUD |
 | [`v1.1.0-stabilization`](https://github.com/Stormynubee/novadrive/releases/tag/v1.1.0-stabilization) | `bdd5a04` | 2026-05-25 | Journey lifecycle, voice/impact gating, 32 unit tests |
-| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `11984ba` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags (current **master**) |
+| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `161798c` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags (current **master**) |
 
 ---
 
@@ -113,7 +113,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 ---
 
-### 8. `11984ba` — 2026-05-25 · tag `v1.2.0-hackathon-publish` (HEAD)
+### 8. `11984ba` — 2026-05-25
 
 **docs: add full VERSION_HISTORY, release tags, and fork link**
 
@@ -122,6 +122,16 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 - README links to version history and [Fork](https://github.com/Stormynubee/novadrive/fork)
 
 [View commit](https://github.com/Stormynubee/novadrive/commit/11984ba)
+
+---
+
+### 9. `161798c` — 2026-05-25 · tag `v1.2.0-hackathon-publish` (HEAD)
+
+**docs: record VERSION_HISTORY commit in timeline**
+
+- Timeline entry for the version-history doc commit itself
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/161798c)
 
 ---
 
@@ -158,4 +168,4 @@ git checkout v1.2.0-hackathon-publish
 
 ## Full diff: project start → now
 
-[Compare `1ee8d75`…`11984ba`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...11984ba)
+[Compare `1ee8d75`…`161798c`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...161798c)
