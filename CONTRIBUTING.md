@@ -58,6 +58,21 @@ Changes to `startTriageFSM.ts`, `crashEngine.ts`, `ghp.ts`, or `parseEmergencyTe
 
 See [docs/AGENTS.md](docs/AGENTS.md) for Cursor subagents and recommended skills.
 
+### Git commits (no `cursoragent` on GitHub)
+
+Cursor can append `Co-authored-by: Cursor <cursoragent@cursor.com>` to commits, which adds **cursoragent** to the repo Contributors sidebar.
+
+1. **Turn off** in Cursor: **Settings → Agent → Attribution → Commit attribution** (off). Restart Cursor.
+2. **Enable the repo hook** (strips co-author lines if Cursor still adds them):
+
+   ```powershell
+   .\scripts\setup-git-hooks.ps1
+   ```
+
+   Or: `git config core.hooksPath .githooks`
+
+If **cursoragent** still appears in the sidebar after history was cleaned, that is GitHub’s cached contributor list (append-only). New commits will not add it if attribution is off and the hook is enabled. To clear the sidebar entirely, open [GitHub Support](https://support.github.com/request) and ask to **regenerate the contributor graph** for this repository.
+
 ## Scope guard (hackathon)
 
 - **P0:** Airplane-mode demo path must keep working
