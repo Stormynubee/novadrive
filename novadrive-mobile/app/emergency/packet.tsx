@@ -1,57 +1,119 @@
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import { DispatchPanel } from '../../src/components/DispatchPanel';
+import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
+import { HudCard } from '../../src/components/HudCard';
+import { HudText } from '../../src/components/HudText';
 import { NovaButton } from '../../src/components/NovaButton';
-import { ProgressRail } from '../../src/components/ProgressRail';
-import { SeverityChip } from '../../src/components/SeverityChip';
-import { ScreenShell } from '../../src/components/ScreenShell';
+import { QrQuietZone } from '../../src/components/QrQuietZone';
+import { SeverityHero } from '../../src/components/SeverityHero';
 import { useApp } from '../../src/context/AppContext';
 import { encodeQrPayload, formatSms } from '../../src/lib/ghp';
-import { colors } from '../../src/theme/colors';
+import { tokens } from '../../src/theme/tokens';
 
 export default function PacketScreen() {
-  const { buildGhp, session, triageResult } = useApp();
+  const { buildGhp, session, triageResult, profile } = useApp();
   const [loading, setLoading] = useState(true);
   const [qr, setQr] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const pulse = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
-    buildGhp().then((p) => {
-      if (p) setQr(encodeQrPayload(p));
+    if (!loading) return;
+    const anim = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, { toValue: 1, duration: 700, useNativeDriver: true }),
+        Animated.timing(pulse, { toValue: 0.4, duration: 700, useNativeDriver: true }),
+      ])
+    );
+    anim.start();
+    return () => anim.stop();
+  }, [loading, pulse]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const p = await buildGhp();
+      if (cancelled) return;
+      if (p) {
+        setQr(encodeQrPayload(p));
+        setError(null);
+      } else {
+        setError(
+          !session.location
+            ? 'Missing location — go back to Locate.'
+            : !session.triage
+              ? 'Missing triage — complete START first.'
+              : 'Select a facility on Route (or use BLACK → 108).'
+        );
+      }
       setLoading(false);
-    });
-  }, [buildGhp]);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const packet = session.packet;
+  const sms = packet ? formatSms(packet, profile.medical) : '';
+  const sha = packet?.integrity?.slice(0, 12);
+
+  const footer = error ? (
+    <NovaButton label="Back to route" onPress={() => router.back()} variant="secondary" large />
+  ) : (
+    <NovaButton label="Continue to relay" onPress={() => router.push('/emergency/relay')} disabled={!packet} large />
+  );
 
   return (
-    <ScreenShell title="Golden Hour Packet" subtitle="Human-readable SMS + compressed QR for bystander relay.">
-      <ProgressRail current="Packet" />
-      {loading && <ActivityIndicator color={colors.amber} />}
-      {triageResult && <SeverityChip triage={triageResult} />}
-      {packet && (
-        <View style={styles.dispatch}>
-          <Text style={styles.mono}>{formatSms(packet)}</Text>
-        </View>
-      )}
-      {qr ? (
-        <View style={styles.qrWrap}>
-          <QRCode value={qr} size={200} backgroundColor="#151D2E" color="#FBBF24" />
-        </View>
+    <EmergencyStepShell
+      step="Packet"
+      title="Golden Hour Packet"
+      subtitle="Share this with bystanders or dispatch — works offline."
+      showBack
+      footer={footer}
+    >
+      {loading ? (
+        <Animated.View style={[styles.skeleton, { opacity: pulse }]} />
       ) : null}
-      <NovaButton label="Continue to relay" onPress={() => router.push('/emergency/relay')} />
-    </ScreenShell>
+      {error && !loading ? (
+        <HudCard accent="danger">
+          <HudText variant="bodyMd" style={{ color: tokens.onErrorContainer, lineHeight: 22 }}>
+            {error}
+          </HudText>
+        </HudCard>
+      ) : null}
+      {triageResult && !loading ? <SeverityHero triage={triageResult} /> : null}
+      {sms && !loading ? <DispatchPanel text={sms} /> : null}
+      {sha ? (
+        <HudText variant="mono" style={styles.sha}>
+          {`SHA-256: ${sha}…`}
+        </HudText>
+      ) : null}
+      {qr && !loading ? (
+        <QrQuietZone>
+          <QRCode value={qr} size={210} backgroundColor="#ffffff" color={tokens.primary} />
+        </QrQuietZone>
+      ) : null}
+      {loading ? <ActivityIndicator color={tokens.primary} style={{ marginTop: 8 }} /> : null}
+    </EmergencyStepShell>
   );
 }
 
 const styles = StyleSheet.create({
-  dispatch: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
+  skeleton: {
+    height: 140,
+    borderRadius: tokens.radius.card,
+    backgroundColor: tokens.surfaceContainerHigh,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: tokens.outlineVariant,
   },
-  mono: { color: colors.text, fontFamily: 'monospace', fontSize: 13, lineHeight: 20 },
-  qrWrap: { alignItems: 'center', padding: 16 },
+  sha: {
+    fontSize: 10,
+    color: tokens.onSurfaceVariant,
+    fontFamily: 'PublicSans_700Bold',
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
 });

@@ -66,23 +66,62 @@ export type Lang = 'en' | 'hi' | 'ta';
 
 export type JourneyStatus = 'IDLE' | 'ACTIVE' | 'ENDED';
 
+/** Primary ICE contact — family / trusted person for Golden Hour Packet. */
+export interface EmergencyContact {
+  fullName: string;
+  relationship: string;
+  phone: string;
+}
+
 export interface MedicalProfile {
   bloodType?: string;
   allergies?: string;
   conditions?: string;
+  medications?: string;
+  /** @deprecated migrated to primaryContact — kept for SMS back-compat */
   emergencyContact?: string;
+  primaryContact?: EmergencyContact;
 }
 
 export interface AccessibilityPrefs {
   largeText: boolean;
   highContrast: boolean;
   reduceMotion: boolean;
+  /** Spoken cues during emergency triage */
   ttsEnabled: boolean;
+  fontScale?: number;
+  /** Hands-free safety commands + voice watch during drive */
+  voiceCommand: boolean;
+  /** Strong vibration on crash / panic detection */
+  hapticCrashAlerts: boolean;
+  /** TalkBack-style announcements for UI changes */
+  screenReader: boolean;
+  /** Turn-by-turn / corridor spoken updates */
+  audioNavigation: boolean;
+}
+
+export type SosSensitivity = 'low' | 'medium' | 'high';
+
+export interface AppSettings {
+  language: Lang;
+  regionalProtocols: boolean;
+  biometricAuth: boolean;
+  sosSensitivity: SosSensitivity;
+  telemetrySharing: boolean;
+  autoDispatchMedical: boolean;
+  notifyEmergencyContacts: boolean;
+  lockDeviceScreen: boolean;
+  /** Listen for distress audio during an active journey only */
+  voiceCrashDetection: boolean;
 }
 
 export interface UserProfile {
   mode: 'guest' | 'auth';
   name?: string;
+  email?: string;
+  citizenId?: string;
+  avatarUri?: string;
   medical?: MedicalProfile;
   a11y?: AccessibilityPrefs;
+  settings?: AppSettings;
 }

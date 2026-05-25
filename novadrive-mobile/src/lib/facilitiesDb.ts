@@ -96,7 +96,8 @@ async function getDb(): Promise<SQLite.SQLiteDatabase> {
 export async function rankFacilities(
   triage: TriageColor,
   lat: number,
-  lng: number
+  lng: number,
+  maxKm = 100
 ): Promise<Facility[]> {
   const db = await getDb();
   const rows = await db.getAllAsync<{
@@ -120,6 +121,8 @@ export async function rankFacilities(
     etaMinutes: Math.max(5, Math.round(haversineKm(lat, lng, r.lat, r.lng) * 2.5)),
     verified: r.verified === 1,
   }));
+
+  filtered = filtered.filter((f) => f.distanceKm <= maxKm);
 
   if (triage === 'RED') filtered = filtered.filter((f) => f.traumaTier <= 2 && f.type !== 'clinic');
   else if (triage === 'YELLOW') filtered = filtered.filter((f) => f.traumaTier <= 3 && f.type !== 'clinic');

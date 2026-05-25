@@ -9,10 +9,10 @@ export default function Index() {
   const [onboarded, setOnboarded] = useState(false);
 
   useEffect(() => {
-    isOnboarded().then((v) => {
-      setOnboarded(v);
-      setReady(true);
-    });
+    isOnboarded()
+      .then((v) => setOnboarded(v))
+      .catch(() => setOnboarded(false))
+      .finally(() => setReady(true));
   }, []);
 
   if (!ready) {
@@ -24,5 +24,5 @@ export default function Index() {
   }
 
   if (!onboarded) return <Redirect href="/splash" />;
-  return <Redirect href="/home" />;
+  return <Redirect href="/(tabs)/explore" />;
 }
