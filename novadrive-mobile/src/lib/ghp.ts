@@ -1,7 +1,11 @@
 import * as Crypto from 'expo-crypto';
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
-import { v4 as uuidv4 } from 'uuid';
-import type { EmergencySession, GoldenHourPacket } from './types';
+import { formatIceLine } from './storage';
+import type { EmergencySession, GoldenHourPacket, MedicalProfile } from './types';
+
+async function newPacketId(): Promise<string> {
+  return Crypto.randomUUID();
+}
 
 export async function hashPayload(payload: string): Promise<string> {
   const digest = await Crypto.digestStringAsync(
@@ -11,10 +15,26 @@ export async function hashPayload(payload: string): Promise<string> {
   return `nd-${digest.slice(0, 8)}`;
 }
 
-export async function buildPacket(session: EmergencySession): Promise<GoldenHourPacket | null> {
-  if (!session.location || !session.triage || !session.facility) return null;
+const DISPATCH_108: EmergencySession['facility'] = {
+  id: '108',
+  name: 'National emergency (108)',
+  type: 'hospital',
+  traumaTier: 2,
+  phone: '108',
+  distanceKm: 0,
+  etaMinutes: 0,
+  verified: true,
+};
 
-  const id = uuidv4();
+export async function buildPacket(
+  session: EmergencySession,
+  medical?: MedicalProfile
+): Promise<GoldenHourPacket | null> {
+  if (!session.location || !session.triage) return null;
+  const facility = session.facility ?? (session.triage === 'BLACK' ? DISPATCH_108 : null);
+  if (!facility) return null;
+
+  const id = await newPacketId();
   const core = JSON.stringify({
     id,
     triage: session.triage,
@@ -37,29 +57,33 @@ export async function buildPacket(session: EmergencySession): Promise<GoldenHour
       followsCommands: session.triage === 'GREEN' || session.triage === 'YELLOW',
     },
     routing: {
-      facilityName: session.facility.name,
-      facilityType: session.facility.type,
-      phone: session.facility.phone,
-      etaMinutes: session.facility.etaMinutes,
-      distanceKm: session.facility.distanceKm,
+      facilityName: facility.name,
+      facilityType: facility.type,
+      phone: facility.phone,
+      etaMinutes: facility.etaMinutes,
+      distanceKm: facility.distanceKm,
     },
     emergency: { dial: '108', state: 'Tamil Nadu', language: 'en' },
     integrity,
   };
 }
 
-export function formatSms(packet: GoldenHourPacket): string {
+export function formatSms(packet: GoldenHourPacket, medical?: MedicalProfile): string {
   const loc = packet.location;
-  const line = loc.landmark || loc.nhCode
-    ? `${loc.nhCode ?? 'NH'} km ${loc.nhKm ?? '—'} (${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)})`
-    : `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
-  const body =
+  const line = loc.landmark ?? `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
+  let body =
     `NOVADRIVE GHP\n` +
     `Triage: ${packet.triage}\n` +
     `Location: ${line}\n` +
-    `Facility: ${packet.routing.facilityName} (~${packet.routing.distanceKm}km, ~${packet.routing.etaMinutes}min)\n` +
-    `Phone: ${packet.routing.phone}\n` +
-    `Hash: ${packet.integrity}`;
+    `Facility: ${packet.routing.facilityName} (~${Math.round(packet.routing.distanceKm)}km, ~${packet.routing.etaMinutes}min)\n` +
+    `Phone: ${packet.routing.phone}\n`;
+  if (medical?.bloodType) body += `Blood: ${medical.bloodType}\n`;
+  const ice =
+    medical?.primaryContact
+      ? formatIceLine(medical.primaryContact)
+      : medical?.emergencyContact;
+  if (ice) body += `ICE: ${ice}\n`;
+  body += `Hash: ${packet.integrity}`;
   return body.slice(0, 800);
 }
 

@@ -1,13 +1,22 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
+import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
+import { HudCard } from '../../src/components/HudCard';
+import { HudText } from '../../src/components/HudText';
+import { LiveChip } from '../../src/components/LiveChip';
 import { NovaButton } from '../../src/components/NovaButton';
-import { ProgressRail } from '../../src/components/ProgressRail';
-import { ScreenShell } from '../../src/components/ScreenShell';
 import { useApp } from '../../src/context/AppContext';
-import { colors } from '../../src/theme/colors';
+import { reverseGeocodePlace } from '../../src/lib/geocode';
+import { tokens } from '../../src/theme/tokens';
 
+/**
+ * Stitch `nova_drive_phase_1_locate_header_standardized` — Phase 1 of the emergency stepper.
+ * Captures GPS + reverse-geocoded landmark, persists in `session.location` for use by the rest
+ * of the flow (Triage → Route → Packet → Relay).
+ */
 export default function LocateScreen() {
   const { setLocation, session } = useApp();
   const [loading, setLoading] = useState(false);
@@ -18,17 +27,14 @@ export default function LocateScreen() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') throw new Error('Location permission required.');
       const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-      const fix = {
+      const { landmark } = await reverseGeocodePlace(pos.coords.latitude, pos.coords.longitude);
+      setLocation({
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
         accuracyMeters: pos.coords.accuracy ?? undefined,
-        nhCode: 'NH48',
-        nhKm: 87,
-        landmark: 'Chennai–Trichy corridor (demo)',
+        landmark,
         capturedAt: new Date().toISOString(),
-      };
-      setLocation(fix);
-      router.push('/emergency/triage');
+      });
     } catch (e) {
       Alert.alert('Location error', (e as Error).message);
     } finally {
@@ -36,31 +42,137 @@ export default function LocateScreen() {
     }
   };
 
+  const footer = (
+    <>
+      {loading ? <ActivityIndicator color={tokens.primary} /> : null}
+      {!session.location ? (
+        <NovaButton
+          label="Capture location"
+          onPress={capture}
+          variant="secondary"
+          large
+          disabled={loading}
+        />
+      ) : (
+        <>
+          <NovaButton
+            label="Continue to triage"
+            onPress={() => router.push('/emergency/triage')}
+            variant="secondary"
+            large
+          />
+          <NovaButton label="Recapture" onPress={capture} variant="ghost" disabled={loading} />
+        </>
+      )}
+    </>
+  );
+
   return (
-    <ScreenShell title="Locate" subtitle="Capture coordinates for Golden Hour Packet — works offline after fix.">
-      <ProgressRail current="Locate" />
-      {session.location ? (
-        <Text style={styles.coords}>
-          {session.location.lat.toFixed(5)}, {session.location.lng.toFixed(5)}
-          {'\n'}
-          {session.location.landmark}
-        </Text>
-      ) : (
-        <Text style={styles.hint}>No location yet. Tap capture (airplane mode uses last GPS fix if available).</Text>
-      )}
-      {loading ? (
-        <ActivityIndicator color={colors.amber} />
-      ) : (
-        <NovaButton label="Capture location" onPress={capture} />
-      )}
-      {session.location && (
-        <NovaButton label="Continue to triage" onPress={() => router.push('/emergency/triage')} />
-      )}
-    </ScreenShell>
+    <EmergencyStepShell
+      step="Locate"
+      title="Pin your location"
+      subtitle="We need your position for 108 dispatch and the Golden Hour Packet."
+      showBack
+      footer={footer}
+    >
+      <View style={styles.mapStrip}>
+        <View style={styles.mapTile}>
+          <MaterialIcons name="my-location" size={28} color={tokens.secondary} />
+          <HudText variant="mono" style={styles.mapLabel}>
+            {session.location ? 'GPS LOCKED' : 'AWAITING FIX'}
+          </HudText>
+        </View>
+        <View style={styles.gridLines} />
+      </View>
+
+      <HudCard accent={session.location ? 'tertiary' : 'primary'}>
+        {session.location ? (
+          <>
+            <View style={styles.row}>
+              <View style={[styles.iconWrap, { backgroundColor: tokens.tertiaryContainer }]}>
+                <MaterialIcons name="place" size={20} color={tokens.tertiary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <HudText variant="mono" style={styles.kicker}>
+                  COORDINATES
+                </HudText>
+                <HudText variant="headlineMd" style={styles.coords}>
+                  {session.location.lat.toFixed(5)}, {session.location.lng.toFixed(5)}
+                </HudText>
+              </View>
+              {session.location.accuracyMeters != null ? (
+                <LiveChip
+                  label={`±${Math.round(session.location.accuracyMeters)} m`}
+                  tone="safe"
+                />
+              ) : null}
+            </View>
+            <View style={styles.divider} />
+            <HudText variant="mono" style={styles.kicker}>
+              NEAREST LANDMARK
+            </HudText>
+            <HudText variant="bodyMd" style={styles.place}>
+              {session.location.landmark}
+            </HudText>
+          </>
+        ) : (
+          <>
+            <View style={styles.row}>
+              <View style={[styles.iconWrap, { backgroundColor: tokens.primaryFixed }]}>
+                <MaterialIcons name="my-location" size={20} color={tokens.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <HudText variant="bodyMd" style={styles.title}>
+                  No fix yet
+                </HudText>
+                <HudText variant="bodySm" style={styles.hint}>
+                  One capture works offline afterward (airplane mode reuses the last fix).
+                </HudText>
+              </View>
+            </View>
+          </>
+        )}
+      </HudCard>
+    </EmergencyStepShell>
   );
 }
 
 const styles = StyleSheet.create({
-  coords: { color: colors.cyan, fontFamily: 'monospace', lineHeight: 22 },
-  hint: { color: colors.muted },
+  mapStrip: {
+    height: 96,
+    borderRadius: tokens.radius.card,
+    backgroundColor: tokens.primaryFixed,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  mapTile: {
+    alignItems: 'center',
+    gap: 6,
+    zIndex: 2,
+  },
+  gridLines: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.5,
+    backgroundColor: 'transparent',
+    borderColor: tokens.outlineVariant,
+    borderWidth: 0.5,
+  },
+  mapLabel: { color: tokens.primary, letterSpacing: 1.4, fontSize: 10 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  iconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: tokens.radius.iconWrap,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  kicker: { fontSize: 10, color: tokens.onSurfaceVariant, letterSpacing: 1.2 },
+  coords: { color: tokens.primary, marginTop: 2, fontFamily: 'HankenGrotesk_700Bold' },
+  title: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
+  hint: { color: tokens.onSurfaceVariant, marginTop: 4, lineHeight: 20 },
+  place: { color: tokens.primary, marginTop: 4, lineHeight: 22 },
+  divider: { height: 1, backgroundColor: tokens.outlineVariant, marginVertical: 12 },
 });

@@ -5,25 +5,28 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "novadrive",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0B1220"
+      "backgroundColor": "#000a1e"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.novadrive.app",
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "NovaDrive uses your location during an active journey to route emergencies and build the Golden Hour Packet.",
-        "NSCameraUsageDescription": "NovaDrive uses the camera to scan bystander relay QR codes."
+        "NSCameraUsageDescription": "NovaDrive uses the camera to scan bystander relay QR codes.",
+        "NSMicrophoneUsageDescription": "NovaDrive listens for distress sounds during an active journey to offer help — audio is not stored or sent automatically.",
+        "NSPhotoLibraryUsageDescription": "NovaDrive uses your photo library so if you choose a profile picture."
       }
     },
     "android": {
       "package": "com.novadrive.app",
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "backgroundColor": "#0B1220",
+        "backgroundColor": "#000a1e",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -32,7 +35,8 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_COARSE_LOCATION",
         "CAMERA",
-        "HIGH_SAMPLING_RATE_SENSORS"
+        "HIGH_SAMPLING_RATE_SENSORS",
+        "RECORD_AUDIO"
       ]
     },
     "web": {
@@ -52,6 +56,19 @@
         "expo-camera",
         {
           "cameraPermission": "NovaDrive scans QR codes so bystanders can relay your Golden Hour Packet."
+        }
+      ],
+      "expo-font",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "NovaDrive listens for distress sounds during an active journey only — nothing is recorded or sent automatically."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "NovaDrive uses your photo library when you choose a profile picture."
         }
       ]
     ],

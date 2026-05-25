@@ -1,77 +1,146 @@
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Linking } from 'react-native';
+import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
+import { FacilityCard } from '../../src/components/FacilityCard';
+import { HudCard } from '../../src/components/HudCard';
+import { HudText } from '../../src/components/HudText';
 import { NovaButton } from '../../src/components/NovaButton';
-import { ProgressRail } from '../../src/components/ProgressRail';
-import { ScreenShell } from '../../src/components/ScreenShell';
 import { useApp } from '../../src/context/AppContext';
 import { rankFacilities } from '../../src/lib/facilitiesDb';
 import type { Facility } from '../../src/lib/types';
-import { colors } from '../../src/theme/colors';
+import { tokens } from '../../src/theme/tokens';
 
 export default function RouteScreen() {
   const { session, selectFacility, triageResult } = useApp();
   const [list, setList] = useState<Facility[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<string | null>(session.facility?.id ?? null);
 
   useEffect(() => {
-    if (!session.location || !triageResult) return;
-    rankFacilities(triageResult, session.location.lat, session.location.lng).then((f) => {
-      setList(f);
+    if (!session.location || !triageResult) {
       setLoading(false);
-    });
+      return;
+    }
+    setLoading(true);
+    rankFacilities(triageResult, session.location.lat, session.location.lng)
+      .then((f) => setList(f))
+      .finally(() => setLoading(false));
   }, [session.location, triageResult]);
 
-  if (triageResult === 'BLACK') {
+  if (!session.location) {
     return (
-      <ScreenShell title="Route" subtitle="Notify 108 / police. No hospital routing for BLACK tag.">
-        <ProgressRail current="Route" />
-        <NovaButton label="Build packet anyway" onPress={() => router.push('/emergency/packet')} />
-      </ScreenShell>
+      <EmergencyStepShell
+        step="Route"
+        title="Route"
+        subtitle="Capture your location first."
+        showBack
+        footer={<NovaButton label="Back to locate" onPress={() => router.replace('/emergency/locate')} large />}
+      >
+        {null}
+      </EmergencyStepShell>
     );
   }
 
+  if (!triageResult) {
+    return (
+      <EmergencyStepShell
+        step="Route"
+        title="Route"
+        subtitle="Complete triage first."
+        showBack
+        footer={<NovaButton label="Back to triage" onPress={() => router.replace('/emergency/triage')} large />}
+      >
+        {null}
+      </EmergencyStepShell>
+    );
+  }
+
+  if (triageResult === 'BLACK') {
+    return (
+      <EmergencyStepShell
+        step="Route"
+        title="Route"
+        subtitle="Notify 108 / police. No hospital routing for BLACK tag."
+        showBack
+        footer={
+          <NovaButton label="Build packet for 108" onPress={() => router.push('/emergency/packet')} large />
+        }
+      >
+        {null}
+      </EmergencyStepShell>
+    );
+  }
+
+  const goPacket = (f?: Facility) => {
+    if (f) {
+      selectFacility(f);
+      setSelected(f.id);
+    }
+    router.push('/emergency/packet');
+  };
+
+  const footer = (
+    <>
+      <NovaButton
+        label="Build Golden Hour Packet"
+        onPress={() => goPacket(list.find((x) => x.id === selected))}
+        large
+        disabled={!selected && list.length > 0}
+      />
+      <NovaButton label="Call 108" onPress={() => Linking.openURL('tel:108')} variant="ghost" />
+    </>
+  );
+
   return (
-    <ScreenShell title="Trauma-tier routing" subtitle="Not nearest pin — tier-matched from offline SQLite POIs.">
-      <ProgressRail current="Route" />
+    <EmergencyStepShell
+      step="Route"
+      title="Route"
+      subtitle="Nearest trauma-ready facilities within 100 km."
+      showBack
+      footer={footer}
+    >
       {loading ? (
-        <ActivityIndicator color={colors.amber} />
+        <ActivityIndicator color={tokens.primary} />
+      ) : list.length === 0 ? (
+        <HudCard accent="secondary">
+          <HudText variant="bodyMd" style={{ lineHeight: 22, marginBottom: 12, color: tokens.primary }}>
+            No facilities within 100 km in the offline pack. Call 108 — expand the regional POI
+            seed for your state to extend the routing range.
+          </HudText>
+          <NovaButton
+            label="Build packet anyway (108)"
+            onPress={() =>
+              goPacket({
+                id: '108',
+                name: 'National emergency (108)',
+                type: 'hospital',
+                traumaTier: 2,
+                phone: '108',
+                distanceKm: 0,
+                etaMinutes: 0,
+                verified: true,
+              })
+            }
+            variant="secondary"
+          />
+        </HudCard>
       ) : (
-        list.map((f) => (
-          <Pressable
-            key={f.id}
-            style={[styles.card, f.recommended && styles.recommended]}
-            onPress={() => {
-              selectFacility(f);
-              router.push('/emergency/packet');
-            }}
-          >
-            <Text style={styles.name}>
-              {f.name} {f.recommended ? '★' : ''}
-            </Text>
-            <Text style={styles.meta}>
-              {f.type} · tier {f.traumaTier} · {f.distanceKm.toFixed(1)} km · ~{f.etaMinutes} min
-            </Text>
-            <Text style={styles.phone}>Phone: {f.phone}</Text>
-            {!f.verified && <Text style={styles.warn}>Phone unverified — confirm before calling</Text>}
-          </Pressable>
-        ))
+        <>
+          <HudText variant="mono" style={{ color: tokens.secondary }}>{`${list.length} FACILITIES NEAR YOU`}</HudText>
+          {list.map((f) => (
+            <FacilityCard
+              key={f.id}
+              facility={f}
+              selected={selected === f.id}
+              onPress={() => {
+                selectFacility(f);
+                setSelected(f.id);
+              }}
+            />
+          ))}
+        </>
       )}
-    </ScreenShell>
+    </EmergencyStepShell>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  recommended: { borderColor: colors.amber },
-  name: { color: colors.text, fontWeight: '700', fontSize: 16 },
-  meta: { color: colors.muted, marginTop: 4 },
-  phone: { color: colors.cyan, marginTop: 6 },
-  warn: { color: colors.urgent, fontSize: 12, marginTop: 4 },
-});

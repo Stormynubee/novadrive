@@ -1,92 +1,80 @@
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { speakA11y } from '../../src/lib/a11yRuntime';
+import { AnswerChips } from '../../src/components/AnswerChips';
+import { CollapsibleChat } from '../../src/components/CollapsibleChat';
+import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { NovaButton } from '../../src/components/NovaButton';
-import { ProgressRail } from '../../src/components/ProgressRail';
-import { SeverityChip } from '../../src/components/SeverityChip';
-import { ScreenShell } from '../../src/components/ScreenShell';
+import { QuestionCard } from '../../src/components/QuestionCard';
+import { SeverityHero } from '../../src/components/SeverityHero';
 import { getQuestion, useApp } from '../../src/context/AppContext';
-import { colors } from '../../src/theme/colors';
 
 export default function TriageScreen() {
   const {
+    a11y,
     triageState,
     triageResult,
     answerTriage,
-    parseChat,
+    applyChatToTriage,
     chatPrefill,
     skipTriageStep,
   } = useApp();
   const [chat, setChat] = useState('');
+  const [applied, setApplied] = useState<string[]>([]);
   const q = getQuestion(triageState);
 
+  useEffect(() => {
+    if (q?.prompt) speakA11y(q.prompt, a11y);
+  }, [q?.prompt, a11y]);
+
   const onSendChat = () => {
-    const matched = parseChat(chat);
+    const trimmed = chat.trim();
+    if (!trimmed) return;
+    const matched = applyChatToTriage(trimmed);
     if (matched.length === 0) {
       Alert.alert('No keywords matched', 'Try: "not breathing", "can\'t walk", "unconscious".');
       return;
     }
-    Alert.alert('Understood', `We'll use this in triage: ${matched.join(', ')}`);
+    setApplied(matched);
+    setChat('');
   };
 
   if (triageResult) {
     return (
-      <ScreenShell title="Triage complete" subtitle="START FSM result — trauma-tier routing next.">
-        <ProgressRail current="Triage" />
-        <SeverityChip triage={triageResult} />
-        <NovaButton label="Route to facility" onPress={() => router.push('/emergency/route')} />
-      </ScreenShell>
+      <EmergencyStepShell
+        step="Triage"
+        title="Triage complete"
+        subtitle="Trauma tier set — route to the nearest matching facility."
+        showBack
+        footer={
+          <NovaButton label="Route to facility" onPress={() => router.push('/emergency/route')} large />
+        }
+      >
+        <SeverityHero triage={triageResult} />
+      </EmergencyStepShell>
     );
   }
 
+  const footer =
+    chatPrefill && Object.keys(chatPrefill).length > 0 ? (
+      <NovaButton label="Apply all parsed answers" onPress={skipTriageStep} variant="ghost" />
+    ) : undefined;
+
   return (
-    <ScreenShell title="START triage" subtitle="Deterministic medical spine. FSM makes all decisions.">
-      <ProgressRail current="Triage" />
-      <View style={styles.chatBox}>
-        <Text style={styles.chatLabel}>Describe the emergency (offline parser)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={'e.g. "not breathing, cannot walk"'}
-          placeholderTextColor={colors.muted}
-          value={chat}
-          onChangeText={setChat}
-          multiline
-        />
-        <NovaButton label="Send" onPress={onSendChat} variant="secondary" />
-      </View>
-      {chatPrefill && Object.keys(chatPrefill).length > 0 && (
-        <NovaButton label="Apply parsed answers & skip step" onPress={skipTriageStep} variant="ghost" />
-      )}
-      {q && (
-        <>
-          <Text style={styles.prompt}>{q.prompt}</Text>
-          {q.promptHi ? <Text style={styles.promptHi}>{q.promptHi}</Text> : null}
-          {q.options.map((opt) => (
-            <NovaButton
-              key={opt.id}
-              label={opt.label}
-              onPress={() => answerTriage(opt.value)}
-              variant="secondary"
-            />
-          ))}
-        </>
-      )}
-    </ScreenShell>
+    <EmergencyStepShell
+      step="Triage"
+      title="Triage"
+      subtitle="Answer a few questions — the app decides the trauma tier."
+      showBack
+      footer={footer}
+    >
+      {q ? (
+        <QuestionCard prompt={q.prompt} promptHi={q.promptHi}>
+          <AnswerChips options={q.options} onSelect={(v) => answerTriage(v)} />
+        </QuestionCard>
+      ) : null}
+      <CollapsibleChat value={chat} onChangeText={setChat} onSend={onSendChat} appliedTags={applied} />
+    </EmergencyStepShell>
   );
 }
-
-const styles = StyleSheet.create({
-  chatBox: { gap: 8 },
-  chatLabel: { color: colors.muted, fontSize: 13 },
-  input: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    padding: 12,
-    color: colors.text,
-    minHeight: 72,
-  },
-  prompt: { color: colors.text, fontSize: 18, fontWeight: '600' },
-  promptHi: { color: colors.muted, fontSize: 14 },
-});
