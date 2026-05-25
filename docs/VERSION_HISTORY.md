@@ -19,7 +19,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 | [`v0.1.0-p0`](https://github.com/Stormynubee/novadrive/releases/tag/v0.1.0-p0) | `7b5b25a` | 2026-05-22 | Expo P0 app, triage FSM, GHP/QR, monorepo CI |
 | [`v1.0.0-govtech-ui`](https://github.com/Stormynubee/novadrive/releases/tag/v1.0.0-govtech-ui) | `108e716` | 2026-05-25 | GovTech tabs, Plan Corridor, calibration, SOS HUD |
 | [`v1.1.0-stabilization`](https://github.com/Stormynubee/novadrive/releases/tag/v1.1.0-stabilization) | `bdd5a04` | 2026-05-25 | Journey lifecycle, voice/impact gating, 32 unit tests |
-| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `fb1b176` | 2026-05-25 | README/CHANGELOG, CI typecheck, docs (current **master**) |
+| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `11984ba` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags (current **master**) |
 
 ---
 
@@ -102,7 +102,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 ---
 
-### 7. `fb1b176` — 2026-05-25 · tag `v1.2.0-hackathon-publish` (HEAD)
+### 7. `fb1b176` — 2026-05-25
 
 **chore: remove .cursor from repo and gitignore IDE metadata**
 
@@ -110,6 +110,18 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 - Trimmed `docs/AGENTS.md` subagent path reference
 
 [View commit](https://github.com/Stormynubee/novadrive/commit/fb1b176)
+
+---
+
+### 8. `11984ba` — 2026-05-25 · tag `v1.2.0-hackathon-publish` (HEAD)
+
+**docs: add full VERSION_HISTORY, release tags, and fork link**
+
+- [docs/VERSION_HISTORY.md](VERSION_HISTORY.md) — every commit, compare links, checkout commands
+- Git tags `v0.1.0-p0` … `v1.2.0-hackathon-publish`
+- README links to version history and [Fork](https://github.com/Stormynubee/novadrive/fork)
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/11984ba)
 
 ---
 
@@ -146,4 +158,4 @@ git checkout v1.2.0-hackathon-publish
 
 ## Full diff: project start → now
 
-[Compare `1ee8d75`…`fb1b176`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...fb1b176)
+[Compare `1ee8d75`…`11984ba`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...11984ba)
