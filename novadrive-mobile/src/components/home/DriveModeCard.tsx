@@ -1,53 +1,135 @@
 import { useEffect } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
 import Animated, {
   Easing,
+  type AnimatedStyle,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
-  withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Circle, G, Path } from 'react-native-svg';
+import Svg, { Circle, G, Line, Path } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { HudText } from '../HudText';
 import { useApp } from '../../context/AppContext';
 import { tokens } from '../../theme/tokens';
 
-const ROAD_DASHES = [0, 1, 2, 3, 4, 5] as const;
-const ROAD_CYCLE_MS = 1400;
-const CHASSIS_CYCLE_MS = 280;
+/** Stitch HTML: w-40 h-24 scene inside ENTER DRIVE MODE button */
+const SCENE_W = 112;
+const SCENE_H = 88;
+const CAR_W = 64;
+const ROAD_BOTTOM = 14;
+const ROAD_HEIGHT = 4;
+const VIEWBOX_H = 64;
+const WHEEL_BOTTOM_Y = 48;
+const WHEEL_INSET_FROM_VIEW_BOTTOM = ((VIEWBOX_H - WHEEL_BOTTOM_Y) / VIEWBOX_H) * CAR_W;
+const CAR_BOTTOM = ROAD_BOTTOM + ROAD_HEIGHT - WHEEL_INSET_FROM_VIEW_BOTTOM;
+const ROAD_TILE = 16;
+const ROAD_TILES = 14;
+const ROAD_SHIFT = 32;
+const ROAD_CYCLE_MS = 600;
+const WHEEL_SPIN_MS = 1200;
+const WHEEL_R = 6;
+const STROKE = tokens.onPrimary;
+
+const WHEEL_CENTERS = [
+  { cx: 18, cy: 42 },
+  { cx: 46, cy: 42 },
+] as const;
+
+function WheelGraphic() {
+  const size = WHEEL_R * 2;
+  const c = WHEEL_R;
+  return (
+    <Svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <G
+        stroke={STROKE}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2.5}
+      >
+        <Circle cx={c} cy={c} r={6} />
+        <Circle cx={c} cy={c} r={2} />
+        <Line x1={c} x2={c} y1={c - 6} y2={c + 6} />
+        <Line x1={c - 6} x2={c + 6} y1={c} y2={c} />
+      </G>
+    </Svg>
+  );
+}
+
+function DriveModeCar({ wheelStyle }: { wheelStyle: AnimatedStyle<ViewStyle> }) {
+  return (
+    <View style={styles.carCanvas}>
+      <Svg width={CAR_W} height={CAR_W} viewBox="0 0 64 64">
+        <G
+          stroke={STROKE}
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2.5}
+        >
+          <Path d="M 14 42 L 8 42 C 5 42 4 40 4 37 L 4 32 C 4 30 5 28 8 26 L 16 16 C 18 14 20 14 24 14 L 40 14 C 44 14 46 16 48 20 L 54 28 C 58 29 60 31 60 35 L 60 38 C 60 40 58 42 56 42 L 50 42" />
+          <Path d="M 22 42 L 42 42" />
+          <Path d="M 28 14 L 28 28 L 8 28" />
+          <Path d="M 28 14 L 46 14 L 54 28 L 28 28" />
+        </G>
+      </Svg>
+      {WHEEL_CENTERS.map((w) => (
+        <View
+          key={`${w.cx}-${w.cy}`}
+          collapsable={false}
+          style={[
+            styles.wheelClip,
+            {
+              left: w.cx - WHEEL_R,
+              top: w.cy - WHEEL_R,
+              width: WHEEL_R * 2,
+              height: WHEEL_R * 2,
+              borderRadius: WHEEL_R,
+            },
+          ]}
+        >
+          <Animated.View style={[styles.wheelSpinner, wheelStyle]}>
+            <WheelGraphic />
+          </Animated.View>
+        </View>
+      ))}
+    </View>
+  );
+}
 
 /**
- * Stitch home dashboard — horizontal ENTER DRIVE MODE card; car rides centered on road dashes.
+ * Stitch home dashboard — ENTER DRIVE MODE; scrolling road + spinning wheels (HTML reference).
  */
 export function DriveModeCard({ onPress }: { onPress: () => void }) {
   const { a11y } = useApp();
   const reduceMotion = a11y.reduceMotion;
 
-  const chassisY = useSharedValue(0);
   const roadX = useSharedValue(0);
+  const wheelSpin = useSharedValue(0);
+
+  const wheelStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${wheelSpin.value}deg` }],
+  }));
 
   useEffect(() => {
-    if (reduceMotion) return;
-    chassisY.value = withRepeat(
-      withSequence(
-        withTiming(-1, { duration: CHASSIS_CYCLE_MS / 2, easing: Easing.inOut(Easing.ease) }),
-        withTiming(1, { duration: CHASSIS_CYCLE_MS / 2, easing: Easing.inOut(Easing.ease) })
-      ),
-      -1,
-      true
-    );
+    if (reduceMotion) {
+      roadX.value = 0;
+      wheelSpin.value = 0;
+      return;
+    }
     roadX.value = withRepeat(
-      withTiming(-48, { duration: ROAD_CYCLE_MS, easing: Easing.linear }),
+      withTiming(-ROAD_SHIFT, { duration: ROAD_CYCLE_MS, easing: Easing.linear }),
       -1,
       false
     );
-  }, [reduceMotion, chassisY, roadX]);
-
-  const chassisStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: chassisY.value }],
-  }));
+    wheelSpin.value = withRepeat(
+      withTiming(360, { duration: WHEEL_SPIN_MS, easing: Easing.linear }),
+      -1,
+      false
+    );
+  }, [reduceMotion, roadX, wheelSpin]);
 
   const roadStyle = useAnimatedStyle(() => ({
     transform: [{ translateX: roadX.value }],
@@ -58,6 +140,8 @@ export function DriveModeCard({ onPress }: { onPress: () => void }) {
     onPress();
   };
 
+  const roadTiles = Array.from({ length: ROAD_TILES }, (_, i) => i);
+
   return (
     <Pressable
       onPress={handlePress}
@@ -67,27 +151,21 @@ export function DriveModeCard({ onPress }: { onPress: () => void }) {
     >
       <View style={styles.gradientFill} />
       <View style={styles.row}>
-        <View style={styles.carLane}>
-          <Animated.View style={[styles.carBody, chassisStyle]}>
-            <Svg width={56} height={40} viewBox="0 0 80 80">
-              <G stroke={tokens.onPrimary} fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth={3}>
-                <Path d="M 18 42 L 26 28 L 54 22 L 68 32 L 74 46 L 64 56 L 16 50 Z" />
-                <Circle cx={28} cy={52} r={5} fill={tokens.onPrimary} stroke="none" />
-                <Circle cx={60} cy={54} r={5} fill={tokens.onPrimary} stroke="none" />
-              </G>
-            </Svg>
-          </Animated.View>
+        <View style={styles.scene}>
           <View style={styles.roadClip}>
             <Animated.View style={[styles.roadStrip, roadStyle]}>
               <View style={styles.roadRow}>
-                {ROAD_DASHES.map((i) => (
-                  <View key={i} style={styles.roadDash} />
-                ))}
-                {ROAD_DASHES.map((i) => (
-                  <View key={`b-${i}`} style={styles.roadDash} />
+                {roadTiles.map((i) => (
+                  <View
+                    key={i}
+                    style={[styles.roadTile, i % 2 === 0 ? styles.roadTileOn : styles.roadTileOff]}
+                  />
                 ))}
               </View>
             </Animated.View>
+          </View>
+          <View style={styles.carWrap}>
+            <DriveModeCar wheelStyle={wheelStyle} />
           </View>
         </View>
         <View style={styles.labels}>
@@ -126,40 +204,72 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
-  carLane: {
-    width: 88,
+  scene: {
+    width: SCENE_W,
+    height: SCENE_H,
     flexShrink: 0,
+    position: 'relative',
+    overflow: 'hidden',
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    height: 72,
-  },
-  carBody: {
-    marginBottom: 6,
-    zIndex: 2,
   },
   roadClip: {
-    width: 72,
-    height: 4,
+    position: 'absolute',
+    left: 0,
+    bottom: ROAD_BOTTOM,
+    width: SCENE_W,
+    height: ROAD_HEIGHT,
     overflow: 'hidden',
-    alignSelf: 'center',
+    zIndex: 1,
   },
   roadStrip: {
-    width: 144,
+    width: ROAD_TILE * ROAD_TILES,
+    height: ROAD_HEIGHT,
   },
-  roadRow: { flexDirection: 'row', gap: 10, alignItems: 'center' },
-  roadDash: {
-    width: 22,
-    height: 2,
-    borderRadius: 1,
-    backgroundColor: 'rgba(255,255,255,0.4)',
+  roadRow: {
+    flexDirection: 'row',
+    height: ROAD_HEIGHT,
+  },
+  roadTile: {
+    width: ROAD_TILE,
+    height: ROAD_HEIGHT,
+  },
+  roadTileOn: {
+    backgroundColor: 'rgba(255,255,255,0.6)',
+  },
+  roadTileOff: {
+    backgroundColor: 'transparent',
+  },
+  carWrap: {
+    position: 'absolute',
+    left: (SCENE_W - CAR_W) / 2,
+    bottom: CAR_BOTTOM,
+    width: CAR_W,
+    zIndex: 2,
+  },
+  carCanvas: {
+    width: CAR_W,
+    height: CAR_W,
+    position: 'relative',
+  },
+  wheelClip: {
+    position: 'absolute',
+    overflow: 'hidden',
+    backgroundColor: 'transparent',
+  },
+  wheelSpinner: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   labels: {
     flex: 1,
     minWidth: 0,
-    paddingLeft: 16,
+    paddingLeft: 12,
     justifyContent: 'center',
   },
   enter: {
