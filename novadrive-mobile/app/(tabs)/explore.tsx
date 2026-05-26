@@ -6,14 +6,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { SarthiGreetingBridge } from '../../src/components/sarthi/SarthiGreetingBridge';
 import { DashboardHeader } from '../../src/components/DashboardHeader';
-import { DriveModeIgnition } from '../../src/components/DriveModeIgnition';
+import { HomePrimaryStack } from '../../src/components/home/HomePrimaryStack';
 import { HudText } from '../../src/components/HudText';
-import { NaariShaktiHomeCard } from '../../src/components/naari/NaariShaktiHomeCard';
 import { NaariShaktiProtocolModal } from '../../src/components/naari/NaariShaktiProtocolModal';
 import { useApp } from '../../src/context/AppContext';
 import { useNaariShakti } from '../../src/context/NaariShaktiContext';
 import {
-  shouldShowNaariHomeCard,
+  isNaariShaktiEligible,
   shouldShowProtocolModal,
 } from '../../src/lib/naariShakti/eligibility';
 import { tokens } from '../../src/theme/tokens';
@@ -21,14 +20,14 @@ import { tokens } from '../../src/theme/tokens';
 const APP_VERSION = Constants.expoConfig?.version ?? '2.1.4';
 
 /**
- * Home tab — Stitch `nova_drive_driving_dashboard_animated_icon`.
- * System ready banner, animated ENTER DRIVE MODE, Quick SOS + Bystander QR.
+ * Home tab — Stitch dashboard: stacked Drive Mode + Naari Shakti (female only),
+ * Bystander QR, Quick SOS + Map View.
  */
 export default function HomeTabScreen() {
   const { profile, beginEmergencyFlow } = useApp();
   const { enablePortal, dismissProtocol } = useNaariShakti();
   const [protocolVisible, setProtocolVisible] = useState(false);
-  const showNaari = shouldShowNaariHomeCard(profile);
+  const showNaari = isNaariShaktiEligible(profile);
 
   const openNaari = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
@@ -83,7 +82,23 @@ export default function HomeTabScreen() {
           </HudText>
         </View>
 
-        <DriveModeIgnition onPress={enterDrive} />
+        <HomePrimaryStack
+          onEnterDrive={enterDrive}
+          onNaariPress={showNaari ? openNaari : undefined}
+          showNaari={showNaari}
+        />
+
+        <Pressable
+          style={({ pressed }) => [styles.fullTile, pressed && styles.pressed]}
+          onPress={() => router.push('/scan')}
+        >
+          <View style={styles.qrIconWrap}>
+            <MaterialIcons name="qr-code-scanner" size={28} color={tokens.primary} />
+          </View>
+          <HudText variant="bodyMd" style={styles.qrLabel}>
+            Bystander QR
+          </HudText>
+        </Pressable>
 
         <View style={styles.secondaryGrid}>
           <Pressable
@@ -104,22 +119,16 @@ export default function HomeTabScreen() {
 
           <Pressable
             style={({ pressed }) => [styles.secondaryTile, pressed && styles.pressed]}
-            onPress={() => router.push('/scan')}
+            onPress={() => router.replace('/(tabs)/drive' as Href)}
           >
-            <View style={styles.qrIconWrap}>
-              <MaterialIcons name="qr-code-scanner" size={28} color={tokens.primary} />
+            <View style={styles.mapIconWrap}>
+              <MaterialIcons name="map" size={28} color={tokens.primary} />
             </View>
-            <HudText variant="bodyMd" style={styles.qrLabel}>
-              Bystander QR
+            <HudText variant="bodyMd" style={styles.mapLabel}>
+              Map View
             </HudText>
           </Pressable>
         </View>
-
-        {showNaari ? (
-          <View style={styles.naariWrap}>
-            <NaariShaktiHomeCard onPress={openNaari} />
-          </View>
-        ) : null}
 
         <Pressable
           style={({ pressed }) => [styles.sarthiTile, pressed && styles.pressed]}
@@ -140,11 +149,13 @@ export default function HomeTabScreen() {
         </Pressable>
       </ScrollView>
 
-      <NaariShaktiProtocolModal
-        visible={protocolVisible}
-        onEnable={onEnablePortal}
-        onDismiss={onDismissProtocol}
-      />
+      {showNaari ? (
+        <NaariShaktiProtocolModal
+          visible={protocolVisible}
+          onEnable={onEnablePortal}
+          onDismiss={onDismissProtocol}
+        />
+      ) : null}
     </View>
   );
 }
@@ -157,7 +168,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
     paddingTop: 16,
     alignItems: 'center',
-    gap: 24,
+    gap: 16,
   },
   watermark: {
     ...StyleSheet.absoluteFillObject,
@@ -182,6 +193,19 @@ const styles = StyleSheet.create({
   statusTitle: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   statusSub: { color: tokens.onSurfaceVariant, marginTop: 2 },
   version: { fontSize: 11, color: tokens.onSurfaceVariant },
+  fullTile: {
+    width: '100%',
+    backgroundColor: tokens.surface,
+    borderRadius: tokens.radius.card,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    paddingVertical: 18,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    gap: 10,
+    zIndex: 1,
+    ...tokens.elevation.card,
+  },
   secondaryGrid: {
     flexDirection: 'row',
     gap: 12,
@@ -218,8 +242,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  mapIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: tokens.surfaceContainerHigh,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   sosLabel: { color: tokens.error, fontFamily: 'PublicSans_700Bold' },
   qrLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
+  mapLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   sarthiTile: {
     width: '100%',
     flexDirection: 'row',
@@ -244,5 +277,4 @@ const styles = StyleSheet.create({
   },
   sarthiLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   sarthiSub: { color: tokens.onSurfaceVariant, marginTop: 2 },
-  naariWrap: { width: '100%', zIndex: 1 },
 });

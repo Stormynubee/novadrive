@@ -19,13 +19,13 @@ export function NaariCitizenStatus({ displayName, verified }: Props) {
           CITIZEN STATUS
         </HudText>
         <HudText variant="bodyMd" style={styles.name}>
-          Verified User: {displayName}
+          Unverified User: {displayName}
         </HudText>
         {verified ? (
           <View style={styles.verifiedRow}>
             <MaterialIcons name="verified" size={16} color={tokens.onTertiaryContainer} />
             <HudText variant="bodySm" style={styles.verified}>
-              Identity Confirmed
+              Profile on file
             </HudText>
           </View>
         ) : null}
@@ -43,11 +43,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
     backgroundColor: tokens.surfaceContainerLowest,
-    flex: 1,
+    width: '100%',
   },
   avatar: {
-    width: 80,
-    height: 80,
+    width: 72,
+    height: 72,
+    flexShrink: 0,
     borderRadius: tokens.radius.input,
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
@@ -55,9 +56,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: { flex: 1, justifyContent: 'center' },
+  text: { flex: 1, minWidth: 0, justifyContent: 'center' },
   label: { color: tokens.primary, fontFamily: 'PublicSans_700Bold', marginBottom: 4 },
-  name: { fontFamily: 'PublicSans_700Bold', color: tokens.onSurface },
-  verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6 },
-  verified: { color: tokens.onTertiaryContainer, fontFamily: 'PublicSans_700Bold' },
+  name: { fontFamily: 'PublicSans_700Bold', color: tokens.onSurface, flexShrink: 1 },
+  verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6, flexWrap: 'wrap' },
+  verified: { color: tokens.onTertiaryContainer, fontFamily: 'PublicSans_700Bold', flexShrink: 1 },
 });

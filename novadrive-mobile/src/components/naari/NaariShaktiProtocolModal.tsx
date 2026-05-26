@@ -29,7 +29,7 @@ export function NaariShaktiProtocolModal({ visible, onEnable, onDismiss }: Props
           </View>
           <View style={styles.body}>
             <HudText variant="bodyMd" style={styles.message}>
-              Verified female user detected. Would you like to enable the specialized emergency
+              Unverified female user detected. Would you like to enable the specialized emergency
               portal for enhanced protection?
             </HudText>
             <Pressable style={styles.enableBtn} onPress={onEnable}>

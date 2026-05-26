@@ -138,7 +138,7 @@ export default function NaariShaktiScreen() {
 
           <NaariQuickMessage value={quickMsg} onChange={setQuickMsg} onSend={sendQuickMessage} />
 
-          <View style={styles.bentoRow}>
+          <View style={styles.bentoCol}>
             <NaariCitizenStatus
               displayName={displayName}
               verified={profile.gender === 'female'}
@@ -171,5 +171,5 @@ const styles = StyleSheet.create({
     borderTopColor: tokens.secondaryContainer,
     marginBottom: 8,
   },
-  bentoRow: { flexDirection: 'row', gap: 12, marginTop: 16, flexWrap: 'wrap' },
+  bentoCol: { flexDirection: 'column', gap: 12, marginTop: 16, width: '100%' },
 });

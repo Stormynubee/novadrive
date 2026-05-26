@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -15,7 +16,7 @@ import { useApp } from './AppContext';
 import { speakA11y } from '../lib/a11yRuntime';
 import { activateNaariDistress } from '../lib/naariShakti/engine';
 import { EMERGENCY_OPTIONS, startEmergencyRecording, stopEmergencyRecording } from '../lib/naariShakti/emergencyRecorder';
-import { openSmsUrl } from '../lib/naariShakti/linkingActions';
+import { openSmsUrl, shareLiveLocation } from '../lib/naariShakti/linkingActions';
 import type { NaariDistressCoords } from '../lib/naariShakti/engine';
 
 type NaariShaktiContextValue = {
@@ -82,11 +83,25 @@ export function NaariShaktiProvider({ children }: { children: ReactNode }) {
       );
       return null;
     }
+    try {
+      const last = await Location.getLastKnownPositionAsync({ maxAge: 120_000 });
+      if (last?.coords) {
+        return { lat: last.coords.latitude, lng: last.coords.longitude };
+      }
+    } catch {
+      /* fall through to fresh fix */
+    }
     const pos = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Balanced,
     });
     return { lat: pos.coords.latitude, lng: pos.coords.longitude };
   }, []);
+
+  useEffect(() => {
+    void getCurrentCoords().then((coords) => {
+      if (coords) setLastCoords(coords);
+    });
+  }, [getCurrentCoords]);
 
   const cancelDistress = useCallback(async () => {
     const uri = await stopEmergencyRecording(recorder);
@@ -97,45 +112,62 @@ export function NaariShaktiProvider({ children }: { children: ReactNode }) {
   }, [recorder]);
 
   const activateDistress = useCallback(async () => {
-    if (activatingRef.current || distressActive) return;
+    const cachedCoords = lastCoords;
+
+    if (activatingRef.current || distressActive) {
+      return;
+    }
     if (!profile.naariShakti?.safetyModeActive) {
       Alert.alert('Safety mode off', 'Turn on Safety Mode to use emergency help.');
       return;
     }
+
     activatingRef.current = true;
+    setDistressActive(true);
+
+    const runDistress = (coords: NaariDistressCoords) => {
+      setLastCoords(coords);
+      activateNaariDistress(
+        { profile, coords },
+        {
+          speak: (message) => {
+            Speech.speak(message, { volume: 1, rate: 0.95 });
+            if (a11y.ttsEnabled) {
+              speakA11y(message, a11y);
+            }
+          },
+          openSms: (phone, body) => {
+            openSmsUrl(phone, body).catch(() => undefined);
+          },
+          startRecording: () => {
+            void startEmergencyRecording(recorder).then((ok) => {
+              if (!ok) {
+                Alert.alert(
+                  'Microphone',
+                  'Could not start emergency recording. SMS and location alerts will still be sent.'
+                );
+              }
+            });
+          },
+        }
+      );
+      void shareLiveLocation(profile, coords);
+      activatingRef.current = false;
+    };
+
+    if (cachedCoords) {
+      runDistress(cachedCoords);
+      return;
+    }
+
     const coords = await getCurrentCoords();
     if (!coords) {
+      setDistressActive(false);
       activatingRef.current = false;
       return;
     }
-    setLastCoords(coords);
-    setDistressActive(true);
-
-    activateNaariDistress(
-      { profile, coords },
-      {
-        speak: (message) => {
-          Speech.speak(message, { volume: 1, rate: 0.95 });
-          if (a11y.ttsEnabled) {
-            speakA11y(message, a11y);
-          }
-        },
-        openSms: (phone, body) => {
-          openSmsUrl(phone, body).catch(() => undefined);
-        },
-        startRecording: async () => {
-          const ok = await startEmergencyRecording(recorder);
-          if (!ok) {
-            Alert.alert(
-              'Microphone',
-              'Could not start emergency recording. SMS and location alerts will still be sent.'
-            );
-          }
-        },
-      }
-    );
-    activatingRef.current = false;
-  }, [a11y, distressActive, getCurrentCoords, profile, recorder]);
+    runDistress(coords);
+  }, [a11y, distressActive, getCurrentCoords, lastCoords, profile, recorder]);
 
   const value = useMemo(
     () => ({

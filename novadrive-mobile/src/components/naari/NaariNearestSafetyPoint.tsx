@@ -15,21 +15,17 @@ export function NaariNearestSafetyPoint({ name, distanceKm, etaMinutes, onNaviga
       <HudText variant="mono" style={styles.label}>
         NEAREST SAFETY POINT
       </HudText>
-      <View style={styles.row}>
-        <View style={styles.text}>
-          <HudText variant="bodyMd" style={styles.name}>
-            {name}
-          </HudText>
-          <HudText variant="bodySm" style={styles.meta}>
-            {distanceKm} km • {etaMinutes} mins response time
-          </HudText>
-        </View>
-        <Pressable style={styles.navBtn} onPress={onNavigate}>
-          <HudText variant="bodySm" style={styles.navLabel}>
-            NAVIGATE
-          </HudText>
-        </Pressable>
-      </View>
+      <HudText variant="bodyMd" style={styles.name}>
+        {name}
+      </HudText>
+      <HudText variant="bodySm" style={styles.meta}>
+        {distanceKm} km • {etaMinutes} mins response time
+      </HudText>
+      <Pressable style={styles.navBtn} onPress={onNavigate}>
+        <HudText variant="bodySm" style={styles.navLabel}>
+          NAVIGATE
+        </HudText>
+      </Pressable>
     </View>
   );
 }
@@ -41,18 +37,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
     backgroundColor: tokens.surfaceContainerLowest,
-    flex: 1,
+    width: '100%',
+    gap: 8,
   },
-  label: { color: tokens.primary, fontFamily: 'PublicSans_700Bold', marginBottom: 8 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  text: { flex: 1 },
+  label: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   name: { fontFamily: 'PublicSans_700Bold', color: tokens.onSurface },
-  meta: { color: tokens.onSurfaceVariant, marginTop: 4 },
+  meta: { color: tokens.onSurfaceVariant },
   navBtn: {
+    alignSelf: 'flex-start',
     backgroundColor: tokens.primary,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: tokens.radius.input,
+    marginTop: 4,
   },
   navLabel: { color: tokens.onPrimary, fontFamily: 'PublicSans_700Bold' },
 });

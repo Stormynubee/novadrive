@@ -5,7 +5,7 @@ import { SarthiMiniWindow } from './SarthiMiniWindow';
 
 function shouldShowSarthi(pathname: string): boolean {
   if (!pathname) return false;
-  if (/journey|emergency|scan/.test(pathname)) return false;
+  if (/journey|emergency|scan|naari-shakti/.test(pathname)) return false;
   return (
     pathname.startsWith('/(tabs)') ||
     /^\/(explore|drive|history|profile)(\/|$)/.test(pathname)
@@ -19,7 +19,11 @@ export function SarthiOverlayBridge() {
 
   return (
     <>
-      <SarthiFab visible={visible && !open} onPress={() => setOpen(true)} />
+      <SarthiFab
+        visible={visible && !open}
+        onPress={() => setOpen(true)}
+        liftAboveGrid={Boolean(pathname?.includes('explore'))}
+      />
       <SarthiMiniWindow open={visible && open} onClose={() => setOpen(false)} />
     </>
   );

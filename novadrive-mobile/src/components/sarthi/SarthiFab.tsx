@@ -5,9 +5,19 @@ import { tokens } from '../../theme/tokens';
 
 const TAB_BAR_OFFSET = 72;
 
-export function SarthiFab({ onPress, visible }: { onPress: () => void; visible: boolean }) {
+export function SarthiFab({
+  onPress,
+  visible,
+  liftAboveGrid = false,
+}: {
+  onPress: () => void;
+  visible: boolean;
+  liftAboveGrid?: boolean;
+}) {
   const insets = useSafeAreaInsets();
   if (!visible) return null;
+
+  const extraLift = liftAboveGrid ? 88 : 0;
 
   return (
     <Pressable
@@ -15,7 +25,7 @@ export function SarthiFab({ onPress, visible }: { onPress: () => void; visible: 
       style={({ pressed }) => [
         styles.fab,
         {
-          bottom: insets.bottom + TAB_BAR_OFFSET,
+          bottom: insets.bottom + TAB_BAR_OFFSET + extraLift,
           right: tokens.spacing.sideMargin,
         },
         pressed && styles.pressed,

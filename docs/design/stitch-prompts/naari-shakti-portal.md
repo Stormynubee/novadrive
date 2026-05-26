@@ -28,8 +28,8 @@ Government-aligned women's emergency safety portal inside Nova Drive — institu
 
 **Related screens (same design system):**
 
-- **Home access card:** Orange-bordered row — female icon in saffron circle, "NAARI SHAKTI" / "Emergency Safety Portal", chevron
-- **Protocol modal:** Blurred home behind — navy header with shield, "Naari Shakti Protocol", white body, full-width saffron "ENABLE PORTAL", text "Not Now"
+- **Home primary stack (female users only):** Below System Ready — navy horizontal "ENTER DRIVE MODE" card (animated car + road dashes) stacked above saffron "NAARI SHAKTI / SAFETY PORTAL" card with pulse-rotate female icon in white/20 circle. Male users see only the drive card.
+- **Protocol modal (female only, first tap):** Blurred home — "Unverified female user detected", ENABLE PORTAL / Not Now. Never shown to male users.
 
 **Context:** Match existing Nova Drive dashboard (System Ready banner, ENTER DRIVE MODE, Quick SOS, bottom tabs Home/Trip/Community/Profile). No bottom tab bar on the portal screen itself.
 
