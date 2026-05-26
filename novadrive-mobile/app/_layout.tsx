@@ -14,6 +14,7 @@ import { useFonts } from 'expo-font';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View } from 'react-native';
 import { AppProvider } from '../src/context/AppContext';
+import { NaariShaktiProvider } from '../src/context/NaariShaktiContext';
 import { SarthiProvider } from '../src/context/SarthiContext';
 import { SafetyMonitorBridge } from '../src/components/SafetyMonitorBridge';
 import { tokens } from '../src/theme/tokens';
@@ -46,6 +47,7 @@ export default function RootLayout() {
 
   return (
     <AppProvider>
+      <NaariShaktiProvider>
       <SarthiProvider>
       <SafetyMonitorBridge />
       <StatusBar style="light" />
@@ -83,8 +85,10 @@ export default function RootLayout() {
         />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="emergency-contacts" options={{ headerShown: false }} />
+        <Stack.Screen name="naari-shakti" options={{ headerShown: false }} />
       </Stack>
       </SarthiProvider>
+      </NaariShaktiProvider>
     </AppProvider>
   );
 }

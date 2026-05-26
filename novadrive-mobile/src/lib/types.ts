@@ -102,6 +102,15 @@ export interface AccessibilityPrefs {
 
 export type SosSensitivity = 'low' | 'medium' | 'high';
 
+export type GenderIdentity = 'female' | 'male' | 'other' | 'prefer_not_to_say';
+
+export interface NaariShaktiPrefs {
+  enabled: boolean;
+  safetyModeActive: boolean;
+  /** ISO timestamp of last protocol modal dismiss without enable */
+  protocolDismissedAt?: string;
+}
+
 export interface AppSettings {
   language: Lang;
   regionalProtocols: boolean;
@@ -121,6 +130,8 @@ export interface UserProfile {
   email?: string;
   citizenId?: string;
   avatarUri?: string;
+  gender?: GenderIdentity;
+  naariShakti?: NaariShaktiPrefs;
   medical?: MedicalProfile;
   a11y?: AccessibilityPrefs;
   settings?: AppSettings;

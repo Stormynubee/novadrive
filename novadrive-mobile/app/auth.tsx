@@ -10,7 +10,9 @@ import { HudText } from '../src/components/HudText';
 import { NovaButton } from '../src/components/NovaButton';
 import { NovaInput } from '../src/components/NovaInput';
 import { NovaLogo } from '../src/components/NovaLogo';
+import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
+import type { GenderIdentity } from '../src/lib/types';
 import { tokens } from '../src/theme/tokens';
 
 function isValidEmail(email: string) {
@@ -25,10 +27,16 @@ function isValidEmail(email: string) {
 export default function AuthScreen() {
   const { updateProfile } = useApp();
   const [email, setEmail] = useState('');
+  const [gender, setGender] = useState<GenderIdentity | undefined>();
 
   const continueGuest = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
-    await updateProfile({ mode: 'guest', name: 'Guest', email: undefined });
+    await updateProfile({
+      mode: 'guest',
+      name: 'Guest',
+      email: undefined,
+      ...(gender ? { gender } : {}),
+    });
     router.push('/medical');
   };
 
@@ -42,7 +50,12 @@ export default function AuthScreen() {
       return;
     }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
-    await updateProfile({ mode: 'auth', name: trimmed.split('@')[0], email: trimmed });
+    await updateProfile({
+      mode: 'auth',
+      name: trimmed.split('@')[0],
+      email: trimmed,
+      ...(gender ? { gender } : {}),
+    });
     router.push('/medical');
   };
 
@@ -88,6 +101,10 @@ export default function AuthScreen() {
           <HudText variant="bodySm" style={styles.hint}>
             We use this only to label your journey logs on this device.
           </HudText>
+          <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
+            Gender (optional)
+          </HudText>
+          <GenderIdentityPicker value={gender} onChange={setGender} />
           <NovaButton
             label="Continue with email"
             onPress={continueEmail}

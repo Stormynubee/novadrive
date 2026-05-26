@@ -1,5 +1,6 @@
 import { type Href, router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
@@ -7,7 +8,14 @@ import { SarthiGreetingBridge } from '../../src/components/sarthi/SarthiGreeting
 import { DashboardHeader } from '../../src/components/DashboardHeader';
 import { DriveModeIgnition } from '../../src/components/DriveModeIgnition';
 import { HudText } from '../../src/components/HudText';
+import { NaariShaktiHomeCard } from '../../src/components/naari/NaariShaktiHomeCard';
+import { NaariShaktiProtocolModal } from '../../src/components/naari/NaariShaktiProtocolModal';
 import { useApp } from '../../src/context/AppContext';
+import { useNaariShakti } from '../../src/context/NaariShaktiContext';
+import {
+  shouldShowNaariHomeCard,
+  shouldShowProtocolModal,
+} from '../../src/lib/naariShakti/eligibility';
 import { tokens } from '../../src/theme/tokens';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '2.1.4';
@@ -17,7 +25,30 @@ const APP_VERSION = Constants.expoConfig?.version ?? '2.1.4';
  * System ready banner, animated ENTER DRIVE MODE, Quick SOS + Bystander QR.
  */
 export default function HomeTabScreen() {
-  const { beginEmergencyFlow } = useApp();
+  const { profile, beginEmergencyFlow } = useApp();
+  const { enablePortal, dismissProtocol } = useNaariShakti();
+  const [protocolVisible, setProtocolVisible] = useState(false);
+  const showNaari = shouldShowNaariHomeCard(profile);
+
+  const openNaari = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+    if (shouldShowProtocolModal(profile)) {
+      setProtocolVisible(true);
+      return;
+    }
+    router.push('/naari-shakti' as Href);
+  };
+
+  const onEnablePortal = async () => {
+    await enablePortal();
+    setProtocolVisible(false);
+    router.push('/naari-shakti' as Href);
+  };
+
+  const onDismissProtocol = async () => {
+    await dismissProtocol();
+    setProtocolVisible(false);
+  };
 
   const enterDrive = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
@@ -84,6 +115,12 @@ export default function HomeTabScreen() {
           </Pressable>
         </View>
 
+        {showNaari ? (
+          <View style={styles.naariWrap}>
+            <NaariShaktiHomeCard onPress={openNaari} />
+          </View>
+        ) : null}
+
         <Pressable
           style={({ pressed }) => [styles.sarthiTile, pressed && styles.pressed]}
           onPress={() => router.push('/sarthi' as Href)}
@@ -102,6 +139,12 @@ export default function HomeTabScreen() {
           <MaterialIcons name="chevron-right" size={24} color={tokens.onSurfaceVariant} />
         </Pressable>
       </ScrollView>
+
+      <NaariShaktiProtocolModal
+        visible={protocolVisible}
+        onEnable={onEnablePortal}
+        onDismiss={onDismissProtocol}
+      />
     </View>
   );
 }
@@ -201,4 +244,5 @@ const styles = StyleSheet.create({
   },
   sarthiLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   sarthiSub: { color: tokens.onSurfaceVariant, marginTop: 2 },
+  naariWrap: { width: '100%', zIndex: 1 },
 });

@@ -199,6 +199,25 @@ export default function ProfileTabScreen() {
 
         <SectionCard title="IDENTITY & SAFETY">
           <ProfileMenuRow
+            icon="person"
+            label="Gender"
+            onPress={() => router.push('/medical?fromProfile=1' as Href)}
+            chip={
+              <HudText variant="mono" style={{ color: tokens.onSurfaceVariant, fontSize: 11 }}>
+                {profile.gender === 'female'
+                  ? 'Female'
+                  : profile.gender === 'male'
+                    ? 'Male'
+                    : profile.gender === 'other'
+                      ? 'Other'
+                      : profile.gender === 'prefer_not_to_say'
+                        ? 'Private'
+                        : 'Not set'}
+              </HudText>
+            }
+          />
+          <View style={rowStyles.divider} />
+          <ProfileMenuRow
             icon="badge"
             label="Aadhaar Verification"
             onPress={() =>

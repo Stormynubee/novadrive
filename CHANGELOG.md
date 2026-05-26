@@ -4,6 +4,24 @@ All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 
+## [2026-05-26] — Naari Shakti women's safety portal
+
+### Added
+
+- **Gender on profile:** `GenderIdentity` on `UserProfile`; required on medical onboarding, optional on auth.
+- **Naari Shakti portal:** Home card (female only), protocol enable modal, full dashboard at `app/naari-shakti.tsx`.
+- **Distress engine:** 2s hold-to-activate — GPS, TTS help cue, `expo-audio` emergency recording, SMS to nearest police station, ICE community alert, distress HUD.
+- **Quick actions:** SMS nearest station, share live location, women's helpline **181**, safety mode toggle, quick help presets.
+- **Tests (6 new suites):** `src/lib/naariShakti/*.test.ts` (57 total mobile unit tests).
+- **Docs:** [design spec](docs/superpowers/specs/2026-05-23-naari-shakti-design.md), [plan](docs/superpowers/plans/2026-05-23-naari-shakti.md), [Stitch prompt](docs/design/stitch-prompts/naari-shakti-portal.md).
+
+### Changed
+
+- `app.json` microphone usage string mentions Naari Shakti emergency recording.
+- Profile shows gender with link to medical profile editor.
+
+---
+
 ## [2026-05-23] — Stabilization & GovTech UI
 
 ### Added

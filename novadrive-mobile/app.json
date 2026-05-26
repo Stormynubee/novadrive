@@ -18,7 +18,7 @@
       "infoPlist": {
         "NSLocationWhenInUseUsageDescription": "NovaDrive uses your location during an active journey to route emergencies and build the Golden Hour Packet.",
         "NSCameraUsageDescription": "NovaDrive uses the camera to scan bystander relay QR codes.",
-        "NSMicrophoneUsageDescription": "NovaDrive listens for distress sounds during an active journey to offer help — audio is not stored or sent automatically.",
+        "NSMicrophoneUsageDescription": "NovaDrive records short emergency audio during Naari Shakti distress activation and may listen for distress sounds during an active journey.",
         "NSPhotoLibraryUsageDescription": "NovaDrive uses your photo library so if you choose a profile picture."
       }
     },

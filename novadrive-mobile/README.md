@@ -26,6 +26,44 @@ Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpower
 - Golden Hour Packet (GHP) + lz-string QR + SHA-256 integrity
 - Bystander QR scan + SecureStore relay cache + SMS 108 intent
 - **Sarthi** floating AI assistant (mini window on tabs, full `/sarthi` screen) — live LLM via Next.js BFF when online, offline rules when not
+- **Naari Shakti** women's safety portal — gender-gated home card, enable modal, full dashboard at `/naari-shakti`
+
+## Naari Shakti (women's safety portal)
+
+Institutional safety flow for users who select **Female** during onboarding. Separate from Quick SOS / Golden Hour triage — optimized for silent distress SMS, live location to ICE contacts, women's helpline, and hold-to-activate emergency with on-device voice recording.
+
+| Piece | Location |
+|-------|----------|
+| Eligibility & messages | `src/lib/naariShakti/*` (Jest: eligibility, hold timer, engine, SMS bodies) |
+| State | `src/context/NaariShaktiContext.tsx` |
+| UI | `src/components/naari/*`, `app/naari-shakti.tsx` |
+| Home entry | `app/(tabs)/explore.tsx` — card + protocol modal |
+| Gender capture | `app/medical.tsx` (required), `app/auth.tsx` (optional), `GenderIdentityPicker.tsx` |
+
+### User flow
+
+1. **Medical profile** → choose gender (required before continuing onboarding).
+2. **Home** → **NAARI SHAKTI** card (female only).
+3. First tap → **Naari Shakti Protocol** → **Enable Portal** or **Not Now**.
+4. **Portal** (`/naari-shakti`):
+   - **Press & hold 2s** on orange emergency button → TTS help cue, GPS, voice recording, SMS to nearest police station (+ ICE if enabled), distress HUD.
+   - **SMS Nearest Station** / **Share Live Location** / **Women's Helpline (181)**.
+   - **Safety mode** toggle, quick help message presets, nearest safety point + navigate.
+
+### Demo notes
+
+- **Verified female user** = self-reported `gender: 'female'` stored locally (no Aadhaar API in P0).
+- SMS uses `Linking` → OS Messages app; user must tap **Send** (iOS/Android policy).
+- Grant **location** and **microphone** when prompted for full distress activation.
+
+Design spec: [docs/superpowers/specs/2026-05-23-naari-shakti-design.md](docs/superpowers/specs/2026-05-23-naari-shakti-design.md)  
+Stitch re-generation prompt: [../docs/design/stitch-prompts/naari-shakti-portal.md](../docs/design/stitch-prompts/naari-shakti-portal.md)
+
+### Quick test
+
+1. Guest or email sign-in → medical → **Female** → finish accessibility.
+2. Home → Naari card → **Enable Portal**.
+3. Hold emergency button 2 seconds → confirm HUD + SMS composer with coordinates.
 
 ## Sarthi assistant
 
@@ -50,7 +88,7 @@ Design spec: [docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md](docs
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 45+ unit tests — lib/, FSM, crash, GHP, Sarthi KB/engine
+npm test             # 57 unit tests — lib/, FSM, crash, GHP, Sarthi, Naari Shakti
 npm run test:coverage
 ```
 

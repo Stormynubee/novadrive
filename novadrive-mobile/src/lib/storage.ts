@@ -6,6 +6,7 @@ import type {
   EmergencyContact,
   GoldenHourPacket,
   MedicalProfile,
+  NaariShaktiPrefs,
   UserProfile,
 } from './types';
 
@@ -94,6 +95,10 @@ export function resolveFontScale(a11y: AccessibilityPrefs): number {
   return a11y.largeText ? 1.15 : 1;
 }
 
+export function defaultNaariShakti(): NaariShaktiPrefs {
+  return { enabled: false, safetyModeActive: false };
+}
+
 export function defaultMedical(): MedicalProfile {
   return {
     bloodType: '',
@@ -150,5 +155,9 @@ function normalizeProfile(p: UserProfile): UserProfile {
     a11y,
     settings: { ...defaultSettings(), ...p.settings },
     medical: p.medical ? normalizeMedical(p.medical) : undefined,
+    naariShakti: {
+      ...defaultNaariShakti(),
+      ...p.naariShakti,
+    },
   };
 }

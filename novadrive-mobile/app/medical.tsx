@@ -9,8 +9,10 @@ import { NovaButton } from '../src/components/NovaButton';
 import { NovaInput } from '../src/components/NovaInput';
 import { NovaTopBar } from '../src/components/NovaTopBar';
 import { OnboardingShell } from '../src/components/OnboardingShell';
+import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
-import type { EmergencyContact, MedicalProfile } from '../src/lib/types';
+import { isOnboardingGenderComplete } from '../src/lib/naariShakti/profileGender';
+import type { EmergencyContact, GenderIdentity, MedicalProfile } from '../src/lib/types';
 import {
   defaultEmergencyContact,
   defaultMedical,
@@ -77,7 +79,8 @@ export default function MedicalScreen() {
   const { fromProfile } = useLocalSearchParams<{ fromProfile?: string }>();
   const inProfile = fromProfile === '1';
   const insets = useSafeAreaInsets();
-  const { profile, updateMedical } = useApp();
+  const { profile, updateMedical, updateProfile } = useApp();
+  const [gender, setGender] = useState<GenderIdentity | undefined>(profile.gender);
   const [m, setM] = useState(() => normalizeMedical({ ...defaultMedical(), ...profile.medical }));
   const userEdited = useRef(false);
 
@@ -92,6 +95,10 @@ export default function MedicalScreen() {
   };
 
   const save = async () => {
+    if (!inProfile && !isOnboardingGenderComplete({ ...profile, gender })) {
+      Alert.alert('Gender required', 'Select gender to personalize safety features.');
+      return;
+    }
     const ice = m.primaryContact ?? defaultEmergencyContact();
     if (!ice.fullName.trim() || !ice.phone.trim()) {
       Alert.alert(
@@ -106,6 +113,9 @@ export default function MedicalScreen() {
       emergencyContact: formatIceLine(ice),
     });
     await updateMedical(payload);
+    if (gender) {
+      await updateProfile({ gender });
+    }
     if (inProfile) {
       router.back();
     } else {
@@ -115,6 +125,19 @@ export default function MedicalScreen() {
 
   const body = (
     <>
+      <HudCard>
+        <View style={styles.sectionHead}>
+          <MaterialIcons name="person" size={22} color={tokens.primary} />
+          <HudText variant="headlineMd" style={styles.sectionTitle}>
+            Citizen identity
+          </HudText>
+        </View>
+        <HudText variant="mono" style={styles.label}>
+          Gender
+        </HudText>
+        <GenderIdentityPicker value={gender} onChange={setGender} />
+      </HudCard>
+
       <HudCard>
         <View style={styles.sectionHead}>
           <MaterialIcons name="bloodtype" size={22} color={tokens.error} />
