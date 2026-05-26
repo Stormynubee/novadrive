@@ -19,7 +19,8 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 | [`v0.1.0-p0`](https://github.com/Stormynubee/novadrive/releases/tag/v0.1.0-p0) | `7b5b25a` | 2026-05-22 | Expo P0 app, triage FSM, GHP/QR, monorepo CI |
 | [`v1.0.0-govtech-ui`](https://github.com/Stormynubee/novadrive/releases/tag/v1.0.0-govtech-ui) | `108e716` | 2026-05-25 | GovTech tabs, Plan Corridor, calibration, SOS HUD |
 | [`v1.1.0-stabilization`](https://github.com/Stormynubee/novadrive/releases/tag/v1.1.0-stabilization) | `bdd5a04` | 2026-05-25 | Journey lifecycle, voice/impact gating, 32 unit tests |
-| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `161798c` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags (current **master**) |
+| [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `161798c` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags |
+| [`v1.3.0-naari-shakti`](https://github.com/Stormynubee/novadrive/releases/tag/v1.3.0-naari-shakti) | `c828e90` | 2026-05-26 | Naari Shakti portal, home stack, emergency activation fix |
 
 ---
 
@@ -125,13 +126,57 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 ---
 
-### 9. `161798c` — 2026-05-25 · tag `v1.2.0-hackathon-publish` (HEAD)
+### 9. `161798c` — 2026-05-25 · tag `v1.2.0-hackathon-publish`
 
 **docs: record VERSION_HISTORY commit in timeline**
 
 - Timeline entry for the version-history doc commit itself
 
 [View commit](https://github.com/Stormynubee/novadrive/commit/161798c)
+
+---
+
+### 10. `d900ab5` — 2026-05-23
+
+**feat(mobile): GovTech Plan Corridor map, quick menu, and UI fixes**
+
+- Shared Plan Corridor screen on Trip tab; offline briefing deep links
+- Nova quick menu sheet; Sarthi overlay and journey safety bridges
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/d900ab5)
+
+---
+
+### 11. `f8f6dce` — 2026-05-26
+
+**feat(mobile): add Naari Shakti women's safety portal**
+
+- Gender on profile; eligibility gating; protocol modal and `/naari-shakti` dashboard
+- Distress engine, hold timer, SMS bodies, emergency recorder — 57 unit tests
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/f8f6dce)
+
+---
+
+### 12. `c828e90` — 2026-05-26 · tag `v1.3.0-naari-shakti`
+
+**fix(mobile): Naari Shakti home layout and emergency activation**
+
+- `HomePrimaryStack` — stacked drive + Naari cards; portal bento column layout
+- First-hold emergency: instant distress HUD, location prefetch/cache, hold timer + release grace
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/c828e90)
+
+---
+
+### 13. — 2026-05-26 (HEAD on `master`)
+
+**docs: refresh README and hackathon docs for Naari Shakti**
+
+- Root + mobile README: two-lane judge narrative, home stack, unverified protocol copy
+- CHANGELOG, SUBMISSION, device smoke matrix rows 13–15; doc refresh spec
+
+[Latest on master](https://github.com/Stormynubee/novadrive/commits/master/)
 
 ---
 
@@ -159,13 +204,22 @@ git checkout v1.0.0-govtech-ui
 # Stabilization + tests
 git checkout v1.1.0-stabilization
 
-# Current hackathon publish (recommended for judges)
+# Hackathon publish (pre-Naari Shakti)
 git checkout v1.2.0-hackathon-publish
+
+# Naari Shakti + home stack + emergency fix (recommended for judges)
+git checkout v1.3.0-naari-shakti
 # or: git checkout master
+```
+
+Create the tag locally after pulling latest `master`:
+
+```bash
+git tag -a v1.3.0-naari-shakti -m "Naari Shakti portal + home stack + emergency activation fix"
 ```
 
 ---
 
 ## Full diff: project start → now
 
-[Compare `1ee8d75`…`161798c`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...161798c)
+[Compare `1ee8d75`…`master`](https://github.com/Stormynubee/novadrive/compare/1ee8d75...master)

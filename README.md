@@ -30,15 +30,28 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 
 ## Why NovaDrive
 
-When cellular signal fails on NH corridors, victims and bystanders still get:
+When cellular signal fails on NH corridors, victims and bystanders still get structured help through **two parallel safety lanes**:
 
-- **START medical triage** — deterministic FSM, not panic UX
-- **Trauma-tier routing** — not “nearest pin”
-- **Golden Hour Packet (GHP)** — human-readable brief for **108**
-- **QR bystander relay** — packet hops to any phone with network later
-- **Naari Shakti** — gender-gated women's safety portal (SMS nearest station, live location, helpline 181, hold-to-activate distress with voice recording)
+```mermaid
+flowchart LR
+  subgraph goldenHour [Golden Hour drive flow]
+    Drive[ENTER DRIVE MODE] --> Trip[Trip Plan Corridor]
+    Trip --> HUD[Live SOS HUD]
+    HUD --> Triage[START triage GHP QR]
+  end
+  subgraph naari [Naari Shakti portal]
+    HomeNaari[Home stack female only] --> Portal[Naari dashboard]
+    Portal --> Hold[Hold emergency 2s]
+    Hold --> Distress[Instant HUD SMS location]
+  end
+```
 
-**Honest scope:** P0 uses sensor fusion + manual SOS, not OS-level crash APIs. No auto-dial when the calm countdown reaches zero. Naari Shakti SMS opens the OS composer (user taps Send); gender is self-reported on-device for the demo.
+| Lane | What you get |
+|------|----------------|
+| **Golden Hour** | START medical triage (deterministic FSM), trauma-tier routing, Golden Hour Packet for **108**, QR bystander relay |
+| **Naari Shakti** | Gender-gated women's safety portal — SMS nearest police station, live location to ICE, helpline **181**, hold-to-activate distress with voice recording |
+
+**Honest scope:** P0 uses sensor fusion + manual SOS, not OS-level crash APIs. No auto-dial when the calm countdown reaches zero. Naari Shakti SMS opens the OS composer (user taps Send). Gender is **self-reported on-device** (unverified in P0 — no Aadhaar API).
 
 ---
 
@@ -46,7 +59,7 @@ When cellular signal fails on NH corridors, victims and bystanders still get:
 
 ```mermaid
 flowchart LR
-  Home["Home ENTER DRIVE MODE"] --> Trip["Trip Plan Corridor"]
+  Home["Home stacked cards QR SOS Map"] --> Trip["Trip Plan Corridor"]
   Trip --> Calibrate["Calibration depart"]
   Calibrate --> HUD["Live SOS HUD"]
   HUD --> Complete["Journey complete"]
@@ -54,26 +67,28 @@ flowchart LR
   Home --> Naari["Naari Shakti portal"]
 ```
 
-Journey monitoring starts only after **Start Driving** on the Trip tab (not from Home alone).
+Journey monitoring starts only after **Start Driving** on the Trip tab (Home **ENTER DRIVE MODE** opens Plan Corridor; it does not start the journey alone).
 
 ### Naari Shakti (women's safety portal)
 
 ```mermaid
 flowchart TD
   Onboard[Medical profile gender] --> Eligible{gender female?}
-  Eligible -->|yes| Card[Home Naari Shakti card]
-  Card --> Modal[Protocol modal Enable / Not Now]
+  Eligible -->|yes| Stack[Home drive + Naari stack]
+  Eligible -->|no| DriveOnly[Home drive card only]
+  Stack --> Modal[Protocol Enable / Not Now]
   Modal -->|Enable| Portal[Naari Shakti dashboard]
   Portal --> Hold[Hold emergency 2s]
-  Hold --> Distress[GPS TTS recording SMS HUD]
+  Hold --> Distress[Instant HUD then SMS location recording]
 ```
 
 | Step | What happens |
 |------|----------------|
 | Onboarding | Select gender on **Medical profile** (required) or optionally on sign-in |
-| Home | **NAARI SHAKTI** card appears for `gender: female` |
-| First tap | **Naari Shakti Protocol** modal → **Enable Portal** or **Not Now** |
-| Portal | Emergency hold, SMS nearest police station, share live location, women's helpline **181**, safety mode toggle, quick help presets |
+| Home (female) | Stacked **ENTER DRIVE MODE** (navy) + **NAARI SHAKTI** (saffron) cards via `HomePrimaryStack` |
+| Home (male) | Drive card only — no Naari UI |
+| First tap | **Naari Shakti Protocol** — *Unverified female user detected* → **Enable Portal** or **Not Now** |
+| Portal | Safety Mode ON → hold **Emergency Help** 2s → distress HUD appears immediately; SMS, location share, TTS, and recording follow |
 
 Docs: [design spec](docs/superpowers/specs/2026-05-23-naari-shakti-design.md) · [implementation plan](docs/superpowers/plans/2026-05-23-naari-shakti.md) · [Stitch prompt](docs/design/stitch-prompts/naari-shakti-portal.md)
 
@@ -90,11 +105,13 @@ flowchart TB
     S[START Triage FSM]
     DB[(SQLite trauma POI)]
     G[GHP + QR + SMS 108]
+    N[Naari Shakti distress engine]
     Plan --> J
     J --> C
     J --> S
     S --> DB
     DB --> G
+    N -.->|parallel lane| G
   end
   subgraph relay [Bystander relay]
     QR[Scan QR]
@@ -113,6 +130,9 @@ Full detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/NOVADRIVE_FIN
 
 ```
 novadrive-mobile/          # PRIMARY — Expo app → Android APK (GovTech UI)
+  src/components/home/     # Stacked ENTER DRIVE MODE + Naari portal cards
+  src/components/naari/  # Naari Shakti UI
+  src/lib/naariShakti/   # Eligibility, distress engine, hold timer (Jest)
 novadrive/                 # Web UI prototype (Next.js) — judges / team mirror
 docs/
   ARCHITECTURE.md
@@ -132,9 +152,12 @@ data/                      # Generated SQLite (gitignored)
 
 See **[CHANGELOG.md](CHANGELOG.md)**:
 
-- **2026-05-26 — Naari Shakti:** gender-gated safety portal, protocol modal, distress engine (57 unit tests)
-- **2026-05-23 — Stabilization:** GovTech tab shell, Plan Corridor, calibration, SOS HUD
-- [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md)
+- **2026-05-26 — Naari Shakti UI & emergency reliability** (`c828e90`): home stack cards, portal layout, first-hold emergency with instant HUD + cached GPS
+- **2026-05-26 — Naari Shakti portal** (`f8f6dce`): gender gate, protocol modal, distress engine (57 unit tests)
+- **2026-05-23 — Stabilization:** GovTech tab shell, Plan Corridor, calibration, SOS HUD (`d900ab5` map/quick menu)
+- [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) — includes Naari rows 13–15
+
+Release tag: **`v1.3.0-naari-shakti`** → [VERSION_HISTORY](docs/VERSION_HISTORY.md)
 
 ---
 
@@ -152,7 +175,9 @@ npx expo start
 npx expo run:android
 ```
 
-**Guest mode** → Trip → **Start Driving** → calibration → HUD → Hold SOS → Triage → Route → GHP → QR → airplane-mode test.
+**Golden Hour path:** Guest mode → Home **ENTER DRIVE MODE** → Trip → **Start Driving** → calibration → HUD → Hold SOS → Triage → Route → GHP → QR → airplane-mode test.
+
+**Naari Shakti path (optional, ~30s):** Guest → Medical → **Female** → Home → Enable Portal → Safety Mode ON → hold Emergency Help 2s → distress HUD + SMS composer.
 
 See [novadrive-mobile/README.md](novadrive-mobile/README.md) and [docs/SUBMISSION.md](docs/SUBMISSION.md).
 
@@ -178,7 +203,7 @@ Deployed via Vercel (`vercel.json` → `docs/site`).
 
 | Phase | Scope |
 |-------|--------|
-| **P0** | Expo app, FSM, SQLite routing, GHP/QR, GovTech UI, stabilization tests |
+| **P0** | Expo app, FSM, SQLite routing, GHP/QR, GovTech UI, Naari Shakti, stabilization tests |
 | **P1** | Trip info cards, Rah-Veer claim log, TTS, OSM offline tiles |
 | **P2** | Supabase auth, NGO registry, OS crash APIs if entitled |
 

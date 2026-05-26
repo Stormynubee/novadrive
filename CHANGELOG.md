@@ -4,12 +4,27 @@ All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 
+## [2026-05-26] — Naari Shakti UI & emergency reliability
+
+### Fixed
+
+- **Emergency help** activates on the **first** 2s hold — instant distress HUD, cached/prefetched GPS (`getLastKnownPositionAsync`), hold timer with release grace (no pressOut race).
+- Portal bento layout uses column stack so citizen status and nearest safety point text no longer overlap.
+
+### Changed
+
+- **Home dashboard:** `DriveModeCard`, `NaariShaktiPortalButton`, `HomePrimaryStack` — stacked ENTER DRIVE MODE + NAARI SHAKTI (female only); full-width Bystander QR; Map View tile.
+- Protocol modal copy: *Unverified female user detected*.
+- Sarthi FAB lifted on Home; hidden on `naari-shakti` route.
+
+---
+
 ## [2026-05-26] — Naari Shakti women's safety portal
 
 ### Added
 
 - **Gender on profile:** `GenderIdentity` on `UserProfile`; required on medical onboarding, optional on auth.
-- **Naari Shakti portal:** Home card (female only), protocol enable modal, full dashboard at `app/naari-shakti.tsx`.
+- **Naari Shakti portal:** Home entry (female only), protocol enable modal, full dashboard at `app/naari-shakti.tsx`.
 - **Distress engine:** 2s hold-to-activate — GPS, TTS help cue, `expo-audio` emergency recording, SMS to nearest police station, ICE community alert, distress HUD.
 - **Quick actions:** SMS nearest station, share live location, women's helpline **181**, safety mode toggle, quick help presets.
 - **Tests (6 new suites):** `src/lib/naariShakti/*.test.ts` (57 total mobile unit tests).

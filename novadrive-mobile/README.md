@@ -10,7 +10,9 @@
 
 ## Drive flow
 
-Home → **Trip** (Plan Corridor) → **Start Driving** → calibration → **Live SOS HUD** → journey complete → Home.
+Home → **ENTER DRIVE MODE** (opens Trip / Plan Corridor) → **Start Driving** → calibration → **Live SOS HUD** → journey complete → Home.
+
+Home also shows **Bystander QR**, **Quick SOS**, and **Map View** tiles. Female users see a stacked **NAARI SHAKTI** card below the drive card.
 
 Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md](docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md)
 
@@ -26,7 +28,7 @@ Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpower
 - Golden Hour Packet (GHP) + lz-string QR + SHA-256 integrity
 - Bystander QR scan + SecureStore relay cache + SMS 108 intent
 - **Sarthi** floating AI assistant (mini window on tabs, full `/sarthi` screen) — live LLM via Next.js BFF when online, offline rules when not
-- **Naari Shakti** women's safety portal — gender-gated home card, enable modal, full dashboard at `/naari-shakti`
+- **Naari Shakti** women's safety portal — gender-gated home stack, protocol modal, full dashboard at `/naari-shakti`
 
 ## Naari Shakti (women's safety portal)
 
@@ -37,33 +39,38 @@ Institutional safety flow for users who select **Female** during onboarding. Sep
 | Eligibility & messages | `src/lib/naariShakti/*` (Jest: eligibility, hold timer, engine, SMS bodies) |
 | State | `src/context/NaariShaktiContext.tsx` |
 | UI | `src/components/naari/*`, `app/naari-shakti.tsx` |
-| Home entry | `app/(tabs)/explore.tsx` — card + protocol modal |
+| Home entry | `src/components/home/HomePrimaryStack.tsx`, `app/(tabs)/explore.tsx` |
 | Gender capture | `app/medical.tsx` (required), `app/auth.tsx` (optional), `GenderIdentityPicker.tsx` |
 
 ### User flow
 
 1. **Medical profile** → choose gender (required before continuing onboarding).
-2. **Home** → **NAARI SHAKTI** card (female only).
-3. First tap → **Naari Shakti Protocol** → **Enable Portal** or **Not Now**.
+2. **Home (female)** → stacked **ENTER DRIVE MODE** + **NAARI SHAKTI** cards (`HomePrimaryStack`). Male users see the drive card only.
+3. First tap on Naari → **Naari Shakti Protocol** (*Unverified female user detected*) → **Enable Portal** or **Not Now**.
 4. **Portal** (`/naari-shakti`):
-   - **Press & hold 2s** on orange emergency button → TTS help cue, GPS, voice recording, SMS to nearest police station (+ ICE if enabled), distress HUD.
+   - Turn **Safety Mode** ON.
+   - **Press & hold 2s** on orange emergency button → distress HUD appears **immediately**; TTS, GPS (cached/prefetched when possible), voice recording, SMS to nearest police station (+ ICE if enabled) follow.
    - **SMS Nearest Station** / **Share Live Location** / **Women's Helpline (181)**.
-   - **Safety mode** toggle, quick help message presets, nearest safety point + navigate.
+   - Quick help message presets, nearest safety point + navigate.
 
 ### Demo notes
 
-- **Verified female user** = self-reported `gender: 'female'` stored locally (no Aadhaar API in P0).
+- **Unverified female user** = self-reported `gender: 'female'` stored locally (no Aadhaar or identity API in P0).
 - SMS uses `Linking` → OS Messages app; user must tap **Send** (iOS/Android policy).
 - Grant **location** and **microphone** when prompted for full distress activation.
+- Sarthi FAB is lifted on Home and hidden on the Naari portal route.
 
 Design spec: [docs/superpowers/specs/2026-05-23-naari-shakti-design.md](docs/superpowers/specs/2026-05-23-naari-shakti-design.md)  
 Stitch re-generation prompt: [../docs/design/stitch-prompts/naari-shakti-portal.md](../docs/design/stitch-prompts/naari-shakti-portal.md)
 
 ### Quick test
 
+Device checklist rows 13–15: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
+
 1. Guest or email sign-in → medical → **Female** → finish accessibility.
-2. Home → Naari card → **Enable Portal**.
-3. Hold emergency button 2 seconds → confirm HUD + SMS composer with coordinates.
+2. Home → **NAARI SHAKTI** card → **Enable Portal**.
+3. Portal → turn **Safety Mode** ON.
+4. Hold **Emergency Help** 2 seconds once → distress HUD + SMS composer with coordinates (no second hold required).
 
 ## Sarthi assistant
 

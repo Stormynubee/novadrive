@@ -16,5 +16,8 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 10 | Sensor check | Profile → Motion Sensor Calibration | Preview only; no live journey |
 | 11 | Emergency SOS | Hold SOS 3s on HUD | Emergency locate flow |
 | 12 | Accessibility | Profile → Accessibility | Back returns to profile |
+| 13 | Naari home (female) | Medical → Female → Home | Stacked drive + Naari cards; male profile shows drive card only |
+| 14 | Naari protocol + portal | Tap Naari → Enable Portal → Safety Mode ON | Portal loads; toggle persists |
+| 15 | Naari emergency hold | Hold Emergency Help 2s once | Distress HUD on first hold; SMS composer opens; no second hold needed |
 
 **Commands before release:** `npm run typecheck` · `npm test`
