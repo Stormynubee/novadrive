@@ -86,6 +86,7 @@ export default function RootLayout() {
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="emergency-contacts" options={{ headerShown: false }} />
         <Stack.Screen name="naari-shakti" options={{ headerShown: false }} />
+        <Stack.Screen name="brief/[slug]" options={{ headerShown: false }} />
       </Stack>
       </SarthiProvider>
       </NaariShaktiProvider>

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  Alert,
   Dimensions,
   FlatList,
   Pressable,
@@ -7,7 +8,9 @@ import {
   View,
 } from 'react-native';
 import { type Href, router } from 'expo-router';
+import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useApp } from '../../context/AppContext';
 import { SarthiChatHeader } from './SarthiChatHeader';
 import { SarthiComposer } from './SarthiComposer';
 import { SarthiMessageBubble } from './SarthiMessageBubble';
@@ -17,19 +20,33 @@ import { useSarthi } from '../../context/SarthiContext';
 import { HudText } from '../HudText';
 import { tokens } from '../../theme/tokens';
 
-const TAB_BAR_OFFSET = 72;
+const TAB_BAR_OFFSET = 88;
+
+function SarthiQuickLink({ label, onPress }: { label: string; onPress: () => void }) {
+  return (
+    <Pressable style={styles.quickRow} onPress={onPress}>
+      <HudText variant="bodySm" style={styles.quickLabel}>
+        {label}
+      </HudText>
+      <MaterialIcons name="arrow-forward" size={16} color={tokens.primary} />
+    </Pressable>
+  );
+}
 
 export function SarthiMiniWindow({
   open,
   onClose,
+  showQuickLinks = false,
 }: {
   open: boolean;
   onClose: () => void;
+  showQuickLinks?: boolean;
 }) {
   const insets = useSafeAreaInsets();
+  const { session } = useApp();
   const { thread, loading, offlineMode, bffUnavailable, send } = useSarthi();
   const [draft, setDraft] = useState('');
-  const height = Dimensions.get('window').height * 0.4;
+  const height = Dimensions.get('window').height * (showQuickLinks ? 0.52 : 0.4);
 
   const recent = useMemo(() => thread.messages.slice(-4), [thread.messages]);
 
@@ -62,6 +79,48 @@ export function SarthiMiniWindow({
         <HudText variant="bodySm" style={styles.banner}>
           BFF not configured — on-device rules (set EXPO_PUBLIC_SARTHI_API_URL)
         </HudText>
+      ) : null}
+      {showQuickLinks ? (
+        <View style={styles.quickBlock}>
+          <HudText variant="bodySm" style={styles.monitorLine}>
+            I am monitoring your current route for fatigue zones and road hazards.
+          </HudText>
+          <SarthiQuickLink
+            label="Road Safety Report"
+            onPress={() => {
+              onClose();
+              router.push('/sarthi' as Href);
+            }}
+          />
+          <SarthiQuickLink
+            label="Emergency Contacts"
+            onPress={() => {
+              onClose();
+              router.push('/emergency-contacts' as Href);
+            }}
+          />
+          <SarthiQuickLink
+            label="Nearby Hospitals"
+            onPress={() => {
+              if (!session.location) {
+                Alert.alert(
+                  'Location required',
+                  'Capture your location in the emergency flow to find nearby hospitals.',
+                  [
+                    { text: 'Cancel', style: 'cancel' },
+                    {
+                      text: 'Open locate',
+                      onPress: () => router.push('/emergency/locate' as Href),
+                    },
+                  ]
+                );
+                return;
+              }
+              onClose();
+              router.push('/emergency/route' as Href);
+            }}
+          />
+        </View>
       ) : null}
       <FlatList
         data={recent}
@@ -120,4 +179,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   moreLabel: { color: tokens.secondary, fontFamily: 'PublicSans_600SemiBold' },
+  quickBlock: {
+    paddingHorizontal: tokens.spacing.gutter,
+    paddingBottom: 8,
+    gap: 6,
+  },
+  monitorLine: {
+    color: tokens.onSurface,
+    backgroundColor: tokens.surfaceContainer,
+    padding: 8,
+    borderRadius: tokens.radius.button,
+    borderLeftWidth: 2,
+    borderLeftColor: tokens.secondary,
+    marginBottom: 4,
+  },
+  quickRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    borderRadius: tokens.radius.button,
+    backgroundColor: tokens.surface,
+  },
+  quickLabel: { color: tokens.primary, fontFamily: 'PublicSans_600SemiBold' },
 });

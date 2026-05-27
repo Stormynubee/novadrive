@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
-import { SarthiGreetingBridge } from '../../src/components/sarthi/SarthiGreetingBridge';
 import { DashboardHeader } from '../../src/components/DashboardHeader';
 import { HomePrimaryStack } from '../../src/components/home/HomePrimaryStack';
+import { DailySafetyBriefSection } from '../../src/components/home/DailySafetyBriefSection';
 import { HudText } from '../../src/components/HudText';
 import { NaariShaktiProtocolModal } from '../../src/components/naari/NaariShaktiProtocolModal';
 import { useApp } from '../../src/context/AppContext';
 import { useNaariShakti } from '../../src/context/NaariShaktiContext';
+import { runQuickSos } from '../../src/lib/home/quickSos';
 import {
   isNaariShaktiEligible,
   shouldShowProtocolModal,
@@ -20,8 +21,8 @@ import { tokens } from '../../src/theme/tokens';
 const APP_VERSION = Constants.expoConfig?.version ?? '2.1.4';
 
 /**
- * Home tab — Stitch dashboard: stacked Drive Mode + Naari Shakti (female only),
- * Bystander QR, Quick SOS + Map View.
+ * Home tab — Stitch dashboard: Drive Mode, Naari Shakti, Bystander QR, Quick SOS,
+ * Report Hazard, Daily Safety Brief.
  */
 export default function HomeTabScreen() {
   const { profile, beginEmergencyFlow } = useApp();
@@ -57,7 +58,6 @@ export default function HomeTabScreen() {
   return (
     <View style={styles.root}>
       <DashboardHeader />
-      <SarthiGreetingBridge />
       <ScrollView
         contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
@@ -104,9 +104,13 @@ export default function HomeTabScreen() {
           <Pressable
             style={({ pressed }) => [styles.secondaryTile, styles.sosTile, pressed && styles.pressed]}
             onPress={() => {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
-              beginEmergencyFlow();
-              router.push('/emergency/locate' as Href);
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(
+                () => undefined
+              );
+              runQuickSos(() => {
+                beginEmergencyFlow();
+                router.push('/emergency/triage' as Href);
+              });
             }}
           >
             <View style={styles.sosIconWrap}>
@@ -119,34 +123,18 @@ export default function HomeTabScreen() {
 
           <Pressable
             style={({ pressed }) => [styles.secondaryTile, pressed && styles.pressed]}
-            onPress={() => router.replace('/(tabs)/drive' as Href)}
+            onPress={() => router.push('/journey/feedback?hazard=1' as Href)}
           >
-            <View style={styles.mapIconWrap}>
-              <MaterialIcons name="map" size={28} color={tokens.primary} />
+            <View style={styles.hazardIconWrap}>
+              <MaterialIcons name="report-problem" size={28} color={tokens.primary} />
             </View>
-            <HudText variant="bodyMd" style={styles.mapLabel}>
-              Map View
+            <HudText variant="bodyMd" style={styles.hazardLabel}>
+              Report Hazard
             </HudText>
           </Pressable>
         </View>
 
-        <Pressable
-          style={({ pressed }) => [styles.sarthiTile, pressed && styles.pressed]}
-          onPress={() => router.push('/sarthi' as Href)}
-        >
-          <View style={styles.sarthiIconWrap}>
-            <MaterialIcons name="shield" size={26} color={tokens.onSecondary} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <HudText variant="bodyMd" style={styles.sarthiLabel}>
-              Ask Sarthi
-            </HudText>
-            <HudText variant="bodySm" style={styles.sarthiSub}>
-              AI assistant · Powered by NovaDrive
-            </HudText>
-          </View>
-          <MaterialIcons name="chevron-right" size={24} color={tokens.onSurfaceVariant} />
-        </Pressable>
+        <DailySafetyBriefSection active />
       </ScrollView>
 
       {showNaari ? (
@@ -165,7 +153,7 @@ const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
     paddingHorizontal: 20,
-    paddingBottom: 120,
+    paddingBottom: 140,
     paddingTop: 16,
     alignItems: 'center',
     gap: 16,
@@ -242,7 +230,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  mapIconWrap: {
+  hazardIconWrap: {
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -252,29 +240,5 @@ const styles = StyleSheet.create({
   },
   sosLabel: { color: tokens.error, fontFamily: 'PublicSans_700Bold' },
   qrLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  mapLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  sarthiTile: {
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: tokens.surface,
-    borderRadius: tokens.radius.card,
-    borderWidth: 1,
-    borderColor: tokens.outlineVariant,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    zIndex: 1,
-    ...tokens.elevation.card,
-  },
-  sarthiIconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: tokens.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sarthiLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  sarthiSub: { color: tokens.onSurfaceVariant, marginTop: 2 },
+  hazardLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
 });

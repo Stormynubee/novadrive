@@ -19,5 +19,12 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 13 | Naari home (female) | Medical → Female → Home | Stacked drive + Naari cards; male profile shows drive card only |
 | 14 | Naari protocol + portal | Tap Naari → Enable Portal → Safety Mode ON | Portal loads; toggle persists |
 | 15 | Naari emergency hold | Hold Emergency Help 2s once | Distress HUD on first hold; SMS composer opens; no second hold needed |
+| 16 | Home weather | Home → Daily Safety Brief (location on) | City + °C from GPS; Open-Meteo summary |
+| 17 | Home weather denied | Deny location permission | “Location unavailable” + settings hint; no crash |
+| 18 | Safety briefs | Tap Protocol Alpha / Regional Alert | Detail screens with institutional copy |
+| 19 | Quick SOS confirm | Tap Quick SOS → Cancel | Stays on home; no triage |
+| 20 | Quick SOS proceed | Tap Quick SOS → Proceed | START triage screen |
+| 21 | Report Hazard | Tap Report Hazard | Feedback form with safety category |
+| 22 | Sarthi home widget | Home → peek bubble → FAB → expand | Peek 5s; pulse FAB; mini panel + quick links + chat |
 
 **Commands before release:** `npm run typecheck` · `npm test`
