@@ -9,6 +9,7 @@ import { HoldSOSButton } from '../src/components/HoldSOSButton';
 import { HudText } from '../src/components/HudText';
 import { ScreenEnter } from '../src/components/ScreenEnter';
 import { useApp } from '../src/context/AppContext';
+import { EMERGENCY_SELECTION_PATH } from '../src/lib/emergency/emergencyNavigation';
 import { tokens } from '../src/theme/tokens';
 
 const SPEED_LIMIT_KMH = 80;
@@ -33,7 +34,7 @@ export default function JourneyScreen() {
   const onSOS = () => {
     triggerSOS();
     beginEmergencyFlow();
-    router.push('/emergency/locate' as Href);
+    router.push(EMERGENCY_SELECTION_PATH as Href);
   };
 
   const live = journeyStatus === 'ACTIVE';
@@ -78,7 +79,7 @@ export default function JourneyScreen() {
           <Pressable
             onPress={() => {
               beginEmergencyFlow();
-              router.push('/emergency/locate' as Href);
+              router.push(EMERGENCY_SELECTION_PATH as Href);
             }}
             style={styles.iconBtn}
             accessibilityLabel="Emergency share"

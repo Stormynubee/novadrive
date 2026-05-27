@@ -1,5 +1,5 @@
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { type Href, router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import { speakA11y } from '../../src/lib/a11yRuntime';
 import { AnswerChips } from '../../src/components/AnswerChips';
@@ -9,10 +9,15 @@ import { NovaButton } from '../../src/components/NovaButton';
 import { QuestionCard } from '../../src/components/QuestionCard';
 import { SeverityHero } from '../../src/components/SeverityHero';
 import { getQuestion, useApp } from '../../src/context/AppContext';
+import {
+  EMERGENCY_SELECTION_PATH,
+  shouldGateTriageWithoutIncident,
+} from '../../src/lib/emergency/emergencyNavigation';
 
 export default function TriageScreen() {
   const {
     a11y,
+    session,
     triageState,
     triageResult,
     answerTriage,
@@ -23,6 +28,14 @@ export default function TriageScreen() {
   const [chat, setChat] = useState('');
   const [applied, setApplied] = useState<string[]>([]);
   const q = getQuestion(triageState);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (shouldGateTriageWithoutIncident(session.incidentType)) {
+        router.replace(EMERGENCY_SELECTION_PATH as Href);
+      }
+    }, [session.incidentType])
+  );
 
   useEffect(() => {
     if (q?.prompt) speakA11y(q.prompt, a11y);

@@ -4,6 +4,7 @@ import { AppState } from 'react-native';
 import { CrashCandidateModal } from './CrashCandidateModal';
 import { JourneyVoiceMonitor } from './JourneyVoiceMonitor';
 import { useApp } from '../context/AppContext';
+import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
 import { shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
 
 /** Keeps impact sensors alive across tabs; voice only during foreground active journey. */
@@ -52,7 +53,7 @@ export function SafetyMonitorBridge() {
   const onConfirmAlert = () => {
     dismissCrashDialog();
     beginEmergencyFlow();
-    router.push('/emergency/locate' as Href);
+    router.push(EMERGENCY_SELECTION_PATH as Href);
   };
 
   return (

@@ -11,6 +11,7 @@ import { HudText } from '../../src/components/HudText';
 import { NaariShaktiProtocolModal } from '../../src/components/naari/NaariShaktiProtocolModal';
 import { useApp } from '../../src/context/AppContext';
 import { useNaariShakti } from '../../src/context/NaariShaktiContext';
+import { EMERGENCY_SELECTION_PATH } from '../../src/lib/emergency/emergencyNavigation';
 import { runQuickSos } from '../../src/lib/home/quickSos';
 import {
   isNaariShaktiEligible,
@@ -109,7 +110,7 @@ export default function HomeTabScreen() {
               );
               runQuickSos(() => {
                 beginEmergencyFlow();
-                router.push('/emergency/triage' as Href);
+                router.push(EMERGENCY_SELECTION_PATH as Href);
               });
             }}
           >

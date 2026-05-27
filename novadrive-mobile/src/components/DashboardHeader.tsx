@@ -3,6 +3,7 @@ import { type Href, router } from 'expo-router';
 import { NovaTopBar } from './NovaTopBar';
 
 import { useApp } from '../context/AppContext';
+import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
 import { useQuickMenu } from '../context/QuickMenuContext';
 
 /**
@@ -36,7 +37,7 @@ export function DashboardHeader({
         onMenu={openSettings}
         onEmergency={() => {
           beginEmergencyFlow();
-          router.push('/emergency/locate' as Href);
+          router.push(EMERGENCY_SELECTION_PATH as Href);
         }}
       />
     );
@@ -54,7 +55,7 @@ export function DashboardHeader({
       trailingIcon={showSettings ? 'settings' : undefined}
       onEmergency={() => {
         beginEmergencyFlow();
-        router.push('/emergency/locate' as Href);
+        router.push(EMERGENCY_SELECTION_PATH as Href);
       }}
     />
   );
