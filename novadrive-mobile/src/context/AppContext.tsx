@@ -11,6 +11,7 @@ import type {
   Facility,
   GoldenHourPacket,
   JourneyStatus,
+  IncidentType,
   LocationFix,
   MedicalProfile,
   TriageColor,
@@ -76,6 +77,7 @@ interface AppContextValue {
   dismissCrashDialog: () => void;
   confirmCrash: () => void;
   setLocation: (loc: LocationFix) => void;
+  setIncidentType: (type: IncidentType) => void;
   answerTriage: (value: Partial<FSMContext>) => void;
   skipTriageStep: () => void;
   parseChat: (text: string) => string[];
@@ -424,6 +426,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setSession((s) => ({ ...s, location: loc }));
   }, []);
 
+  const setIncidentType = useCallback((incidentType: IncidentType) => {
+    setSession((s) => ({ ...s, incidentType }));
+  }, []);
+
   const answerTriage = useCallback(
     (value: Partial<FSMContext>) => {
       const mergedCtx = { ...triageCtx, ...chatPrefill, ...value };
@@ -592,6 +598,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       dismissCrashDialog,
       confirmCrash,
       setLocation,
+      setIncidentType,
       answerTriage,
       skipTriageStep,
       parseChat,
@@ -636,6 +643,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       dismissCrashDialog,
       confirmCrash,
       setLocation,
+      setIncidentType,
       answerTriage,
       skipTriageStep,
       parseChat,

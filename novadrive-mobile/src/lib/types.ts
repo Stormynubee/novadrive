@@ -55,8 +55,11 @@ export interface GoldenHourPacket {
   integrity: string;
 }
 
+export type IncidentType = 'road_accident' | 'natural_calamity' | 'human_crime';
+
 export interface EmergencySession {
   location?: LocationFix;
+  incidentType?: IncidentType;
   triage?: TriageColor;
   facility?: Facility;
   packet?: GoldenHourPacket;

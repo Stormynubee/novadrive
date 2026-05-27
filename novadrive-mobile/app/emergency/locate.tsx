@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -56,8 +56,8 @@ export default function LocateScreen() {
       ) : (
         <>
           <NovaButton
-            label="Continue to triage"
-            onPress={() => router.push('/emergency/triage')}
+            label="Continue to incident selection"
+            onPress={() => router.push('/emergency/selection' as Href)}
             variant="secondary"
             large
           />
