@@ -4,6 +4,45 @@ All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 
+## [2026-05-28] — Distress voice detection hardening
+
+### Added
+
+- **Distress voice pipeline** under `novadrive-mobile/src/lib/voice/`: lifecycle policy (navigation, TTS, recorder warm-up), spectral feature extraction, two-stage classifier with golden fixtures, optional YAMNet scoring hook.
+- **Profile setting:** `voiceDistressSensitivity` (low / medium / high) under Voice Crash Detection.
+- **Docs:** [design spec](novadrive-mobile/docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md), [plan index](docs/superpowers/plans/2026-05-28-distress-voice-detection.md), ONNX export notes in `novadrive-mobile/scripts/export-yamnet-distress-onnx.md`.
+- **Device smoke matrix** rows 23–26 (navigation / notification false-positive regression, yell confirmation, Naari-only idle).
+- **README guard:** `npm run verify:docs` keeps mobile README unit-test count in sync with `src/**/*.test.ts`.
+
+### Fixed
+
+- False “Distress signal detected” popups during tab navigation, app TTS, and recorder restarts.
+- Voice monitor now mounts when `canDetectDistressVoice` (active journey **or** Naari safety mode), not journey-only.
+- Removed debug ingest calls to `127.0.0.1:7773` from emergency and journey flows.
+
+### Changed
+
+- `panicVoiceEngine` is a loudness pre-filter only; final decision is `distressVoiceClassifier`.
+- **135** mobile unit tests (includes `src/lib/voice/*` and `readmeStats`).
+
+**Shipped:** `7370f90` · Tag: **`v1.4.0-distress-voice`**
+
+---
+
+## [2026-05-28] — Safety brief screens & activation splash
+
+### Added
+
+- Institutional **Protocol Alpha** and **Regional Alert** detail screens with acknowledgment storage (`safetyBriefExperience`, `SafetyBriefExperienceScreen`).
+
+### Changed
+
+- Emergency activation splash enforces **10s** minimum dwell before auto-navigation to trauma response (`ACTIVATION_SPLASH_SECONDS`).
+
+**Commits:** `f3f2222`, `5008608`
+
+---
+
 ## [2026-05-26] — Naari Shakti UI & emergency reliability
 
 ### Fixed

@@ -59,6 +59,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "verify:docs": "node scripts/verify-readme-stats.mjs",
     "postinstall": "node scripts/patch-foojay-gradle.js"
   },
   "private": true

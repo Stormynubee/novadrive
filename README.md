@@ -101,7 +101,7 @@ flowchart TB
   subgraph mobile [novadrive-mobile P0]
     Plan[Plan Corridor + GPS]
     J[Journey HUD]
-    C[CrashEngine + voice watch]
+    C[CrashEngine + distress voice watch]
     S[START Triage FSM]
     DB[(SQLite trauma POI)]
     G[GHP + QR + SMS 108]
@@ -132,6 +132,7 @@ Full detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/NOVADRIVE_FIN
 novadrive-mobile/          # PRIMARY — Expo app → Android APK (GovTech UI)
   src/components/home/     # Stacked ENTER DRIVE MODE + Naari portal cards
   src/components/naari/  # Naari Shakti UI
+  src/lib/voice/         # Distress voice policy, classifier, optional YAMNet
   src/lib/naariShakti/   # Eligibility, distress engine, hold timer (Jest)
 novadrive/                 # Web UI prototype (Next.js) — judges / team mirror
 docs/
@@ -152,12 +153,15 @@ data/                      # Generated SQLite (gitignored)
 
 See **[CHANGELOG.md](CHANGELOG.md)**:
 
+- **2026-05-28 — Distress voice hardening** (`7370f90`): policy grace windows, two-stage classifier, Naari+journey mic mount, sensitivity setting, smoke rows 23–26 ([mobile README](novadrive-mobile/README.md#distress-voice-detection))
+- **2026-05-28 — Safety brief screens** (`f3f2222`): institutional Protocol Alpha / Regional Alert detail UX
+- **2026-05-28 — Activation splash** (`5008608`): minimum 10s dwell before trauma response auto-navigation
 - **2026-05-26 — Naari Shakti UI & emergency reliability** (`c828e90`): home stack cards, portal layout, first-hold emergency with instant HUD + cached GPS
-- **2026-05-26 — Naari Shakti portal** (`f8f6dce`): gender gate, protocol modal, distress engine (57 unit tests)
+- **2026-05-26 — Naari Shakti portal** (`f8f6dce`): gender gate, protocol modal, distress engine
 - **2026-05-23 — Stabilization:** GovTech tab shell, Plan Corridor, calibration, SOS HUD (`d900ab5` map/quick menu)
-- [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) — includes Naari rows 13–15
+- [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) — Naari rows 13–15 · distress voice rows 23–26
 
-Release tag: **`v1.3.0-naari-shakti`** → [VERSION_HISTORY](docs/VERSION_HISTORY.md)
+Release tag: **`v1.4.0-distress-voice`** (recommended for judges) → [VERSION_HISTORY](docs/VERSION_HISTORY.md)
 
 ---
 
@@ -178,6 +182,8 @@ npx expo run:android
 **Golden Hour path:** Guest mode → Home **ENTER DRIVE MODE** → Trip → **Start Driving** → calibration → HUD → Hold SOS → Triage → Route → GHP → QR → airplane-mode test.
 
 **Naari Shakti path (optional, ~30s):** Guest → Medical → **Female** → Home → Enable Portal → Safety Mode ON → hold Emergency Help 2s → distress HUD + SMS composer.
+
+**Distress voice regression (optional, ~30s):** Start journey → switch tabs (Home / Community / Settings) → confirm **no** false distress modal from UI sounds or app TTS. See smoke rows 23–24 in [device matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md).
 
 See [novadrive-mobile/README.md](novadrive-mobile/README.md) and [docs/SUBMISSION.md](docs/SUBMISSION.md).
 

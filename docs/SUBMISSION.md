@@ -15,7 +15,8 @@
 | START triage FSM + tests | `src/lib/startTriageFSM.ts` | ✅ `npm test` |
 | Offline POI routing | SQLite in app | ✅ 50+ seeded nodes |
 | GHP + QR + SMS 108 | `emergency/packet`, `relay`, `scan` | ✅ |
-| Naari Shakti portal | `app/naari-shakti.tsx`, `src/lib/naariShakti/` | ✅ 57 unit tests |
+| Naari Shakti portal | `app/naari-shakti.tsx`, `src/lib/naariShakti/` | ✅ |
+| Distress voice detection | `src/lib/voice/*`, design spec, smoke rows 23–26 | ✅ 135 mobile unit tests |
 | Implementation plan | `docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md` | ✅ |
 | Team brief + PDF | `docs/NOVADRIVE_MASTER_BRIEF.md` | ✅ |
 | Slide deck | Team asset (7 slides per plan §20) | Team |
@@ -43,6 +44,15 @@
 4. Confirm orange distress HUD + SMS composer with coordinates (tap **Send** in OS Messages)
 
 Smoke matrix rows 13–15: [novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md](../novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md)
+
+## Distress voice acceptance test (optional, ~1 min)
+
+Requires **Voice Crash Detection** ON (Profile) and an active journey unless testing Naari-only (row 26).
+
+1. Start journey → switch to Home, Community, and Settings tabs → **no** distress modal from UI sounds or app speech (row 23).
+2. Play a phone notification chime during journey → **no** modal (row 24).
+
+Smoke matrix rows 23–26: [novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md](../novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md)
 
 ---
 
@@ -97,4 +107,4 @@ npx expo run:android
 
 Repository: **novadrive** — rename from legacy slug in GitHub Settings → General if your remote still points to the old name.
 
-Latest release tag: **`v1.3.0-naari-shakti`** — see [VERSION_HISTORY.md](VERSION_HISTORY.md).
+Latest release tag: **`v1.4.0-distress-voice`** — see [VERSION_HISTORY.md](VERSION_HISTORY.md).

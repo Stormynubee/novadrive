@@ -91,25 +91,53 @@ Device checklist rows 13–15: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_M
 
 Design spec: [docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md](docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md)
 
-## Distress voice detection (dev client)
+## Distress voice detection
+
+Reduces false “Distress signal detected” modals during navigation, TTS, and ambient noise while still catching real yells during an active journey or Naari safety mode.
+
+```mermaid
+flowchart LR
+  mic[JourneyVoiceMonitor] --> policy[distressVoicePolicy]
+  policy --> pre[panicVoiceEngine pre-filter]
+  pre --> spectral[distressAudioFeatures]
+  spectral --> clf[distressVoiceClassifier]
+  yamnet[YAMNet ONNX optional] -.-> clf
+  clf --> modal[CrashCandidateModal]
+```
 
 | Piece | Location |
 |-------|----------|
 | Policy (navigation / TTS / mic warm-up) | `src/lib/voice/distressVoicePolicy.ts` |
-| Classifier + fixtures | `src/lib/voice/distressVoiceClassifier.ts`, `src/lib/__fixtures__/distressVoiceVectors.ts` |
+| Spectral features + metering proxies | `src/lib/voice/distressAudioFeatures.ts` |
+| Classifier + golden fixtures | `src/lib/voice/distressVoiceClassifier.ts`, `src/lib/__fixtures__/distressVoiceVectors.ts` |
 | Optional YAMNet ONNX | `src/lib/voice/yamnetDistressInference.ts`, `assets/models/` |
 
-**Expo Go** uses metering-derived feature proxies only. For on-device YAMNet, install `onnxruntime-react-native`, add `assets/models/yamnet_distress_mini.onnx`, and run `npx expo prebuild` + `npx expo run:android` (see `scripts/export-yamnet-distress-onnx.md`).
+| Runtime | Behavior |
+|---------|----------|
+| **Expo Go** | Metering dB + spectral proxies; no ONNX |
+| **Dev client / APK** | Same pipeline; optional YAMNet when model + `onnxruntime-react-native` are installed |
 
 Profile → **Voice Crash Detection** toggle; **Distress voice sensitivity** (low / medium / high) when enabled.
 
-Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md) · Smoke rows 23–26 in [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
+For YAMNet: see [scripts/export-yamnet-distress-onnx.md](scripts/export-yamnet-distress-onnx.md) (`npx expo prebuild` required — not Expo Go).
+
+Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md) · Plan index: [../docs/superpowers/plans/2026-05-28-distress-voice-detection.md](../docs/superpowers/plans/2026-05-28-distress-voice-detection.md)
+
+### Judge quick test (smoke rows 23–26)
+
+1. Start journey → switch Home / Community / Settings tabs → **no** distress modal from UI sounds or app speech (row 23).
+2. Play a notification chime during journey → **no** modal (row 24).
+3. Optional: intentional yell near mic → modal after ~1–2 s confirmation (row 25).
+4. Naari Safety Mode ON without journey → idle on portal/home → **no** false modal (row 26).
+
+Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ## Quality gates
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 57 unit tests — lib/, FSM, crash, GHP, Sarthi, Naari Shakti
+npm test             # 135 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti
+npm run verify:docs  # README "N unit tests" matches src/**/*.test.ts
 npm run test:coverage
 ```
 

@@ -21,6 +21,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 | [`v1.1.0-stabilization`](https://github.com/Stormynubee/novadrive/releases/tag/v1.1.0-stabilization) | `bdd5a04` | 2026-05-25 | Journey lifecycle, voice/impact gating, 32 unit tests |
 | [`v1.2.0-hackathon-publish`](https://github.com/Stormynubee/novadrive/releases/tag/v1.2.0-hackathon-publish) | `161798c` | 2026-05-25 | Publish docs, VERSION_HISTORY, release tags |
 | [`v1.3.0-naari-shakti`](https://github.com/Stormynubee/novadrive/releases/tag/v1.3.0-naari-shakti) | `c828e90` | 2026-05-26 | Naari Shakti portal, home stack, emergency activation fix |
+| [`v1.4.0-distress-voice`](https://github.com/Stormynubee/novadrive/releases/tag/v1.4.0-distress-voice) | `7370f90` | 2026-05-28 | Distress voice pipeline, smoke 23–26, 135 unit tests |
 
 ---
 
@@ -169,12 +170,42 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 ---
 
-### 13. — 2026-05-26 (HEAD on `master`)
+### 13. `7370f90` — 2026-05-28 · tag `v1.4.0-distress-voice`
 
-**docs: refresh README and hackathon docs for Naari Shakti**
+**fix(mobile): harden distress voice detection and cut false positives**
 
-- Root + mobile README: two-lane judge narrative, home stack, unverified protocol copy
-- CHANGELOG, SUBMISSION, device smoke matrix rows 13–15; doc refresh spec
+- Policy grace (navigation, TTS, recorder warm-up); two-stage classifier + golden fixtures
+- Naari + journey voice mount; Profile sensitivity; smoke rows 23–26; debug ingest removed
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/7370f90)
+
+---
+
+### 14. `5008608` — 2026-05-28
+
+**fix(mobile): improve safety brief stats and 10s activation dwell**
+
+- Safety brief stat strip layout; `ACTIVATION_SPLASH_SECONDS = 10`
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/5008608)
+
+---
+
+### 15. `f3f2222` — 2026-05-28
+
+**feat(mobile): redesign safety protocol and regional alert briefs**
+
+- Institutional GovTech brief detail screens and acknowledgment storage
+
+[View commit](https://github.com/Stormynubee/novadrive/commit/f3f2222)
+
+---
+
+### 16. — (HEAD on `master`)
+
+**docs: README, CHANGELOG, and judge docs for distress voice release**
+
+- Root + mobile README synced; `npm run verify:docs`; tag `v1.4.0-distress-voice`
 
 [Latest on master](https://github.com/Stormynubee/novadrive/commits/master/)
 
@@ -207,15 +238,19 @@ git checkout v1.1.0-stabilization
 # Hackathon publish (pre-Naari Shakti)
 git checkout v1.2.0-hackathon-publish
 
-# Naari Shakti + home stack + emergency fix (recommended for judges)
+# Naari Shakti + home stack + emergency fix
 git checkout v1.3.0-naari-shakti
+
+# Distress voice + safety briefs + activation splash (recommended for judges)
+git checkout v1.4.0-distress-voice
 # or: git checkout master
 ```
 
-Create the tag locally after pulling latest `master`:
+Create the distress-voice tag locally after pulling latest `master`:
 
 ```bash
-git tag -a v1.3.0-naari-shakti -m "Naari Shakti portal + home stack + emergency activation fix"
+git tag -a v1.4.0-distress-voice -m "Distress voice policy + classifier; README and judge docs synced"
+git push origin v1.4.0-distress-voice
 ```
 
 ---
