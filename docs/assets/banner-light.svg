@@ -33,7 +33,7 @@
 
     <text x="56" y="118" fill="#000a1e" font-family="Segoe UI, system-ui, sans-serif" font-size="56" font-weight="700" letter-spacing="-0.02em">NovaDrive</text>
     <text x="58" y="158" fill="#a04100" font-family="Segoe UI, system-ui, sans-serif" font-size="22" font-weight="600">Signal drops. The critical minute doesn&apos;t.</text>
-    <text x="58" y="196" fill="#44474e" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Offline-first Golden Hour co-pilot · NH corridor safety</text>
+    <text x="58" y="196" fill="#44474e" font-family="Segoe UI, system-ui, sans-serif" font-size="15">Offline-first Golden Hour co-pilot ï¿½ NH corridor safety</text>
 
     <g transform="translate(56 228)">
       <rect width="118" height="32" rx="16" fill="#000a1e"/>
@@ -41,17 +41,17 @@
     </g>
     <g transform="translate(186 228)">
       <rect width="200" height="32" rx="16" fill="#002147"/>
-      <text x="100" y="21" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600">IIT Madras · RoadSoS 2026</text>
+      <text x="100" y="21" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600">IIT Madras ï¿½ RoadSoS 2026</text>
     </g>
     <g transform="translate(398 228)">
       <rect width="108" height="32" rx="16" fill="#fe6b00"/>
-      <text x="54" y="21" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700">P0 · Expo</text>
+      <text x="54" y="21" text-anchor="middle" fill="#ffffff" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="700">P0 ï¿½ Expo</text>
     </g>
     <g transform="translate(518 228)">
       <rect width="130" height="32" rx="16" fill="#e8f5ee" stroke="#249c53" stroke-opacity="0.4"/>
-      <text x="65" y="21" text-anchor="middle" fill="#249c53" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600">START · GHP · QR</text>
+      <text x="65" y="21" text-anchor="middle" fill="#249c53" font-family="Segoe UI, system-ui, sans-serif" font-size="12" font-weight="600">START ï¿½ GHP ï¿½ QR</text>
     </g>
 
-    <text x="56" y="300" fill="#74777f" font-family="Segoe UI, system-ui, sans-serif" font-size="11" letter-spacing="0.06em">CoERS &amp; RBG Labs / MoRTH · Road Safety Hackathon</text>
+    <text x="56" y="300" fill="#74777f" font-family="Segoe UI, system-ui, sans-serif" font-size="11" letter-spacing="0.06em">CoERS &amp; RBG Labs / MoRTH ï¿½ Road Safety Hackathon</text>
   </g>
 </svg>

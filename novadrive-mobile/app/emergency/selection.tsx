@@ -12,6 +12,7 @@ import {
   formatCancelSosLabel,
   nextCancelSeconds,
 } from '../../src/lib/emergency/cancelSosCountdown';
+import { EMERGENCY_ACTIVATION_PATH } from '../../src/lib/emergency/emergencyNavigation';
 import { INCIDENT_OPTIONS } from '../../src/lib/emergency/incidentCatalog';
 import type { IncidentType } from '../../src/lib/types';
 import { tokens } from '../../src/theme/tokens';
@@ -34,7 +35,7 @@ export default function EmergencySelectionScreen() {
 
   const onSelect = (type: IncidentType) => {
     setIncidentType(type);
-    router.push('/emergency/triage' as Href);
+    router.push(EMERGENCY_ACTIVATION_PATH as Href);
   };
 
   const onCancel = () => {

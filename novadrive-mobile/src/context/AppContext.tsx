@@ -38,7 +38,7 @@ import {
   type PanicVoiceEvent,
 } from '../lib/panicVoiceEngine';
 import type { SafetyAlertReason } from '../lib/safetyAlert';
-import { shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
+import { canDetectDistressVoice, shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
 import {
   createJourneyLog,
   finalizeJourneyLog,
@@ -78,6 +78,7 @@ interface AppContextValue {
   confirmCrash: () => void;
   setLocation: (loc: LocationFix) => void;
   setIncidentType: (type: IncidentType) => void;
+  completeTraumaAssessment: (triage: TriageColor) => void;
   answerTriage: (value: Partial<FSMContext>) => void;
   skipTriageStep: () => void;
   parseChat: (text: string) => string[];
@@ -195,11 +196,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const triggerSafetyAlert = useCallback(
     (reason: SafetyAlertReason) => {
       const now = Date.now();
+      // #region agent log
+      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B6',location:'src/context/AppContext.tsx:199',message:'triggerSafetyAlert invoked',data:{reason,journeyStatus:journeyStatusRef.current,appForeground:appInForegroundRef.current,dialogOpen:dialogOpenRef.current},timestamp:Date.now()})}).catch(()=>{});
+      // #endregion
       if (reason !== 'simulate' && now - lastSafetyDialogAt.current < 30_000) return;
       if (dialogOpenRef.current) return;
       if (
         reason === 'voice' &&
-        (journeyStatusRef.current !== 'ACTIVE' || !appInForegroundRef.current)
+        !canDetectDistressVoice({
+          journeyActive: journeyStatusRef.current === 'ACTIVE',
+          appForeground: appInForegroundRef.current,
+          isFemaleSafetyHelpActive:
+            profile.gender === 'female' && Boolean(profile.naariShakti?.safetyModeActive),
+        })
       ) {
         return;
       }
@@ -284,13 +293,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const processVoiceMeterSample = useCallback(
     (db: number) => {
-      if (journeyStatusRef.current !== 'ACTIVE' || !appInForegroundRef.current) return;
+      if (
+        !canDetectDistressVoice({
+          journeyActive: journeyStatusRef.current === 'ACTIVE',
+          appForeground: appInForegroundRef.current,
+          isFemaleSafetyHelpActive:
+            profile.gender === 'female' && Boolean(profile.naariShakti?.safetyModeActive),
+        })
+      ) {
+        return;
+      }
       if (!shouldEnableVoiceMonitoring(settingsRef.current)) return;
       const { state, event } = evaluatePanicVoice(panicState.current, db, Date.now());
       panicState.current = state;
       if (event === 'PANIC_CANDIDATE') handlePanicEvent(event);
     },
-    [handlePanicEvent]
+    [handlePanicEvent, profile.gender, profile.naariShakti?.safetyModeActive]
   );
 
   const setVoiceMonitoringActive = useCallback((active: boolean) => {
@@ -301,6 +319,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (journeyStatusRef.current !== 'ACTIVE') return;
 
     const { status } = await Location.getForegroundPermissionsAsync();
+    // #region agent log
+    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:305',message:'ensureSafetyMonitoring permission check',data:{status,journeyStatus:journeyStatusRef.current},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (status !== 'granted') return;
 
     await startLocationWatch();
@@ -328,6 +349,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const startJourney = useCallback(async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
+    // #region agent log
+    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:333',message:'startJourney permission request result',data:{status,plannedDestination},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (status !== 'granted') {
       Alert.alert(
         'Location needed',
@@ -353,6 +377,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       journeyLogId.current = null;
     }
     await ensureSafetyMonitoring();
+    // #region agent log
+    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:362',message:'startJourney post ensureSafetyMonitoring',data:{voiceCrashDetection:settingsRef.current.voiceCrashDetection,journeyStatus:journeyStatusRef.current},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     if (shouldEnableVoiceMonitoring(settingsRef.current)) {
       setVoiceMonitoring(true);
     }
@@ -428,6 +455,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const setIncidentType = useCallback((incidentType: IncidentType) => {
     setSession((s) => ({ ...s, incidentType }));
+  }, []);
+
+  const completeTraumaAssessment = useCallback((triage: TriageColor) => {
+    setTriageResult(triage);
+    setSession((s) => ({ ...s, triage }));
   }, []);
 
   const answerTriage = useCallback(
@@ -545,6 +577,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const beginEmergencyFlow = useCallback(() => {
     resetEmergency();
+    setSession({ incidentType: 'road_accident' });
   }, [resetEmergency]);
 
   const resetDemoToStart = useCallback(async () => {
@@ -599,6 +632,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       confirmCrash,
       setLocation,
       setIncidentType,
+      completeTraumaAssessment,
       answerTriage,
       skipTriageStep,
       parseChat,
@@ -644,6 +678,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       confirmCrash,
       setLocation,
       setIncidentType,
+      completeTraumaAssessment,
       answerTriage,
       skipTriageStep,
       parseChat,

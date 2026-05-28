@@ -19,6 +19,7 @@ import { HudText } from './HudText';
 import { LiveChip } from './LiveChip';
 import { PlanCorridorMap } from './PlanCorridorMap';
 import { useApp } from '../context/AppContext';
+import { toCurrentLocationLabel } from '../lib/location/locationLabel';
 import { tokens } from '../theme/tokens';
 
 type RoutePreference = 'safest' | 'fastest';
@@ -164,17 +165,43 @@ export function PlanCorridorScreen() {
   useEffect(() => {
     if (gpsReady.current) return;
     gpsReady.current = true;
+    // #region agent log
+    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:168',message:'plan corridor location effect start',data:{origin,destination},timestamp:Date.now()})}).catch(()=>{});
+    // #endregion
     (async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
+        // #region agent log
+        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:173',message:'plan corridor permission result',data:{status},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
         if (status !== 'granted') {
           setOrigin('Current location (permission needed)');
           return;
         }
-        const pos = await Location.getCurrentPositionAsync({});
-        setOrigin(`Current Location — Sector ${Math.abs(Math.round(pos.coords.latitude)) % 90}`);
+        const last = await Location.getLastKnownPositionAsync({ maxAge: 90_000 });
+        if (last?.coords) {
+          setOrigin(
+            toCurrentLocationLabel({
+              lat: last.coords.latitude,
+              lng: last.coords.longitude,
+            })
+          );
+        }
+        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        // #region agent log
+        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:179',message:'plan corridor location resolved',data:{lat:pos.coords.latitude,lng:pos.coords.longitude},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
+        setOrigin(
+          toCurrentLocationLabel({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          })
+        );
       } catch {
-        setOrigin('Current Location — GPS');
+        // #region agent log
+        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:183',message:'plan corridor location exception fallback',data:{},timestamp:Date.now()})}).catch(()=>{});
+        // #endregion
+        setOrigin('Current location unavailable');
       }
     })();
   }, []);

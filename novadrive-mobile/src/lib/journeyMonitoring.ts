@@ -4,3 +4,12 @@ import type { AppSettings } from './types';
 export function shouldEnableVoiceMonitoring(settings: AppSettings): boolean {
   return settings.voiceCrashDetection ?? true;
 }
+
+export function canDetectDistressVoice(input: {
+  journeyActive: boolean;
+  appForeground: boolean;
+  isFemaleSafetyHelpActive: boolean;
+}): boolean {
+  if (!input.appForeground) return false;
+  return input.journeyActive || input.isFemaleSafetyHelpActive;
+}

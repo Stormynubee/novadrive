@@ -14,7 +14,7 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 8 | Distress modal | Simulate crash on HUD only | Modal on foreground journey; no backdrop dismiss |
 | 9 | Idle safety | Home/Community idle | No distress modal from voice/impact |
 | 10 | Sensor check | Profile → Motion Sensor Calibration | Preview only; no live journey |
-| 11 | Emergency SOS | Hold SOS 3s on HUD | Emergency Selection (3 cards), not triage |
+| 11 | Emergency SOS | Hold SOS 3s on HUD | Emergency Activation splash opens, then Trauma Response |
 | 12 | Accessibility | Profile → Accessibility | Back returns to profile |
 | 13 | Naari home (female) | Medical → Female → Home | Stacked drive + Naari cards; male profile shows drive card only |
 | 14 | Naari protocol + portal | Tap Naari → Enable Portal → Safety Mode ON | Portal loads; toggle persists |
@@ -22,9 +22,9 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 16 | Home weather | Home → Daily Safety Brief (location on) | City + °C from GPS; Open-Meteo summary |
 | 17 | Home weather denied | Deny location permission | “Location unavailable” + settings hint; no crash |
 | 18 | Safety briefs | Tap Protocol Alpha / Regional Alert | Detail screens with institutional copy |
-| 19 | Quick SOS confirm | Tap Quick SOS → Cancel | Stays on home; no selection screen |
-| 20 | Quick SOS proceed | Tap Quick SOS → Proceed | Emergency Selection (3 cards + cancel countdown) |
-| 20b | Incident pick | Select Road / Natural / Human Crime | START triage; cancel expires after 10s |
+| 19 | Quick SOS confirm | Tap Quick SOS → Cancel | Stays on home; no activation screen |
+| 20 | Quick SOS proceed | Tap Quick SOS → Proceed | Activation splash with language + mode selector |
+| 20b | Trauma response | Activation auto/guided → scroll down | Chatbot, first-aid board, dispatch cards, QR visible |
 | 21 | Report Hazard | Tap Report Hazard | Feedback form with safety category |
 | 22 | Sarthi home widget | Home → peek bubble → FAB → expand | Peek 5s; pulse FAB; mini panel + quick links + chat |
 

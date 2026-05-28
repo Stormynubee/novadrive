@@ -1,4 +1,4 @@
-import { shouldEnableVoiceMonitoring } from './journeyMonitoring';
+import { canDetectDistressVoice, shouldEnableVoiceMonitoring } from './journeyMonitoring';
 import type { AppSettings } from './types';
 
 const baseSettings = (): AppSettings => ({
@@ -24,6 +24,38 @@ describe('shouldEnableVoiceMonitoring', () => {
   it('is false when voiceCrashDetection is explicitly off', () => {
     expect(
       shouldEnableVoiceMonitoring({ ...baseSettings(), voiceCrashDetection: false })
+    ).toBe(false);
+  });
+});
+
+describe('canDetectDistressVoice', () => {
+  it('allows distress detection while actively driving', () => {
+    expect(
+      canDetectDistressVoice({
+        journeyActive: true,
+        appForeground: true,
+        isFemaleSafetyHelpActive: false,
+      })
+    ).toBe(true);
+  });
+
+  it('allows distress detection for women help mode even when not driving', () => {
+    expect(
+      canDetectDistressVoice({
+        journeyActive: false,
+        appForeground: true,
+        isFemaleSafetyHelpActive: true,
+      })
+    ).toBe(true);
+  });
+
+  it('blocks distress detection when neither driving nor women help mode is active', () => {
+    expect(
+      canDetectDistressVoice({
+        journeyActive: false,
+        appForeground: true,
+        isFemaleSafetyHelpActive: false,
+      })
     ).toBe(false);
   });
 });

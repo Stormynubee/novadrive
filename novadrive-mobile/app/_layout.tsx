@@ -74,6 +74,8 @@ export default function RootLayout() {
         <Stack.Screen name="journey/feedback" options={{ headerShown: false }} />
         <Stack.Screen name="journey" options={{ headerShown: false }} />
         <Stack.Screen name="emergency/locate" options={{ headerShown: false }} />
+        <Stack.Screen name="emergency/activation" options={{ headerShown: false }} />
+        <Stack.Screen name="emergency/response" options={{ headerShown: false }} />
         <Stack.Screen name="emergency/selection" options={{ headerShown: false }} />
         <Stack.Screen name="emergency/triage" options={{ headerShown: false }} />
         <Stack.Screen name="emergency/route" options={{ headerShown: false }} />

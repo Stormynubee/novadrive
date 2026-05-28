@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Linking } from 'react-native';
 import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
@@ -8,6 +8,7 @@ import { HudText } from '../../src/components/HudText';
 import { NovaButton } from '../../src/components/NovaButton';
 import { useApp } from '../../src/context/AppContext';
 import { rankFacilities } from '../../src/lib/facilitiesDb';
+import { EMERGENCY_RESPONSE_PATH } from '../../src/lib/emergency/emergencyNavigation';
 import type { Facility } from '../../src/lib/types';
 import { tokens } from '../../src/theme/tokens';
 
@@ -47,9 +48,15 @@ export default function RouteScreen() {
       <EmergencyStepShell
         step="Route"
         title="Route"
-        subtitle="Complete triage first."
+        subtitle="Complete trauma response assessment first."
         showBack
-        footer={<NovaButton label="Back to triage" onPress={() => router.replace('/emergency/triage')} large />}
+        footer={
+          <NovaButton
+            label="Back to response"
+            onPress={() => router.replace(EMERGENCY_RESPONSE_PATH as Href)}
+            large
+          />
+        }
       >
         {null}
       </EmergencyStepShell>

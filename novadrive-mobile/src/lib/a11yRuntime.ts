@@ -11,13 +11,13 @@ export function announceA11y(message: string, prefs: AccessibilityPrefs) {
   AccessibilityInfo.announceForAccessibility(message);
 }
 
-export function speakA11y(message: string, prefs: AccessibilityPrefs) {
+export function speakA11y(message: string, prefs: AccessibilityPrefs, locale = 'en-IN') {
   const enabled = prefs.ttsEnabled || prefs.voiceCommand || prefs.audioNavigation;
   if (!enabled || !message.trim()) return;
   if (message === lastSpoken) return;
   lastSpoken = message;
   Speech.stop();
-  Speech.speak(message, { language: 'en-IN', rate: 0.92 });
+  Speech.speak(message, { language: locale, rate: 0.92 });
 }
 
 export async function hapticCrashAlert(prefs: AccessibilityPrefs) {

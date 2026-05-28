@@ -9,6 +9,7 @@ import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
 import { NovaButton } from '../../src/components/NovaButton';
 import { useApp } from '../../src/context/AppContext';
+import { EMERGENCY_ACTIVATION_PATH } from '../../src/lib/emergency/emergencyNavigation';
 import { reverseGeocodePlace } from '../../src/lib/geocode';
 import { tokens } from '../../src/theme/tokens';
 
@@ -56,8 +57,8 @@ export default function LocateScreen() {
       ) : (
         <>
           <NovaButton
-            label="Continue to incident selection"
-            onPress={() => router.push('/emergency/selection' as Href)}
+            label="Continue to activation"
+            onPress={() => router.push(EMERGENCY_ACTIVATION_PATH as Href)}
             variant="secondary"
             large
           />

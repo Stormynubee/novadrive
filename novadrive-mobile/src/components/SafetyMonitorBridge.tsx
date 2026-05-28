@@ -5,12 +5,13 @@ import { CrashCandidateModal } from './CrashCandidateModal';
 import { JourneyVoiceMonitor } from './JourneyVoiceMonitor';
 import { useApp } from '../context/AppContext';
 import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
-import { shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
+import { canDetectDistressVoice, shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
 
 /** Keeps impact sensors alive across tabs; voice only during foreground active journey. */
 export function SafetyMonitorBridge() {
   const {
     journeyStatus,
+    profile,
     settings,
     ensureSafetyMonitoring,
     crashDialogOpen,
@@ -23,7 +24,15 @@ export function SafetyMonitorBridge() {
   const journeyActive = journeyStatus === 'ACTIVE';
   const [appForeground, setAppForeground] = useState(AppState.currentState === 'active');
   const voiceEnabled = shouldEnableVoiceMonitoring(settings);
-  const voiceMonitorActive = journeyActive && appForeground && voiceEnabled;
+  const womenHelpModeActive =
+    profile.gender === 'female' && Boolean(profile.naariShakti?.safetyModeActive);
+  const voiceMonitorActive =
+    voiceEnabled &&
+    canDetectDistressVoice({
+      journeyActive,
+      appForeground,
+      isFemaleSafetyHelpActive: womenHelpModeActive,
+    });
 
   useFocusEffect(
     useCallback(() => {
