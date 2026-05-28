@@ -1,11 +1,22 @@
 import { shouldNavigateToResponse } from './activationAuto';
 
 describe('shouldNavigateToResponse', () => {
-  it('navigates immediately in auto mode once backend is ready', () => {
+  it('does not auto-navigate while splash countdown is still running', () => {
     expect(
       shouldNavigateToResponse({
         mode: 'auto',
         secondsLeft: 6,
+        backendReady: true,
+        alreadyNavigated: false,
+      })
+    ).toBe(false);
+  });
+
+  it('auto-navigates after countdown completes even if backend became ready early', () => {
+    expect(
+      shouldNavigateToResponse({
+        mode: 'auto',
+        secondsLeft: 0,
         backendReady: true,
         alreadyNavigated: false,
       })

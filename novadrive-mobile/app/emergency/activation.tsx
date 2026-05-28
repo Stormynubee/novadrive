@@ -6,7 +6,11 @@ import * as Location from 'expo-location';
 import { HudText } from '../../src/components/HudText';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { useApp } from '../../src/context/AppContext';
-import { shouldNavigateToResponse, type ActivationMode } from '../../src/lib/emergency/activationAuto';
+import {
+  ACTIVATION_SPLASH_SECONDS,
+  shouldNavigateToResponse,
+  type ActivationMode,
+} from '../../src/lib/emergency/activationAuto';
 import {
   EMERGENCY_RESPONSE_PATH,
   EMERGENCY_SELECTION_PATH,
@@ -24,7 +28,7 @@ const ROTATING_STATUS = [
 export default function EmergencyActivationScreen() {
   const { settings, updateSettings, session, resetEmergency } = useApp();
   const [statusIndex, setStatusIndex] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(8);
+  const [secondsLeft, setSecondsLeft] = useState(ACTIVATION_SPLASH_SECONDS);
   const [mode, setMode] = useState<ActivationMode>('auto');
   const [backendReady, setBackendReady] = useState(false);
   const hasAutoNavigatedRef = useRef(false);

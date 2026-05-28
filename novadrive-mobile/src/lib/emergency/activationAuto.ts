@@ -1,5 +1,8 @@
 export type ActivationMode = 'auto' | 'manual';
 
+/** Minimum splash dwell before auto mode advances to trauma response. */
+export const ACTIVATION_SPLASH_SECONDS = 8;
+
 type AutoNavigationInput = {
   mode: ActivationMode;
   secondsLeft: number;
@@ -10,6 +13,6 @@ type AutoNavigationInput = {
 export function shouldNavigateToResponse(input: AutoNavigationInput): boolean {
   if (input.alreadyNavigated) return false;
   if (input.mode !== 'auto') return false;
-  if (input.backendReady) return true;
-  return input.secondsLeft <= 0;
+  if (input.secondsLeft > 0) return false;
+  return true;
 }
