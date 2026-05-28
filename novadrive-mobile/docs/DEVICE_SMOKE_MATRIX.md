@@ -27,5 +27,9 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 20b | Trauma response | Activation auto/guided → scroll down | Chatbot, first-aid board, dispatch cards, QR visible |
 | 21 | Report Hazard | Tap Report Hazard | Feedback form with safety category |
 | 22 | Sarthi home widget | Home → peek bubble → FAB → expand | Peek 5s; pulse FAB; mini panel + quick links + chat |
+| 23 | Journey + tab switch | Active journey → Home / Community / Settings tabs | No distress modal from UI sounds or app speech |
+| 24 | Journey + notification | Play phone notification chime during journey | No distress modal |
+| 25 | Journey + test yell | Loud intentional yell near mic (test only) | Distress modal after ~1–2 s confirmation |
+| 26 | Naari only | Safety Mode ON, no active journey, idle on portal/home | Mic policy active; no false modal while idle |
 
 **Commands before release:** `npm run typecheck` · `npm test`

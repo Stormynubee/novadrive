@@ -56,10 +56,6 @@ export default function JourneyDepartScreen() {
   useEffect(() => {
     if (ran.current) return;
     ran.current = true;
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D1',location:'app/journey/depart.tsx:60',message:'depart calibration started',data:{previewOnly,reduceMotion:a11y.reduceMotion},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-
     const duration = a11y.reduceMotion ? 900 : CALIBRATION_MS;
     const step = duration / 3;
 
@@ -82,24 +78,12 @@ export default function JourneyDepartScreen() {
         return;
       }
 
-      try {
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D1',location:'app/journey/depart.tsx:86',message:'calling startJourney',data:{previewOnly},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        await startJourney();
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D1',location:'app/journey/depart.tsx:89',message:'startJourney resolved',data:{cancelled:cancelledRef.current,mounted:mountedRef.current},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        if (cancelledRef.current || !mountedRef.current) {
+      try {        await startJourney();        if (cancelledRef.current || !mountedRef.current) {
           endJourney();
           return;
         }
         router.replace('/journey' as Href);
-      } catch {
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D1',location:'app/journey/depart.tsx:99',message:'startJourney rejected',data:{cancelled:cancelledRef.current,mounted:mountedRef.current},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        if (!cancelledRef.current && mountedRef.current) {
+      } catch {        if (!cancelledRef.current && mountedRef.current) {
           endJourney();
           router.back();
         }

@@ -8,7 +8,10 @@ import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
 import { useApp } from '../../src/context/AppContext';
+import type { VoiceDistressSensitivity } from '../../src/lib/types';
 import { tokens } from '../../src/theme/tokens';
+
+const VOICE_DISTRESS_LEVELS: VoiceDistressSensitivity[] = ['low', 'medium', 'high'];
 
 function ProfileMenuRow({
   icon,
@@ -270,6 +273,39 @@ export default function ProfileTabScreen() {
               />
             }
           />
+          {(settings.voiceCrashDetection ?? true) ? (
+            <>
+              <View style={rowStyles.divider} />
+              <View style={sensitivityStyles.wrap}>
+                <HudText variant="bodySm" style={sensitivityStyles.label}>
+                  Distress voice sensitivity
+                </HudText>
+                <View style={sensitivityStyles.row}>
+                  {VOICE_DISTRESS_LEVELS.map((level) => {
+                    const active =
+                      (settings.voiceDistressSensitivity ?? 'medium') === level;
+                    return (
+                      <Pressable
+                        key={level}
+                        onPress={() => updateSettings({ voiceDistressSensitivity: level })}
+                        style={[sensitivityStyles.chip, active && sensitivityStyles.chipOn]}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: active }}
+                        accessibilityLabel={`${level} distress sensitivity`}
+                      >
+                        <HudText
+                          variant="mono"
+                          style={active ? sensitivityStyles.chipOnText : sensitivityStyles.chipText}
+                        >
+                          {level.charAt(0).toUpperCase() + level.slice(1)}
+                        </HudText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            </>
+          ) : null}
           <View style={rowStyles.divider} />
           <ProfileMenuRow
             icon="sensors"
@@ -435,6 +471,23 @@ const sectionStyles = StyleSheet.create({
     marginLeft: 4,
   },
   card: { paddingVertical: 4, paddingHorizontal: 0 },
+});
+
+const sensitivityStyles = StyleSheet.create({
+  wrap: { paddingHorizontal: 14, paddingBottom: 12 },
+  label: { color: tokens.onSurfaceVariant, marginBottom: 8 },
+  row: { flexDirection: 'row', gap: 8 },
+  chip: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: tokens.radius.button,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    alignItems: 'center',
+  },
+  chipOn: { backgroundColor: tokens.primary, borderColor: tokens.primary },
+  chipText: { color: tokens.onSurfaceVariant, fontSize: 11 },
+  chipOnText: { color: tokens.onPrimary },
 });
 
 const rowStyles = StyleSheet.create({

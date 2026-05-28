@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { VoicePcmRingBuffer } from '../lib/voice/voicePcmRingBuffer';
 import {
   RecordingPresets,
   requestRecordingPermissionsAsync,
@@ -13,11 +14,23 @@ const VOICE_OPTIONS = {
   isMeteringEnabled: true,
 };
 
-/** Single recorder instance for journey — uses expo-audio (replaces deprecated expo-av). */
+/** Debounce brief `active` flicker (tab focus) so the recorder is not torn down immediately. */
+const INACTIVE_STOP_DEBOUNCE_MS = 450;
+/** Throttle optional YAMNet runs when PCM windows become available. */
+const YAMNET_INTERVAL_MS = 500;
+
+/**
+ * Single recorder instance for journey — uses expo-audio (replaces deprecated expo-av).
+ * SDK 54 recorder exposes metering only; PCM ring is ready for a future native tap.
+ */
 export function JourneyVoiceMonitor({ active }: { active: boolean }) {
-  const { processVoiceMeterSample, setVoiceMonitoringActive } = useApp();
+  const { processVoiceMeterSample, setVoiceMonitoringActive, markRecorderWarmup } = useApp();
   const activeRef = useRef(active);
   const startingRef = useRef(false);
+  const wasRecordingRef = useRef(false);
+  const stopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pcmRingRef = useRef(new VoicePcmRingBuffer());
+  const lastYamnetAtRef = useRef(0);
 
   activeRef.current = active;
 
@@ -33,23 +46,47 @@ export function JourneyVoiceMonitor({ active }: { active: boolean }) {
     ) {
       return;
     }
-    processVoiceMeterSample(state.metering);
+    const pcmWindow =
+      pcmRingRef.current.isFull ? pcmRingRef.current.snapshot() : undefined;
+    processVoiceMeterSample(state.metering, pcmWindow);
+    const now = Date.now();
+    if (pcmWindow && now - lastYamnetAtRef.current >= YAMNET_INTERVAL_MS) {
+      lastYamnetAtRef.current = now;
+    }
   }, [active, state.isRecording, state.metering, processVoiceMeterSample]);
 
   useEffect(() => {
     if (!active) {
-      startingRef.current = false;
-      (async () => {
-        try {
-          if (recorder.getStatus().isRecording) {
-            await recorder.stop();
+      if (!wasRecordingRef.current) return;
+      if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = setTimeout(() => {
+        stopTimerRef.current = null;
+        if (activeRef.current) return;
+        startingRef.current = false;
+        (async () => {
+          try {
+            if (recorder.getStatus().isRecording) {
+              await recorder.stop();
+            }
+          } catch {
+            /* already stopped */
           }
-        } catch {
-          /* already stopped */
+          wasRecordingRef.current = false;
+          pcmRingRef.current.clear();
+          setVoiceMonitoringActive(false);
+        })();
+      }, INACTIVE_STOP_DEBOUNCE_MS);
+      return () => {
+        if (stopTimerRef.current) {
+          clearTimeout(stopTimerRef.current);
+          stopTimerRef.current = null;
         }
-        setVoiceMonitoringActive(false);
-      })();
-      return;
+      };
+    }
+
+    if (stopTimerRef.current) {
+      clearTimeout(stopTimerRef.current);
+      stopTimerRef.current = null;
     }
 
     let cancelled = false;
@@ -72,6 +109,7 @@ export function JourneyVoiceMonitor({ active }: { active: boolean }) {
         const st = recorder.getStatus();
         if (st.isRecording) {
           setVoiceMonitoringActive(true);
+          wasRecordingRef.current = true;
           return;
         }
 
@@ -82,6 +120,8 @@ export function JourneyVoiceMonitor({ active }: { active: boolean }) {
         if (cancelled || !activeRef.current) return;
 
         recorder.record();
+        markRecorderWarmup();
+        wasRecordingRef.current = true;
         setVoiceMonitoringActive(true);
       } catch {
         setVoiceMonitoringActive(false);
@@ -93,7 +133,7 @@ export function JourneyVoiceMonitor({ active }: { active: boolean }) {
     return () => {
       cancelled = true;
     };
-  }, [active, recorder, setVoiceMonitoringActive]);
+  }, [active, recorder, setVoiceMonitoringActive, markRecorderWarmup]);
 
   useEffect(() => {
     return () => {
@@ -105,6 +145,7 @@ export function JourneyVoiceMonitor({ active }: { active: boolean }) {
         } catch {
           /* already stopped */
         }
+        wasRecordingRef.current = false;
         setVoiceMonitoringActive(false);
       })();
     };

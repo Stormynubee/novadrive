@@ -32,11 +32,24 @@ import {
   resetCrashDetectionCooldown,
   type CrashEvent,
 } from '../lib/crashEngine';
+import type { PanicVoiceEvent } from '../lib/panicVoiceEngine';
 import {
-  createPanicVoiceState,
-  evaluatePanicVoice,
-  type PanicVoiceEvent,
-} from '../lib/panicVoiceEngine';
+  createDistressVoiceClassifierState,
+  evaluateDistressVoice,
+} from '../lib/voice/distressVoiceClassifier';
+import {
+  estimateMeteringProxies,
+  extractDistressAudioFeatures,
+} from '../lib/voice/distressAudioFeatures';
+import {
+  createVoicePolicyState,
+  markNavigationTransition,
+  markRecorderWarmup,
+  markTtsMute,
+  shouldProcessVoiceSample,
+} from '../lib/voice/distressVoicePolicy';
+import { runYamnetDistress } from '../lib/voice/yamnetDistressInference';
+import { registerVoicePolicyHandlers } from '../lib/voice/voicePolicyBridge';
 import type { SafetyAlertReason } from '../lib/safetyAlert';
 import { canDetectDistressVoice, shouldEnableVoiceMonitoring } from '../lib/journeyMonitoring';
 import {
@@ -96,8 +109,10 @@ interface AppContextValue {
   plannedDestination: string;
   setPlannedDestination: (label: string) => void;
   logout: () => Promise<void>;
-  processVoiceMeterSample: (db: number) => void;
+  processVoiceMeterSample: (db: number, pcm16k?: Float32Array) => void;
   setVoiceMonitoringActive: (active: boolean) => void;
+  markNavigationTransition: () => void;
+  markRecorderWarmup: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -125,7 +140,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const locSub = useRef<Location.LocationSubscription | null>(null);
   const accelSub = useRef<{ remove: () => void } | null>(null);
   const crashState = useRef(createCrashEngineState());
-  const panicState = useRef(createPanicVoiceState());
+  const distressClassifierState = useRef(createDistressVoiceClassifierState());
+  const yamnetInflightRef = useRef(false);
+  const voicePolicyRef = useRef(createVoicePolicyState());
+  const profileRef = useRef(profile);
   const speedRef = useRef(0);
   const calmTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const monitoringActive = useRef(false);
@@ -153,6 +171,27 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+
+  useEffect(() => {
+    profileRef.current = profile;
+  }, [profile]);
+
+  useEffect(() => {
+    registerVoicePolicyHandlers({
+      markTtsMute: (estimatedSpeechMs) => {
+        voicePolicyRef.current = markTtsMute(voicePolicyRef.current, estimatedSpeechMs);
+      },
+    });
+    return () => registerVoicePolicyHandlers(null);
+  }, []);
+
+  const markNavigationTransitionCtx = useCallback(() => {
+    voicePolicyRef.current = markNavigationTransition(voicePolicyRef.current);
+  }, []);
+
+  const markRecorderWarmupCtx = useCallback(() => {
+    voicePolicyRef.current = markRecorderWarmup(voicePolicyRef.current);
+  }, []);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next) => {
@@ -196,9 +235,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const triggerSafetyAlert = useCallback(
     (reason: SafetyAlertReason) => {
       const now = Date.now();
-      // #region agent log
-      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B6',location:'src/context/AppContext.tsx:199',message:'triggerSafetyAlert invoked',data:{reason,journeyStatus:journeyStatusRef.current,appForeground:appInForegroundRef.current,dialogOpen:dialogOpenRef.current},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
       if (reason !== 'simulate' && now - lastSafetyDialogAt.current < 30_000) return;
       if (dialogOpenRef.current) return;
       if (
@@ -207,7 +243,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           journeyActive: journeyStatusRef.current === 'ACTIVE',
           appForeground: appInForegroundRef.current,
           isFemaleSafetyHelpActive:
-            profile.gender === 'female' && Boolean(profile.naariShakti?.safetyModeActive),
+            profileRef.current.gender === 'female' &&
+            Boolean(profileRef.current.naariShakti?.safetyModeActive),
         })
       ) {
         return;
@@ -292,23 +329,72 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [handleCrashEvent]);
 
   const processVoiceMeterSample = useCallback(
-    (db: number) => {
+    (db: number, pcm16k?: Float32Array) => {
       if (
         !canDetectDistressVoice({
           journeyActive: journeyStatusRef.current === 'ACTIVE',
           appForeground: appInForegroundRef.current,
           isFemaleSafetyHelpActive:
-            profile.gender === 'female' && Boolean(profile.naariShakti?.safetyModeActive),
+            profileRef.current.gender === 'female' &&
+            Boolean(profileRef.current.naariShakti?.safetyModeActive),
         })
       ) {
         return;
       }
       if (!shouldEnableVoiceMonitoring(settingsRef.current)) return;
-      const { state, event } = evaluatePanicVoice(panicState.current, db, Date.now());
-      panicState.current = state;
-      if (event === 'PANIC_CANDIDATE') handlePanicEvent(event);
+
+      const now = Date.now();
+      const policyCheck = shouldProcessVoiceSample({
+        ...voicePolicyRef.current,
+        now,
+      });
+      if (!policyCheck) return;
+
+      const panic = distressClassifierState.current.panic;
+      const above = panic.calibrated ? db - panic.baselineDb : 0;
+      const features =
+        pcm16k && pcm16k.length > 0
+          ? extractDistressAudioFeatures(pcm16k)
+          : estimateMeteringProxies(db, above);
+
+      const sensitivity = settingsRef.current.voiceDistressSensitivity ?? 'medium';
+      const evaluate = (yamnetDistress?: number) => {
+        const { state, alert } = evaluateDistressVoice(
+          distressClassifierState.current,
+          { meteringDb: db, features, yamnetDistress },
+          { now, sensitivity }
+        );
+        distressClassifierState.current = state;
+        if (alert) handlePanicEvent('PANIC_CANDIDATE');
+      };
+
+      evaluate();
+
+      if (
+        pcm16k &&
+        pcm16k.length >= 16_000 &&
+        !yamnetInflightRef.current
+      ) {
+        yamnetInflightRef.current = true;
+        void runYamnetDistress(pcm16k).then((yamnet) => {
+          yamnetInflightRef.current = false;
+          if (!yamnet || yamnet.suppressed) return;
+          if (
+            !canDetectDistressVoice({
+              journeyActive: journeyStatusRef.current === 'ACTIVE',
+              appForeground: appInForegroundRef.current,
+              isFemaleSafetyHelpActive:
+                profileRef.current.gender === 'female' &&
+                Boolean(profileRef.current.naariShakti?.safetyModeActive),
+            })
+          ) {
+            return;
+          }
+          evaluate(yamnet.distress);
+        });
+      }
     },
-    [handlePanicEvent, profile.gender, profile.naariShakti?.safetyModeActive]
+    [handlePanicEvent]
   );
 
   const setVoiceMonitoringActive = useCallback((active: boolean) => {
@@ -319,9 +405,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (journeyStatusRef.current !== 'ACTIVE') return;
 
     const { status } = await Location.getForegroundPermissionsAsync();
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:305',message:'ensureSafetyMonitoring permission check',data:{status,journeyStatus:journeyStatusRef.current},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (status !== 'granted') return;
 
     await startLocationWatch();
@@ -336,7 +419,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     speedRef.current = 0;
     setPlannedDestination('');
     crashState.current = createCrashEngineState();
-    panicState.current = createPanicVoiceState();
+    distressClassifierState.current = createDistressVoiceClassifierState();
+    voicePolicyRef.current = createVoicePolicyState();
     lastSafetyDialogAt.current = 0;
     journeyLogId.current = null;
     journeyStartedAt.current = 0;
@@ -349,9 +433,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const startJourney = useCallback(async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:333',message:'startJourney permission request result',data:{status,plannedDestination},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (status !== 'granted') {
       Alert.alert(
         'Location needed',
@@ -363,7 +444,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setJourneyStatus('ACTIVE');
     journeyStatusRef.current = 'ACTIVE';
     crashState.current = createCrashEngineState();
-    panicState.current = createPanicVoiceState();
+    distressClassifierState.current = createDistressVoiceClassifierState();
+    voicePolicyRef.current = createVoicePolicyState();
     lastSafetyDialogAt.current = 0;
     journeyStartedAt.current = Date.now();
     journeyMaxSpeed.current = 0;
@@ -377,9 +459,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       journeyLogId.current = null;
     }
     await ensureSafetyMonitoring();
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D2',location:'src/context/AppContext.tsx:362',message:'startJourney post ensureSafetyMonitoring',data:{voiceCrashDetection:settingsRef.current.voiceCrashDetection,journeyStatus:journeyStatusRef.current},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
     if (shouldEnableVoiceMonitoring(settingsRef.current)) {
       setVoiceMonitoring(true);
     }
@@ -440,7 +519,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setCrashDialogOpen(false);
     if (calmTimer.current) clearInterval(calmTimer.current);
     resetCrashDetectionCooldown(crashState.current);
-    panicState.current = createPanicVoiceState();
+    distressClassifierState.current = createDistressVoiceClassifierState();
+    voicePolicyRef.current = createVoicePolicyState();
     lastSafetyDialogAt.current = 0;
   }, []);
 
@@ -651,6 +731,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       logout,
       processVoiceMeterSample,
       setVoiceMonitoringActive,
+      markNavigationTransition: markNavigationTransitionCtx,
+      markRecorderWarmup: markRecorderWarmupCtx,
     }),
     [
       profile,
@@ -696,6 +778,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       logout,
       processVoiceMeterSample,
       setVoiceMonitoringActive,
+      markNavigationTransitionCtx,
+      markRecorderWarmupCtx,
     ]
   );
 

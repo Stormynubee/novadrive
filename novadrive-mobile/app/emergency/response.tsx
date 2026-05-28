@@ -70,11 +70,7 @@ export default function TraumaResponseScreen() {
     []
   );
 
-  useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B2',location:'app/emergency/response.tsx:73',message:'response screen mounted',data:{mode,incidentType:session.incidentType ?? null,hasLocation:Boolean(session.location)},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    if (!session.incidentType) {
+  useEffect(() => {    if (!session.incidentType) {
       router.replace(EMERGENCY_ACTIVATION_PATH as Href);
       return;
     }
@@ -137,15 +133,7 @@ export default function TraumaResponseScreen() {
         lng: loc.lng,
         language: settings.language,
       });
-      setDispatchResult(result);
-      // #region agent log
-      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B4',location:'app/emergency/response.tsx:132',message:'runDispatch resolved',data:{status:result.status,traumaCenter:result.traumaCenter.name,traumaEta:result.traumaCenter.etaMinutes,policeUnit:result.policeUnit.name,policeEta:result.policeUnit.etaMinutes},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-    } catch {
-      // #region agent log
-      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B4',location:'app/emergency/response.tsx:136',message:'runDispatch exception fallback',data:{hasLocation:Boolean(session.location),incidentType:session.incidentType ?? null},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-      setDispatchResult({
+      setDispatchResult(result);    } catch {      setDispatchResult({
         traumaCenter: { name: 'Nearest Trauma Center', phone: '108', etaMinutes: 8 },
         policeUnit: { name: 'Police Control Room', phone: '112', etaMinutes: 6 },
         status: 'partial',

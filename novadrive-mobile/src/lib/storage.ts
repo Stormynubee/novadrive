@@ -88,6 +88,7 @@ export function defaultSettings(): AppSettings {
     notifyEmergencyContacts: true,
     lockDeviceScreen: false,
     voiceCrashDetection: true,
+    voiceDistressSensitivity: 'medium',
   };
 }
 

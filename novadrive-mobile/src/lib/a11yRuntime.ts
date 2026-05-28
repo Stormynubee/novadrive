@@ -2,6 +2,7 @@ import { AccessibilityInfo, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import type { AccessibilityPrefs } from './types';
+import { notifyTtsPlayback } from './voice/voicePolicyBridge';
 
 let lastSpoken = '';
 
@@ -16,6 +17,7 @@ export function speakA11y(message: string, prefs: AccessibilityPrefs, locale = '
   if (!enabled || !message.trim()) return;
   if (message === lastSpoken) return;
   lastSpoken = message;
+  notifyTtsPlayback(message);
   Speech.stop();
   Speech.speak(message, { language: locale, rate: 0.92 });
 }

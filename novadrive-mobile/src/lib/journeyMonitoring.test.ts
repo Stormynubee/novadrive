@@ -11,6 +11,7 @@ const baseSettings = (): AppSettings => ({
   notifyEmergencyContacts: true,
   lockDeviceScreen: false,
   voiceCrashDetection: true,
+  voiceDistressSensitivity: 'medium',
 });
 
 describe('shouldEnableVoiceMonitoring', () => {

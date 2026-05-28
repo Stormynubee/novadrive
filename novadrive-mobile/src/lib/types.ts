@@ -105,6 +105,8 @@ export interface AccessibilityPrefs {
 
 export type SosSensitivity = 'low' | 'medium' | 'high';
 
+export type VoiceDistressSensitivity = 'low' | 'medium' | 'high';
+
 export type GenderIdentity = 'female' | 'male' | 'other' | 'prefer_not_to_say';
 
 export interface NaariShaktiPrefs {
@@ -125,6 +127,8 @@ export interface AppSettings {
   lockDeviceScreen: boolean;
   /** Listen for distress audio during an active journey only */
   voiceCrashDetection: boolean;
+  /** Scream/distress voice detection strictness */
+  voiceDistressSensitivity: VoiceDistressSensitivity;
 }
 
 export interface UserProfile {

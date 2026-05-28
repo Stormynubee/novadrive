@@ -164,17 +164,9 @@ export function PlanCorridorScreen() {
 
   useEffect(() => {
     if (gpsReady.current) return;
-    gpsReady.current = true;
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:168',message:'plan corridor location effect start',data:{origin,destination},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    (async () => {
+    gpsReady.current = true;    (async () => {
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:173',message:'plan corridor permission result',data:{status},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        if (status !== 'granted') {
+        const { status } = await Location.requestForegroundPermissionsAsync();        if (status !== 'granted') {
           setOrigin('Current location (permission needed)');
           return;
         }
@@ -187,21 +179,13 @@ export function PlanCorridorScreen() {
             })
           );
         }
-        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:179',message:'plan corridor location resolved',data:{lat:pos.coords.latitude,lng:pos.coords.longitude},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        setOrigin(
+        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });        setOrigin(
           toCurrentLocationLabel({
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
           })
         );
-      } catch {
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run2',hypothesisId:'D3',location:'src/components/PlanCorridorScreen.tsx:183',message:'plan corridor location exception fallback',data:{},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        setOrigin('Current location unavailable');
+      } catch {        setOrigin('Current location unavailable');
       }
     })();
   }, []);

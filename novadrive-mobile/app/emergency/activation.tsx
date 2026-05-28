@@ -34,11 +34,7 @@ export default function EmergencyActivationScreen() {
   const hasAutoNavigatedRef = useRef(false);
   const status = useMemo(() => ROTATING_STATUS[statusIndex % ROTATING_STATUS.length], [statusIndex]);
 
-  useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run1',hypothesisId:'H2',location:'app/emergency/activation.tsx:30',message:'incidentType guard effect',data:{incidentType:session.incidentType ?? null},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    if (!session.incidentType) {
+  useEffect(() => {    if (!session.incidentType) {
       router.replace('/emergency/selection' as Href);
     }
   }, [session.incidentType]);
@@ -58,16 +54,8 @@ export default function EmergencyActivationScreen() {
     };
   }, []);
 
-  useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run1',hypothesisId:'H3',location:'app/emergency/activation.tsx:38',message:'countdown effect mounted',data:{modeAtMount:mode,secondsLeftAtMount:secondsLeft},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    const countdownTimer = setInterval(() => {
-      setSecondsLeft((value) => {
-        // #region agent log
-        fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run1',hypothesisId:'H1',location:'app/emergency/activation.tsx:43',message:'countdown tick updater',data:{value,modeCaptured:mode},timestamp:Date.now()})}).catch(()=>{});
-        // #endregion
-        if (value <= 1) return 0;
+  useEffect(() => {    const countdownTimer = setInterval(() => {
+      setSecondsLeft((value) => {        if (value <= 1) return 0;
         return value - 1;
       });
     }, 1000);
@@ -98,11 +86,7 @@ export default function EmergencyActivationScreen() {
     ) {
       return;
     }
-    hasAutoNavigatedRef.current = true;
-    // #region agent log
-    fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'post-fix',hypothesisId:'H1',location:'app/emergency/activation.tsx:62',message:'auto navigation triggered from effect',data:{secondsLeft,mode,target:`${EMERGENCY_RESPONSE_PATH}?mode=${mode}`},timestamp:Date.now()})}).catch(()=>{});
-    // #endregion
-    navigateToResponse(mode);
+    hasAutoNavigatedRef.current = true;    navigateToResponse(mode);
   }, [secondsLeft, mode, backendReady]);
 
   const cancelFlow = () => {
@@ -171,11 +155,7 @@ export default function EmergencyActivationScreen() {
 
         <Pressable
           style={styles.continueButton}
-          onPress={() => {
-            // #region agent log
-            fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run1',hypothesisId:'H4',location:'app/emergency/activation.tsx:126',message:'manual continue pressed',data:{mode,secondsLeft,target:`${EMERGENCY_RESPONSE_PATH}?mode=${mode}`},timestamp:Date.now()})}).catch(()=>{});
-            // #endregion
-            hasAutoNavigatedRef.current = true;
+          onPress={() => {            hasAutoNavigatedRef.current = true;
             navigateToResponse(mode);
           }}
         >

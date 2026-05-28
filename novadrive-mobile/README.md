@@ -21,7 +21,7 @@ Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpower
 - GovTech tabs: Home, Trip, Community, Profile + Configuration (`/settings`)
 - Plan Corridor map, route cards (Alpha-1 / Beta), offline briefing (`trip/plan`, `trip/discover`)
 - Route calibration screen → live speedometer HUD, sensor status, hold-to-SOS (3s)
-- Foreground GPS + **CrashEngine** (impact/throw) + **Voice watch** (settings-gated; simulate for judges)
+- Foreground GPS + **CrashEngine** (impact/throw) + **Distress voice watch** (policy + spectral classifier; optional YAMNet in dev client)
 - Calm 15s distress dialog — **no auto triage or 108 at countdown 0**; no backdrop dismiss
 - Hold-to-SOS → START triage FSM → trauma-tier SQLite routing
 - Offline keyword parser on emergency chat
@@ -90,6 +90,20 @@ Device checklist rows 13–15: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_M
 6. **Offline:** 24+ crisis/FAQ playbooks in `src/lib/sarthi/sarthiKnowledgeBase.ts`; high-priority matches skip the network for speed.
 
 Design spec: [docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md](docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md)
+
+## Distress voice detection (dev client)
+
+| Piece | Location |
+|-------|----------|
+| Policy (navigation / TTS / mic warm-up) | `src/lib/voice/distressVoicePolicy.ts` |
+| Classifier + fixtures | `src/lib/voice/distressVoiceClassifier.ts`, `src/lib/__fixtures__/distressVoiceVectors.ts` |
+| Optional YAMNet ONNX | `src/lib/voice/yamnetDistressInference.ts`, `assets/models/` |
+
+**Expo Go** uses metering-derived feature proxies only. For on-device YAMNet, install `onnxruntime-react-native`, add `assets/models/yamnet_distress_mini.onnx`, and run `npx expo prebuild` + `npx expo run:android` (see `scripts/export-yamnet-distress-onnx.md`).
+
+Profile → **Voice Crash Detection** toggle; **Distress voice sensitivity** (low / medium / high) when enabled.
+
+Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md) · Smoke rows 23–26 in [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ## Quality gates
 

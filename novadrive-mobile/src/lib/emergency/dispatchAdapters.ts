@@ -65,11 +65,7 @@ export function createDispatchAdapters({
 }: CreateDispatchAdaptersInput) {
   return {
     async requestDispatch(input: DispatchRequest): Promise<DispatchResult> {
-      const body = JSON.stringify(input);
-      // #region agent log
-      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B3',location:'src/lib/emergency/dispatchAdapters.ts:69',message:'dispatch request start',data:{incidentType:input.incidentType,lat:input.lat,lng:input.lng,traumaEndpoint,policeEndpoint},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-      const traumaPromise = fetchImpl(traumaEndpoint, {
+      const body = JSON.stringify(input);      const traumaPromise = fetchImpl(traumaEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,
@@ -92,10 +88,6 @@ export function createDispatchAdapters({
           : traumaResult.status === 'rejected' && policeResult.status === 'rejected'
             ? 'failed'
             : 'partial';
-      // #region agent log
-      fetch('http://127.0.0.1:7773/ingest/d05490f0-79d1-4fa1-b47e-bd7a9abe8ff0',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'85c631'},body:JSON.stringify({sessionId:'85c631',runId:'run3',hypothesisId:'B3',location:'src/lib/emergency/dispatchAdapters.ts:94',message:'dispatch request settled',data:{status,traumaResult:traumaResult.status,policeResult:policeResult.status,traumaName:traumaCenter.name,policeName:policeUnit.name},timestamp:Date.now()})}).catch(()=>{});
-      // #endregion
-
       return {
         traumaCenter,
         policeUnit,
