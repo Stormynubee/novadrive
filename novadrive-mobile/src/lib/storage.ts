@@ -1,5 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import {
+  BRIEF_ACK_STORAGE_KEY,
+  parseBriefAcknowledgments,
+  serializeBriefAcknowledgments,
+} from './home/safetyBriefAcknowledgments';
 import type {
   AccessibilityPrefs,
   AppSettings,
@@ -160,4 +165,13 @@ function normalizeProfile(p: UserProfile): UserProfile {
       ...p.naariShakti,
     },
   };
+}
+
+export async function loadBriefAcknowledgments(): Promise<string[]> {
+  const raw = await AsyncStorage.getItem(BRIEF_ACK_STORAGE_KEY);
+  return parseBriefAcknowledgments(raw);
+}
+
+export async function saveBriefAcknowledgments(slugs: string[]): Promise<void> {
+  await AsyncStorage.setItem(BRIEF_ACK_STORAGE_KEY, serializeBriefAcknowledgments(slugs));
 }
