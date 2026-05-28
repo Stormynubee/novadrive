@@ -1,4 +1,5 @@
 import type { SafetyBriefArticle } from './briefCatalog';
+import type { BriefHighlight } from './briefHighlightDisplay';
 
 export type BriefSeverity = 'info' | 'advisory' | 'active';
 
@@ -24,7 +25,7 @@ export type SafetyBriefDetail = SafetyBriefArticle & {
   severity: BriefSeverity;
   region: string;
   effectiveUntil: string;
-  highlights: { label: string; value: string }[];
+  highlights: BriefHighlight[];
   affectedCorridors: string[];
   checklist: BriefChecklistItem[];
   quickActions: BriefQuickAction[];
@@ -42,8 +43,16 @@ const DETAILS: Record<string, SafetyBriefDetail> = {
     effectiveUntil: '31 Dec 2026',
     highlights: [
       { label: 'Rest rule', value: '4 h / 250 km' },
-      { label: 'Telemetry', value: 'Fatigue segments' },
-      { label: 'Scope', value: 'Commercial drivers' },
+      {
+        label: 'Telemetry',
+        value: 'Fatigue segments',
+        compactValue: 'Fatigue map on',
+      },
+      {
+        label: 'Scope',
+        value: 'Commercial drivers',
+        compactValue: 'Commercial fleet',
+      },
     ],
     affectedCorridors: [],
     paragraphs: [
@@ -75,7 +84,12 @@ const DETAILS: Record<string, SafetyBriefDetail> = {
     highlights: [
       { label: 'Status', value: 'Lanes active' },
       { label: 'Patrol', value: 'Urban merges' },
-      { label: 'Compliance', value: 'Emergency lane' },
+      {
+        label: 'Compliance',
+        value: 'Emergency lane',
+        compactLabel: 'Lanes',
+        compactValue: 'Emergency only',
+      },
     ],
     affectedCorridors: [
       'NH-45 (GST Road)',

@@ -15,6 +15,7 @@ import { HudCard } from '../HudCard';
 import { HudText } from '../HudText';
 import { NovaButton } from '../NovaButton';
 import { useApp } from '../../context/AppContext';
+import { resolveBriefHighlightDisplay } from '../../lib/home/briefHighlightDisplay';
 import {
   allChecklistComplete,
   buildBriefShareMessage,
@@ -172,13 +173,13 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
             </HudText>
             <View style={styles.metaRow}>
               <MaterialIcons name="place" size={14} color={tokens.onPrimary} style={styles.metaIcon} />
-              <HudText variant="bodySm" style={styles.heroRegion}>
+              <HudText variant="bodySm" style={styles.heroRegion} numberOfLines={2}>
                 {brief.region}
               </HudText>
-              <HudText variant="bodySm" style={styles.heroUntil}>
-                · Valid {brief.effectiveUntil}
-              </HudText>
             </View>
+            <HudText variant="bodySm" style={styles.heroUntil} numberOfLines={1}>
+              Valid {brief.effectiveUntil}
+            </HudText>
           </View>
           <View style={styles.heroGrid} pointerEvents="none">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -187,18 +188,28 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
           </View>
         </View>
 
-        <View style={styles.statRow}>
-          {brief.highlights.map((h) => (
-            <View key={h.label} style={styles.statTile}>
-              <HudText variant="bodySm" style={styles.statLabel}>
-                {h.label}
-              </HudText>
-              <HudText variant="headlineMd" style={styles.statValue}>
-                {h.value}
-              </HudText>
-            </View>
-          ))}
-        </View>
+        <HudCard style={styles.statCard}>
+          {brief.highlights.map((h, index) => {
+            const display = resolveBriefHighlightDisplay(h);
+            return (
+              <View
+                key={h.label}
+                style={[styles.statStripRow, index > 0 ? styles.statStripDivider : undefined]}
+              >
+                <HudText variant="bodySm" style={styles.statLabel} numberOfLines={1}>
+                  {display.label}
+                </HudText>
+                <HudText
+                  variant="headlineMd"
+                  style={styles.statValue}
+                  numberOfLines={2}
+                >
+                  {display.value}
+                </HudText>
+              </View>
+            );
+          })}
+        </HudCard>
 
         {brief.affectedCorridors.length > 0 ? (
           <HudCard accent="secondary" style={styles.sectionCard}>
@@ -385,32 +396,42 @@ const styles = StyleSheet.create({
   refCode: { color: tokens.primaryFixedDim, opacity: 0.9 },
   heroTitle: { color: tokens.onPrimary, fontFamily: 'HankenGrotesk_800ExtraBold' },
   heroMeta: { color: tokens.primaryFixedDim },
-  metaRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 4 },
-  metaIcon: { marginRight: 2 },
-  heroRegion: { color: tokens.onPrimary, opacity: 0.92 },
-  heroUntil: { color: tokens.primaryFixedDim },
-  statRow: {
-    flexDirection: 'row',
-    gap: 8,
+  metaRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 4 },
+  metaIcon: { marginTop: 2 },
+  heroRegion: { flex: 1, color: tokens.onPrimary, opacity: 0.92 },
+  heroUntil: { color: tokens.primaryFixedDim, marginTop: 2 },
+  statCard: {
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+    overflow: 'hidden',
   },
-  statTile: {
-    flex: 1,
-    backgroundColor: tokens.surface,
-    borderRadius: tokens.radius.card,
-    borderWidth: 1,
-    borderColor: tokens.outlineVariant,
-    padding: 12,
-    gap: 4,
-    ...tokens.elevation.card,
+  statStripRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 16,
+    paddingHorizontal: tokens.spacing.gutter,
+    paddingVertical: 14,
+  },
+  statStripDivider: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: tokens.outlineVariant,
   },
   statLabel: {
+    flexShrink: 0,
+    maxWidth: '42%',
     color: tokens.onSurfaceVariant,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
+    letterSpacing: 0.8,
+    fontFamily: 'PublicSans_600SemiBold',
   },
   statValue: {
+    flex: 1,
+    flexShrink: 1,
+    textAlign: 'right',
     color: tokens.primary,
     fontFamily: 'HankenGrotesk_700Bold',
+    fontSize: 17,
+    lineHeight: 22,
   },
   sectionCard: { gap: 12 },
   sectionHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
