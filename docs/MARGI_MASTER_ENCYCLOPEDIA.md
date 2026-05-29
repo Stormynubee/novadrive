@@ -114,4 +114,4 @@ See [AGENTS.md](./AGENTS.md). Rebrand implementation plan: [superpowers/plans/20
 
 ---
 
-*Team Vortex · IIT Madras Road Safety Hackathon 2026 · Margi v1.5.0*
+*Team NovaDrive · IIT Madras Road Safety Hackathon 2026 · Margi v1.5.0*

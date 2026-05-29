@@ -2,7 +2,7 @@
 
 **When signal drops, the path still holds.**
 
-**Team Vortex** · Native Expo app for **IIT Madras Road Safety Hackathon 2026** — **RoadSoS** track (Care Path royal blue / saffron UI).
+**Team NovaDrive** · Native Expo app for **IIT Madras Road Safety Hackathon 2026** — **RoadSoS** track (Care Path royal blue / saffron UI).
 
 **Expo SDK 54** — matches the current **Play Store Expo Go** app (SDK 56 requires a newer Expo Go not on Play Store yet).
 
@@ -136,7 +136,7 @@ Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 148 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding
+npm test             # 150 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding
 npm run verify:docs      # README "N unit tests" matches src/**/*.test.ts
 npm run verify:branding  # no NovaDrive in public GitHub copy
 npm run test:coverage

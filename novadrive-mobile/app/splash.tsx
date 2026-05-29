@@ -5,7 +5,7 @@ import { Animated, Easing, StyleSheet, View } from 'react-native';
 import { MargiButton } from '../src/components/MargiButton';
 import { MargiLogo } from '../src/components/MargiLogo';
 import { HudText } from '../src/components/HudText';
-import { APP_TAGLINE } from '../src/lib/brand';
+import { APP_TAGLINE, TEAM_DISPLAY_NAME } from '../src/lib/brand';
 import { useApp } from '../src/context/AppContext';
 import { tokens } from '../src/theme/tokens';
 
@@ -68,7 +68,7 @@ export default function SplashScreen() {
           {APP_TAGLINE}
         </HudText>
         <HudText variant="mono" style={styles.subtitle}>
-          IIT Madras RoadSoS · Team Vortex
+          IIT Madras RoadSoS · {TEAM_DISPLAY_NAME}
         </HudText>
       </Animated.View>
 

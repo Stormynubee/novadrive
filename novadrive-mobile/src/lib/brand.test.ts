@@ -4,11 +4,16 @@ import {
   GHP_HASH_PREFIX,
   GHP_SMS_HEADER,
   LEGACY_GHP_HEADERS,
+  TEAM_DISPLAY_NAME,
   permissionCopy,
 } from './brand';
 
 test('display name is Margi', () => {
   expect(APP_DISPLAY_NAME).toBe('Margi');
+});
+
+test('team display name is Team NovaDrive', () => {
+  expect(TEAM_DISPLAY_NAME).toBe('Team NovaDrive');
 });
 
 test('tagline is set', () => {

@@ -1,26 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Margi — When signal drops, the path still holds.">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-label="Margi — When signal drops, the path still holds. Team NovaDrive · IIT Madras RoadSoS 2026">
   <defs>
     <linearGradient id="bgLight" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="100%" stop-color="#f0f4f8"/>
     </linearGradient>
-    <linearGradient id="pathGradLight" x1="0" y1="1" x2="0" y2="0">
+    <linearGradient id="pathGradLight" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#0056b3"/>
+      <stop offset="55%" stop-color="#0077cc"/>
       <stop offset="100%" stop-color="#ff8c00"/>
     </linearGradient>
+    <clipPath id="pathClipLight">
+      <rect x="0" y="198" width="920" height="72" rx="4"/>
+    </clipPath>
     <style>
       .mono { font-family: Consolas, 'JetBrains Mono', monospace; }
       .display { font-family: 'Segoe UI', system-ui, sans-serif; }
     </style>
   </defs>
+
   <rect width="1280" height="320" fill="url(#bgLight)"/>
-  <path d="M0 280 L1280 280" stroke="#dde4ec" stroke-width="2"/>
-  <path d="M200 280 C400 200 500 120 640 100" stroke="url(#pathGradLight)" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M0 296 L1280 296" stroke="#dde4ec" stroke-width="2"/>
+
+  <g clip-path="url(#pathClipLight)">
+    <path
+      d="M 64 248 C 220 232 360 252 520 236 S 760 244 900 234"
+      stroke="url(#pathGradLight)"
+      stroke-width="5"
+      fill="none"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      opacity="0.9"/>
+    <path
+      d="M 64 248 C 220 232 360 252 520 236 S 760 244 900 234"
+      stroke="#ffffff"
+      stroke-width="8"
+      fill="none"
+      stroke-linecap="round"
+      opacity="0.5"/>
+  </g>
+
+  <path
+    d="M 940 296 C 1000 268 1060 248 1120 228 C 1160 214 1200 206 1240 198"
+    stroke="url(#pathGradLight)"
+    stroke-width="4"
+    fill="none"
+    stroke-linecap="round"
+    opacity="0.4"/>
+
   <text x="80" y="72" class="mono" font-size="13" fill="#0056b3" letter-spacing="2">MARGI · ROAD SOS 2026</text>
   <text x="80" y="140" class="display" font-size="56" font-weight="700" fill="#0056b3">Margi</text>
   <text x="80" y="188" class="display" font-size="22" fill="#4a5568">When signal drops, the path still holds.</text>
-  <text x="80" y="248" class="mono" font-size="12" fill="#6b7280">Team Vortex · IIT Madras · Expo SDK 54 · GHP · QR · 108</text>
-  <circle cx="1080" cy="120" r="48" fill="#0056b3" opacity="0.1"/>
-  <circle cx="1120" cy="160" r="36" fill="#ff8c00" opacity="0.12"/>
-  <path d="M1040 200 H1080 L1100 170 L1120 210 L1140 185 H1180" stroke="#ff8c00" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="80" y="272" class="mono" font-size="12" fill="#6b7280">Team NovaDrive · IIT Madras · Expo SDK 54 · GHP · QR · 108</text>
+
+  <circle cx="1080" cy="118" r="48" fill="#0056b3" opacity="0.1"/>
+  <circle cx="1120" cy="158" r="36" fill="#ff8c00" opacity="0.12"/>
+  <path d="M1040 198 H1080 L1100 168 L1120 208 L1140 183 H1180" stroke="#ff8c00" stroke-width="3" fill="none" stroke-linecap="round"/>
 </svg>

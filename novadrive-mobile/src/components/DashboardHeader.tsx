@@ -1,6 +1,6 @@
 import { type Href, router } from 'expo-router';
 
-import { APP_DISPLAY_NAME } from '../lib/brand';
+import { APP_DISPLAY_NAME, TEAM_DISPLAY_NAME } from '../lib/brand';
 import { MargiTopBar } from './MargiTopBar';
 import { useApp } from '../context/AppContext';
 import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
@@ -9,7 +9,7 @@ import { useQuickMenu } from '../context/QuickMenuContext';
 /** Standard tab header — Margi chrome, menu + settings gear, orange emergency share. */
 export function DashboardHeader({
   title = APP_DISPLAY_NAME,
-  subtitle = 'by Team Vortex',
+  subtitle = `by ${TEAM_DISPLAY_NAME}`,
   showBack,
   showSettings = true,
   /** Plan Corridor header: menu + emergency only (no gear). */

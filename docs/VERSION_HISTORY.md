@@ -95,7 +95,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 **docs: hackathon README, CHANGELOG, CI typecheck, agent guide, and team docs**
 
-- Root README: Team Vortex, IIT Madras RoadSoS, architecture + drive-flow diagrams, CI badge
+- Root README: Team NovaDrive, IIT Madras RoadSoS, architecture + drive-flow diagrams, CI badge
 - `CHANGELOG.md`, `CONTRIBUTING.md`, `docs/AGENTS.md`
 - CI: `npm run typecheck` in mobile job
 - Stitch design refs, team guide HTML, superpowers specs/plans

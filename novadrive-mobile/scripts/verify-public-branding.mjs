@@ -53,11 +53,16 @@ function shouldSkipFile(rel) {
   return SKIP_PREFIXES.some((p) => rel.startsWith(p) || rel === p);
 }
 
+const ALLOWED_TEAM_NOVADRIVE = /Team NovaDrive/gi;
+
+function scrubAllowedTeamName(body) {
+  return body.replace(ALLOWED_TEAM_NOVADRIVE, 'Team __ALLOWED__');
+}
+
 function allowsLegacySection(body) {
   const legacyIdx = body.search(/legacy compatibility/i);
   if (legacyIdx === -1) return false;
-  const tail = body.slice(legacyIdx);
-  const beforeLegacy = body.slice(0, legacyIdx);
+  const beforeLegacy = scrubAllowedTeamName(body.slice(0, legacyIdx));
   for (const re of FORBIDDEN_PATTERNS) {
     if (re.test(beforeLegacy)) return false;
   }
@@ -70,8 +75,9 @@ function allowsLegacySection(body) {
  */
 export function findBrandingViolation(body) {
   if (allowsLegacySection(body)) return null;
+  const scrubbed = scrubAllowedTeamName(body);
   for (const re of FORBIDDEN_PATTERNS) {
-    const m = body.match(re);
+    const m = scrubbed.match(re);
     if (m) return { pattern: re.source, match: m[0] };
   }
   return null;

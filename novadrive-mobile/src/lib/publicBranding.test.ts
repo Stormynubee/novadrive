@@ -12,4 +12,12 @@ describe('publicBranding', () => {
     const body = `# Margi\n\n## Legacy compatibility\n\nNOVADRIVE GHP is still parsed.\n`;
     expect(findPublicBrandingViolation(body)).toBeNull();
   });
+
+  it('allows Team NovaDrive credit on banners', () => {
+    expect(
+      findPublicBrandingViolation(
+        'Team NovaDrive · IIT Madras · Margi — When signal drops, the path still holds.',
+      ),
+    ).toBeNull();
+  });
 });

@@ -13,6 +13,7 @@ import { MargiLogo } from '../src/components/MargiLogo';
 import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
 import type { GenderIdentity } from '../src/lib/types';
+import { TEAM_DISPLAY_NAME } from '../src/lib/brand';
 import { tokens } from '../src/theme/tokens';
 
 function isValidEmail(email: string) {
@@ -146,7 +147,7 @@ export default function AuthScreen() {
         </Pressable>
 
         <HudText variant="mono" style={styles.footer}>
-          Team Vortex · Government of India · IIT Madras
+          {TEAM_DISPLAY_NAME} · Government of India · IIT Madras
         </HudText>
       </ScrollView>
     </SafeAreaView>

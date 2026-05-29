@@ -1,6 +1,6 @@
 # Margi — AI agent guide
 
-For **Team Vortex** and judges using Cursor (or similar) on this repo.
+For **Team NovaDrive** and judges using Cursor (or similar) on this repo.
 
 ## Repository focus
 

@@ -2,7 +2,7 @@
 
 ## Goal
 
-Replace **Margi** with **Margi** as the shipped product identity across mobile, web mirror, GitHub README/banner, and judge docs. Adopt the **Care Path** visual system from the heart/path/EKG logo (royal blue + vibrant orange on light backgrounds).
+Replace **NovaDrive** with **Margi** as the shipped product identity across mobile, web mirror, GitHub README/banner, and judge docs. Adopt the **Care Path** visual system from the heart/path/EKG logo (royal blue + vibrant orange on light backgrounds).
 
 ## Native identifiers
 
@@ -14,7 +14,7 @@ Replace **Margi** with **Margi** as the shipped product identity across mobile, 
 | URL scheme | `margi://` |
 | Expo slug | `novadrive-mobile` (folder name unchanged for git continuity) |
 
-**Migration:** `npx expo prebuild --clean` then fresh install. Old `com.margi.app` installs remain side-by-side.
+**Migration:** `npx expo prebuild --clean` then fresh install. Old `com.novadrive.app` installs remain side-by-side.
 
 ## Color tokens (Care Path)
 
@@ -64,7 +64,7 @@ Single source for:
 
 | Item | New | Legacy (still accepted) |
 |------|-----|-------------------------|
-| SMS header | `MARGI GHP` | `MARGI GHP` (decode only) |
+| SMS header | `MARGI GHP` | `NOVADRIVE GHP` (decode only) |
 | Integrity hash prefix | `mg-xxxxxxxx` | `nd-xxxxxxxx` |
 | QR envelope | `ND1:` (unchanged) | — |
 
@@ -89,7 +89,7 @@ Single source for:
 
 ## Smoke matrix
 
-Update document title and any Margi references to Margi. Functional flows unchanged.
+Update document title and any NovaDrive references to Margi. Functional flows unchanged.
 
 ## Verification
 

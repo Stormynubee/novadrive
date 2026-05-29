@@ -1,11 +1,11 @@
 <p align="center">
   <a href="https://github.com/Stormynubee/novadrive">
-    <img src="docs/assets/banner.png" alt="Margi — When signal drops, the path still holds. Team Vortex · IIT Madras RoadSoS 2026" width="100%" />
+    <img src="docs/assets/banner.png?v=20260528" alt="Margi — When signal drops, the path still holds. Team NovaDrive · IIT Madras RoadSoS 2026" width="100%" />
   </a>
 </p>
 
 <p align="center">
-  <strong>Team Vortex</strong> · <strong>IIT Madras Road Safety Hackathon 2026</strong> · <strong>RoadSoS</strong> (CoERS &amp; RBG Labs / MoRTH)
+  <strong>Team NovaDrive</strong> · <strong>IIT Madras Road Safety Hackathon 2026</strong> · <strong>RoadSoS</strong> (CoERS &amp; RBG Labs / MoRTH)
 </p>
 
 [![RoadSoS Hackathon 2026](https://img.shields.io/badge/IIT%20Madras-RoadSoS%202026-amber?style=flat-square)](https://roadsafetyhackathon-six.vercel.app)

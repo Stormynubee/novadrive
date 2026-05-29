@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to the Margi monorepo (IIT Madras Road Safety Hackathon 2026, RoadSoS).  
-Product was previously shipped as **Margi**; rebrand to **Margi** in v1.5.0.
+Product was previously shipped as **NovaDrive**; rebrand to **Margi** in v1.5.0.
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 

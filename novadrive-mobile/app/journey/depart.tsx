@@ -6,6 +6,7 @@ import { HudText } from '../../src/components/HudText';
 import { RouteCalibrationPath } from '../../src/components/RouteCalibrationPath';
 import { ScreenEnter } from '../../src/components/ScreenEnter';
 import { useApp } from '../../src/context/AppContext';
+import { TEAM_DISPLAY_NAME } from '../../src/lib/brand';
 import { tokens } from '../../src/theme/tokens';
 
 const CALIBRATION_MS = 3200;
@@ -115,7 +116,7 @@ export default function JourneyDepartScreen() {
               Margi
             </HudText>
             <HudText variant="mono" style={styles.team}>
-              TEAM VORTEX
+              {TEAM_DISPLAY_NAME}
             </HudText>
           </View>
 

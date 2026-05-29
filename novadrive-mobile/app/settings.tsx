@@ -10,6 +10,7 @@ import { MargiTopBar } from '../src/components/MargiTopBar';
 import { useApp } from '../src/context/AppContext';
 import type { Lang, SosSensitivity } from '../src/lib/types';
 import { announceA11y } from '../src/lib/a11yRuntime';
+import { TEAM_DISPLAY_NAME } from '../src/lib/brand';
 import { tokens } from '../src/theme/tokens';
 
 const LANGUAGES: { key: Lang; label: string }[] = [
@@ -257,7 +258,7 @@ export default function SettingsScreen() {
         <View style={styles.footer}>
           <MaterialIcons name="shield" size={28} color={tokens.outline} />
           <HudText variant="mono" style={styles.footerBrand}>
-            POWERED BY TEAM VORTEX
+            Powered by {TEAM_DISPLAY_NAME}
           </HudText>
           <HudText variant="bodySm" style={styles.footerVer}>
             Version 2.4.1 (Gov Edition)
