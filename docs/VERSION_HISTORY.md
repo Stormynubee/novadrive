@@ -16,8 +16,8 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 | Tag | Commit | Date | Summary |
 |-----|--------|------|---------|
-| [`v1.7.0-p1-features`](https://github.com/Stormynubee/novadrive/releases/tag/v1.7.0-p1-features) | _(this release)_ | 2026-05-28 | Rah-Veer, offline trip cards, journey debrief/history, FSM TTS narrator |
-| [`v1.6.0-hud-redesign`](https://github.com/Stormynubee/novadrive/releases/tag/v1.6.0-hud-redesign) | _(this release)_ | 2026-05-28 | Drive HUD: SOS top, compact speedometer, fixed layout |
+| [`v1.7.0-p1-features`](https://github.com/Stormynubee/novadrive/releases/tag/v1.7.0-p1-features) | `8ad6dba` | 2026-05-28 | Rah-Veer, offline trip cards, journey debrief/history, FSM TTS narrator |
+| [`v1.6.0-hud-redesign`](https://github.com/Stormynubee/novadrive/releases/tag/v1.6.0-hud-redesign) | `8ad6dba` | 2026-05-28 | Drive HUD: SOS top, compact speedometer, fixed layout |
 | [`v1.5.0-margi-rebrand`](https://github.com/Stormynubee/novadrive/releases/tag/v1.5.0-margi-rebrand) | `50205c7` | 2026-05-28 | Margi Care Path rebrand, `com.margi.app`, MARGI GHP, docs/banner sweep |
 | [`v0.1.0-p0`](https://github.com/Stormynubee/novadrive/releases/tag/v0.1.0-p0) | `7b5b25a` | 2026-05-22 | Expo P0 app, triage FSM, GHP/QR, monorepo CI |
 | [`v1.0.0-govtech-ui`](https://github.com/Stormynubee/novadrive/releases/tag/v1.0.0-govtech-ui) | `108e716` | 2026-05-25 | GovTech tabs, Plan Corridor, calibration, SOS HUD |
