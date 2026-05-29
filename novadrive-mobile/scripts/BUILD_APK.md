@@ -15,7 +15,16 @@ npm install --legacy-peer-deps
 npm run android:apk
 ```
 
-**Windows (PowerShell):** same commands.
+**Windows (PowerShell):** same commands. The script **auto-detects JDK 17+** (Android Studio JBR at `C:\Program Files\Android\Android Studio\jbr` is preferred over Java 8 on PATH).
+
+If detection fails, set JDK explicitly for the session:
+
+```powershell
+$env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
+npm run android:apk
+```
+
+**Do not** rely on Java 8 (`java version "1.8..."`) — Gradle will fail on `foojay-resolver`.
 
 Output:
 

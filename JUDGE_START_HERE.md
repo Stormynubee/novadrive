@@ -52,7 +52,7 @@ No Gradle or JDK required if you use the release APK.
 
 **Not production medical software:** START triage is a deterministic demo tree — not physician-certified. Crash/voice detection are **experimental**; no auto-dial to 108 without user confirming SMS.
 
-**Unit tests:** `cd novadrive-mobile && npm test` — **182** tests.
+**Unit tests:** `cd novadrive-mobile && npm test` — **183** tests.
 
 **APK CI:** [Android debug APK workflow](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml) — download artifact **`margi-debug.apk`** if the release asset is not yet attached.
 
