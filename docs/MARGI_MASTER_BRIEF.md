@@ -1,5 +1,7 @@
 # Margi — Master Team Brief
 
+> **⚠ Historical planning doc.** Margi shipped as a **native Expo Android app** (`novadrive-mobile/`), not the PWA described in sections below. For judges and reviewers, read **[CANON.md](CANON.md)** first. POI counts, sql.js, and Serwist items here are **aspirational or outdated** unless cross-checked with CANON.
+
 **Project:** Margi (Road Safety Hackathon 2026 — RoadSoS Track)  
 **Organizer:** CoERS & RBG Labs, IIT Madras (with MoRTH)  
 **Document version:** 1.0  

@@ -1,11 +1,11 @@
 # Judge start here — Margi (5 minutes)
 
-**Margi** is an offline-first Golden Hour co-pilot for Indian highway corridors (IIT Madras RoadSoS 2026).
+**Margi** is an offline-first Golden Hour **research prototype** for Indian highway corridors (IIT Madras RoadSoS 2026). **Canonical scope:** [docs/CANON.md](docs/CANON.md).
 
 | | |
 |---|---|
 | **Repo** | [github.com/Stormynubee/Margi](https://github.com/Stormynubee/Margi) |
-| **Release** | [`v2.0.0-production`](https://github.com/Stormynubee/Margi/releases/tag/v2.0.0-production) |
+| **Release tag** | [`v2.0.0-production`](https://github.com/Stormynubee/Margi/releases/tag/v2.0.0-production) (demo build — not clinical production) |
 | **Brief site** | [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app) |
 | **Full checklist** | [docs/SUBMISSION.md](docs/SUBMISSION.md) |
 
@@ -52,7 +52,7 @@ No Gradle or JDK required if you use the release APK.
 
 **Not production medical software:** START triage is a deterministic demo tree — not physician-certified. Crash/voice detection are **experimental**; no auto-dial to 108 without user confirming SMS.
 
-**Unit tests:** `cd novadrive-mobile && npm test` — **179** tests.
+**Unit tests:** `cd novadrive-mobile && npm test` — **182** tests.
 
 **APK CI:** [Android debug APK workflow](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml) — download artifact **`margi-debug.apk`** if the release asset is not yet attached.
 

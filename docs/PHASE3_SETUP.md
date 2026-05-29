@@ -1,6 +1,6 @@
 # Margi Phase 3 — Production setup guide
 
-Use this after cloning **v2.0.0-production**. Secrets stay in local `.env` files — never commit them.
+Use this after cloning **v2.0.0-production** (integration milestone tag). Secrets stay in local `.env` files — never commit them. **Not clinical production** — see [CANON.md](CANON.md).
 
 ---
 

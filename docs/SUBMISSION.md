@@ -1,6 +1,6 @@
 # Hackathon submission — Margi (RoadSoS 2026)
 
-**Start here:** [JUDGE_START_HERE.md](../JUDGE_START_HERE.md) (5-minute judge path)
+**Canonical truth:** [docs/CANON.md](CANON.md) · **Start here:** [JUDGE_START_HERE.md](../JUDGE_START_HERE.md)
 
 **Team repo:** [github.com/Stormynubee/Margi](https://github.com/Stormynubee/Margi)  
 **Brief site:** [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app)  
@@ -20,8 +20,8 @@
 | GHP + QR + SMS 108 | `emergency/packet`, `relay`, `scan` | ✅ |
 | Web bystander relay | `novadrive/src/app/relay/` | ✅ browser decode |
 | Naari Shakti portal | `app/naari-shakti.tsx`, `src/lib/naariShakti/` | ✅ |
-| Distress voice detection | `src/lib/voice/*` (experimental) | ✅ 173+ mobile unit tests |
-| Phase 3 production | Supabase, Sarthi BFF, HTTP dispatch | ✅ [PHASE3_SETUP.md](PHASE3_SETUP.md) |
+| Distress voice detection | `src/lib/voice/*` (experimental) | ✅ 179 mobile unit tests |
+| Phase 3 integration (optional) | Supabase, Sarthi BFF, HTTP dispatch | ✅ [PHASE3_SETUP.md](PHASE3_SETUP.md) |
 | Implementation plan | `docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md` | ✅ |
 | Team brief + PDF | `docs/MARGI_MASTER_BRIEF.md` | ✅ |
 | Slide deck | Team asset (7 slides per plan §20) | Team |
@@ -43,7 +43,7 @@
 
 ## Build commands for judges
 
-**Preferred:** Download `margi-debug.apk` from [Releases](https://github.com/Stormynubee/Margi/releases/tag/v2.0.0-production).
+**Preferred:** Download `margi-debug.apk` from [Releases](https://github.com/Stormynubee/Margi/releases/tag/v2.0.0-production) or [Actions artifact](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml).
 
 **From source:**
 
@@ -51,7 +51,7 @@
 cd novadrive-mobile
 npm install --legacy-peer-deps
 npm test
-npx expo run:android
+npm run android:apk
 ```
 
 ---
@@ -60,8 +60,8 @@ npx expo run:android
 
 Repository: **[Stormynubee/Margi](https://github.com/Stormynubee/Margi)** — product name **Margi**; folder names `novadrive*` retained for history.
 
-Latest release tag: **`v2.0.0-production`** — see [VERSION_HISTORY.md](VERSION_HISTORY.md).
+Latest release tag: **`v2.0.0-production`** (integration milestone name — see [CANON.md](CANON.md)) — [VERSION_HISTORY.md](VERSION_HISTORY.md).
 
-**Unit tests:** 179 (`cd novadrive-mobile && npm test`)
+**Unit tests:** 182 (`cd novadrive-mobile && npm test`)
 
 **Honest limits:** START triage is decision support only (not physician-certified). Crash/voice detection experimental. POI data is demo seed — verify facilities by phone.

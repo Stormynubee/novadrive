@@ -13,7 +13,7 @@
 [![Expo](https://img.shields.io/badge/mobile-Expo%20SDK%2054-000020?style=flat-square&logo=expo)](novadrive-mobile/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
-Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway corridors — native mobile P0, optional web mirror, and a public team brief for judges.
+Government-aligned, **offline-first Golden Hour research prototype** for Indian highway corridors — native mobile P0, optional web mirror, and a public team brief for judges.
 
 | | |
 |---|---|
@@ -23,6 +23,7 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 | **Complete UI brief (HTML)** | [margi-complete.html](https://roadsafetyhackathon-six.vercel.app/margi-complete.html) |
 | **Master encyclopedia** | [docs/MARGI_MASTER_ENCYCLOPEDIA.md](docs/MARGI_MASTER_ENCYCLOPEDIA.md) |
 | **Submission checklist** | [docs/SUBMISSION.md](docs/SUBMISSION.md) |
+| **Canonical truth (read first)** | [docs/CANON.md](docs/CANON.md) |
 | **Judges — start here (5 min)** | [JUDGE_START_HERE.md](JUDGE_START_HERE.md) |
 | **Changelog (latest work)** | [CHANGELOG.md](CHANGELOG.md) |
 | **All versions & commits** | [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) |
@@ -167,7 +168,7 @@ See **[CHANGELOG.md](CHANGELOG.md)**:
 - **2026-05-23 — Stabilization:** GovTech tab shell, Plan Corridor, calibration, SOS HUD (`d900ab5` map/quick menu)
 - [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) — Naari rows 13–15 · distress voice rows 23–26
 
-Release tag: **`v2.0.0-production`** (recommended for judges) · [APK build](novadrive-mobile/scripts/BUILD_APK.md) · prior tags in [VERSION_HISTORY](docs/VERSION_HISTORY.md)
+Release tag: **`v2.0.0-production`** (integration milestone — not clinical production; see [CANON.md](docs/CANON.md)) · [APK build](novadrive-mobile/scripts/BUILD_APK.md) · prior tags in [VERSION_HISTORY](docs/VERSION_HISTORY.md)
 
 ---
 

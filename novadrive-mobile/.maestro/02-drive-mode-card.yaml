@@ -1,0 +1,6 @@
+appId: com.margi.app
+---
+- launchApp
+- tapOn: "Continue as Guest"
+- tapOn: "ENTER DRIVE MODE"
+- assertVisible: "Start Driving"
