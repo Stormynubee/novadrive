@@ -246,6 +246,25 @@ export default function SettingsScreen() {
 
         <Pressable
           style={styles.linkRow}
+          onPress={() => router.push('/settings/journey-history' as Href)}
+        >
+          <MaterialIcons name="history" size={22} color={tokens.primary} />
+          <HudText variant="bodyMd" style={styles.linkLabel}>
+            Journey history
+          </HudText>
+          <MaterialIcons name="chevron-right" size={22} color={tokens.outline} />
+        </Pressable>
+
+        <Pressable style={styles.linkRow} onPress={() => router.push('/rahveer' as Href)}>
+          <MaterialIcons name="volunteer-activism" size={22} color={tokens.secondary} />
+          <HudText variant="bodyMd" style={styles.linkLabel}>
+            Rah-Veer · Good Samaritan
+          </HudText>
+          <MaterialIcons name="chevron-right" size={22} color={tokens.outline} />
+        </Pressable>
+
+        <Pressable
+          style={styles.linkRow}
           onPress={() => router.push('/accessibility?fromSettings=1' as Href)}
         >
           <MaterialIcons name="accessibility-new" size={22} color={tokens.primary} />

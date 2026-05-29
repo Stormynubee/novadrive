@@ -15,6 +15,8 @@ import {
   EMERGENCY_RESPONSE_PATH,
   EMERGENCY_SELECTION_PATH,
 } from '../../src/lib/emergency/emergencyNavigation';
+
+const EMERGENCY_TRIAGE_PATH = '/emergency/triage';
 import { tokens } from '../../src/theme/tokens';
 
 const ROTATING_STATUS = [
@@ -155,7 +157,12 @@ export default function EmergencyActivationScreen() {
 
         <Pressable
           style={styles.continueButton}
-          onPress={() => {            hasAutoNavigatedRef.current = true;
+          onPress={() => {
+            hasAutoNavigatedRef.current = true;
+            if (mode === 'manual') {
+              router.push(EMERGENCY_TRIAGE_PATH as Href);
+              return;
+            }
             navigateToResponse(mode);
           }}
         >

@@ -17,23 +17,7 @@ export interface BriefingCard {
   accent?: 'primary' | 'secondary' | 'tertiary' | 'outline';
 }
 
-const HAZARDS = [
-  {
-    name: 'NH48 Wildlife crossing (km 102–115)',
-    note: 'Elevated vigilance — reduced visibility at night.',
-  },
-  {
-    name: 'Tindivanam merge zone',
-    note: 'Heavy truck traffic; maintain safe following distance.',
-  },
-];
-
-const DEAD_ZONES = [
-  {
-    name: 'Canyon corridor (40 min)',
-    note: 'Comm-shadow likely — offline maps and GHP cached on device.',
-  },
-];
+import { listCorridorHazards } from './tripBriefingDb';
 
 export async function buildTripBriefing(
   pointA: { lat: number; lng: number; label: string },
@@ -43,6 +27,9 @@ export async function buildTripBriefing(
   const traumaLines = facilities.slice(0, 3).map(
     (f, i) => `${i + 1}. ${f.name} (Tier ${f.traumaTier}) — ${f.distanceKm.toFixed(0)} km`
   );
+
+  const hazards = await listCorridorHazards('hazard');
+  const deadZones = await listCorridorHazards('deadzone');
 
   return [
     {
@@ -64,13 +51,19 @@ export async function buildTripBriefing(
     {
       type: 'hazards',
       title: 'Accident-prone zones',
-      body: HAZARDS.map((h) => `${h.name}: ${h.note}`).join('\n'),
+      body:
+        hazards.length > 0
+          ? hazards.map((h) => `${h.name}: ${h.note}`).join('\n')
+          : 'No hazard rows in offline pack.',
       accent: 'tertiary',
     },
     {
       type: 'deadzone',
       title: 'Low-network zones',
-      body: DEAD_ZONES.map((d) => `${d.name}: ${d.note}`).join('\n'),
+      body:
+        deadZones.length > 0
+          ? deadZones.map((d) => `${d.name}: ${d.note}`).join('\n')
+          : 'No dead-zone rows in offline pack.',
       accent: 'outline',
     },
     {

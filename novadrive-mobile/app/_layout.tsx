@@ -87,6 +87,9 @@ export default function RootLayout() {
           options={{ headerShown: false, animation: 'slide_from_bottom' }}
         />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="settings/journey-history" options={{ headerShown: false }} />
+        <Stack.Screen name="rahveer/index" options={{ headerShown: false }} />
+        <Stack.Screen name="rahveer/claim" options={{ headerShown: false }} />
         <Stack.Screen name="emergency-contacts" options={{ headerShown: false }} />
         <Stack.Screen name="naari-shakti" options={{ headerShown: false }} />
         <Stack.Screen name="brief/[slug]" options={{ headerShown: false }} />

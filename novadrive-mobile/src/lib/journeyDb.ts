@@ -4,6 +4,22 @@ import * as Crypto from 'expo-crypto';
 export type FeedbackPhase = 'pre_trip' | 'post_trip';
 export type FeedbackCategory = 'road' | 'app' | 'safety' | 'other';
 
+export interface JourneySummaryJson {
+  stats: {
+    durationSec: number;
+    maxSpeedKmh: number;
+    impactAlerts: number;
+    voiceAlerts: number;
+  };
+  incidents: {
+    impact: number;
+    voice: number;
+    sosTriggered?: boolean;
+  };
+  routeContext: string;
+  feedbackNote?: string;
+}
+
 export interface JourneyLog {
   id: string;
   startedAt: string;
@@ -13,6 +29,7 @@ export interface JourneyLog {
   impactAlerts: number;
   voiceAlerts: number;
   durationSec: number;
+  summaryJson?: JourneySummaryJson | null;
 }
 
 export interface JourneyFeedback {
@@ -53,10 +70,24 @@ async function getDb(): Promise<SQLite.SQLiteDatabase> {
         );
         CREATE INDEX IF NOT EXISTS idx_feedback_journey ON journey_feedback(journey_id);
       `);
+      try {
+        await db.execAsync(`ALTER TABLE journey_logs ADD COLUMN summary_json TEXT`);
+      } catch {
+        /* column may already exist */
+      }
       return db;
     })();
   }
   return dbPromise;
+}
+
+function parseSummary(raw: unknown): JourneySummaryJson | null {
+  if (raw == null || raw === '') return null;
+  try {
+    return typeof raw === 'string' ? (JSON.parse(raw) as JourneySummaryJson) : (raw as JourneySummaryJson);
+  } catch {
+    return null;
+  }
 }
 
 function rowToLog(row: Record<string, unknown>): JourneyLog {
@@ -69,6 +100,7 @@ function rowToLog(row: Record<string, unknown>): JourneyLog {
     impactAlerts: Number(row.impact_alerts) || 0,
     voiceAlerts: Number(row.voice_alerts) || 0,
     durationSec: Number(row.duration_sec) || 0,
+    summaryJson: parseSummary(row.summary_json),
   };
 }
 
@@ -118,6 +150,16 @@ export async function getJourneyLog(id: string): Promise<JourneyLog | null> {
     id
   );
   return row ? rowToLog(row) : null;
+}
+
+export async function saveJourneySummary(id: string, summary: JourneySummaryJson): Promise<void> {
+  const db = await getDb();
+  await db.runAsync(`UPDATE journey_logs SET summary_json = ? WHERE id = ?`, JSON.stringify(summary), id);
+}
+
+export async function getJourneySummary(id: string): Promise<JourneySummaryJson | null> {
+  const log = await getJourneyLog(id);
+  return log?.summaryJson ?? null;
 }
 
 export async function listRecentJourneys(limit = 20): Promise<JourneyLog[]> {

@@ -103,7 +103,15 @@ export function encodeQrPayload(packet: GoldenHourPacket): string {
   return `ND1:${compressed}`;
 }
 
-export function decodeQrPayload(raw: string): { id: string; triage: string; lat: number; lng: number; integrity: string } | null {
+export type QrDecodedMinimal = {
+  id: string;
+  triage: string;
+  lat: number;
+  lng: number;
+  integrity: string;
+};
+
+export function decodeQrPayload(raw: string): QrDecodedMinimal | null {
   try {
     const payload = raw.startsWith('ND1:') ? raw.slice(4) : raw;
     const json = raw.startsWith('ND1:')
@@ -120,4 +128,36 @@ export function decodeQrPayload(raw: string): { id: string; triage: string; lat:
       return null;
     }
   }
+}
+
+/** Reconstruct a relay-ready packet from minimal QR decode (full round-trip for bystander scan). */
+export function packetFromQrDecoded(decoded: QrDecodedMinimal): GoldenHourPacket {
+  const triage = decoded.triage as GoldenHourPacket['triage'];
+  return {
+    id: decoded.id,
+    createdAt: new Date().toISOString(),
+    triage,
+    location: {
+      lat: decoded.lat,
+      lng: decoded.lng,
+      capturedAt: new Date().toISOString(),
+    },
+    victims: {
+      count: 1,
+      canWalk: triage === 'GREEN',
+      breathing: triage !== 'BLACK',
+      severeBleeding: triage === 'RED',
+      capillaryRefillOk: triage !== 'RED',
+      followsCommands: triage === 'GREEN' || triage === 'YELLOW',
+    },
+    routing: {
+      facilityName: 'From QR relay',
+      facilityType: 'hospital',
+      phone: '108',
+      etaMinutes: 0,
+      distanceKm: 0,
+    },
+    emergency: { dial: '108', state: 'Tamil Nadu', language: 'en' },
+    integrity: decoded.integrity,
+  };
 }

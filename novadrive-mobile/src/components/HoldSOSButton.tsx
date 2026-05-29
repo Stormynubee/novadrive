@@ -7,6 +7,7 @@ import { tokens } from '../theme/tokens';
 
 const HOLD_MS = 1500;
 const HOLD_DASHBOARD_MS = 3000;
+const HOLD_HUD_TOP_MS = 3000;
 
 /**
  * "Hold 1.5s" SOS pad. Pulses calmly while idle (saffron ring), fills on press, fires haptic +
@@ -19,10 +20,11 @@ export function HoldSOSButton({
 }: {
   onTrigger: () => void;
   label?: string;
-  variant?: 'default' | 'dashboard';
+  variant?: 'default' | 'dashboard' | 'hudTop';
 }) {
-  const holdMs = variant === 'dashboard' ? HOLD_DASHBOARD_MS : HOLD_MS;
-  const isDashboard = variant === 'dashboard';
+  const isHudTop = variant === 'hudTop';
+  const isDashboard = variant === 'dashboard' || isHudTop;
+  const holdMs = isHudTop || variant === 'dashboard' ? HOLD_HUD_TOP_MS : HOLD_MS;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tick = useRef<ReturnType<typeof setInterval> | null>(null);
   const [progress, setProgress] = useState(0);
@@ -72,23 +74,46 @@ export function HoldSOSButton({
     <Pressable
       onPressIn={start}
       onPressOut={cancel}
-      style={styles.wrap}
-      accessibilityLabel="Hold 1.5 seconds for emergency SOS"
+      style={[styles.wrap, isHudTop && styles.wrapHudTop]}
+      accessibilityLabel="Hold 3 seconds for emergency SOS"
     >
-      <View style={[styles.frame, isDashboard && styles.frameDashboard]}>
+      <View
+        style={[
+          styles.frame,
+          isDashboard && !isHudTop && styles.frameDashboard,
+          isHudTop && styles.frameHudTop,
+        ]}
+      >
         {!holding ? (
           <Animated.View
             pointerEvents="none"
             style={[
-              isDashboard ? styles.pulseDashboard : styles.pulse,
+              isHudTop ? styles.pulseHudTop : isDashboard ? styles.pulseDashboard : styles.pulse,
               { transform: [{ scale: ringScale }], opacity: ringOpacity },
             ]}
           />
         ) : null}
-        <View style={[styles.ring, isDashboard && styles.ringDashboard, holding && styles.ringActive]}>
-          <View style={[styles.btn, isDashboard && styles.btnDashboard]}>
+        <View
+          style={[
+            styles.ring,
+            isDashboard && !isHudTop && styles.ringDashboard,
+            isHudTop && styles.ringHudTop,
+            holding && styles.ringActive,
+          ]}
+        >
+          <View style={[styles.btn, isDashboard && !isHudTop && styles.btnDashboard, isHudTop && styles.btnHudTop]}>
             <View style={[styles.fill, { height: `${progress * 100}%` }]} />
-            {isDashboard ? (
+            {isHudTop ? (
+              <View style={styles.hudTopInner}>
+                <MaterialIcons name="emergency" size={36} color={tokens.onError} style={styles.icon} />
+                <HudText variant="headlineMd" style={styles.sosWordHudTop}>
+                  HOLD FOR SOS
+                </HudText>
+                <HudText variant="mono" style={styles.sosSubHudTop}>
+                  {holding ? 'Hold steady…' : '3 seconds'}
+                </HudText>
+              </View>
+            ) : isDashboard ? (
               <>
                 <MaterialIcons name="emergency" size={72} color={tokens.onError} style={styles.icon} />
                 <HudText variant="display" style={styles.sosWord}>
@@ -101,14 +126,16 @@ export function HoldSOSButton({
           </View>
         </View>
       </View>
-      <HudText variant="mono" style={[styles.label, isDashboard && styles.labelDashboard]}>
-        {label ??
-          (holding
-            ? 'Hold steady…'
-            : isDashboard
-              ? 'Hold 3s'
-              : 'Hold 1.5s · SOS')}
-      </HudText>
+      {!isHudTop ? (
+        <HudText variant="mono" style={[styles.label, isDashboard && styles.labelDashboard]}>
+          {label ??
+            (holding
+              ? 'Hold steady…'
+              : isDashboard
+                ? 'Hold 3s'
+                : 'Hold 1.5s · SOS')}
+        </HudText>
+      ) : null}
     </Pressable>
   );
 }
@@ -118,8 +145,10 @@ const SIZE_DASHBOARD = 200;
 
 const styles = StyleSheet.create({
   wrap: { alignItems: 'center', gap: 10 },
+  wrapHudTop: { width: '100%', alignSelf: 'stretch' },
   frame: { width: SIZE + 24, height: SIZE + 24, alignItems: 'center', justifyContent: 'center' },
   frameDashboard: { width: SIZE_DASHBOARD + 32, height: SIZE_DASHBOARD + 32 },
+  frameHudTop: { width: '100%', height: 92, alignItems: 'stretch', justifyContent: 'center' },
   pulse: {
     position: 'absolute',
     width: SIZE + 24,
@@ -133,6 +162,16 @@ const styles = StyleSheet.create({
     width: SIZE_DASHBOARD + 32,
     height: SIZE_DASHBOARD + 32,
     borderRadius: (SIZE_DASHBOARD + 32) / 2,
+    borderWidth: 2,
+    borderColor: tokens.error,
+  },
+  pulseHudTop: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    borderRadius: tokens.radius.button,
     borderWidth: 2,
     borderColor: tokens.error,
   },
@@ -153,6 +192,13 @@ const styles = StyleSheet.create({
     borderColor: tokens.surface,
     borderWidth: 4,
   },
+  ringHudTop: {
+    width: '100%',
+    height: 88,
+    borderRadius: tokens.radius.button,
+    borderColor: tokens.surface,
+    borderWidth: 3,
+  },
   btn: {
     width: SIZE,
     height: SIZE,
@@ -169,6 +215,34 @@ const styles = StyleSheet.create({
     borderRadius: SIZE_DASHBOARD / 2,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+  },
+  btnHudTop: {
+    width: '100%',
+    height: 80,
+    borderRadius: tokens.radius.button,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+  },
+  hudTopInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    zIndex: 1,
+    paddingHorizontal: 16,
+  },
+  sosWordHudTop: {
+    color: tokens.onError,
+    fontFamily: 'HankenGrotesk_800ExtraBold',
+    fontSize: 18,
+    letterSpacing: 1,
+  },
+  sosSubHudTop: {
+    position: 'absolute',
+    right: 16,
+    color: 'rgba(255,255,255,0.85)',
+    fontSize: 10,
+    letterSpacing: 1.2,
   },
   sosWord: {
     color: tokens.onError,

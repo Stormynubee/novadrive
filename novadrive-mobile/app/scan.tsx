@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -9,7 +9,9 @@ import { HudText } from '../src/components/HudText';
 import { MargiButton } from '../src/components/MargiButton';
 import { MargiTopBar } from '../src/components/MargiTopBar';
 import { ScreenShell } from '../src/components/ScreenShell';
-import { decodeQrPayload, formatSms } from '../src/lib/ghp';
+import { decodeQrPayload, formatSms, packetFromQrDecoded } from '../src/lib/ghp';
+import { appendRelayChain } from '../src/lib/relayChain';
+import { insertRahVeerClaim } from '../src/lib/rahveerDb';
 import { saveRelayPacket } from '../src/lib/storage';
 import type { GoldenHourPacket } from '../src/lib/types';
 import { tokens } from '../src/theme/tokens';
@@ -60,35 +62,16 @@ export default function ScanScreen() {
       setScanned(false);
       return;
     }
-    const stub: GoldenHourPacket = {
-      id: decoded.id,
-      createdAt: new Date().toISOString(),
-      triage: decoded.triage as GoldenHourPacket['triage'],
-      location: {
-        lat: decoded.lat,
-        lng: decoded.lng,
-        capturedAt: new Date().toISOString(),
-      },
-      victims: {
-        count: 1,
-        canWalk: decoded.triage === 'GREEN',
-        breathing: decoded.triage !== 'BLACK',
-        severeBleeding: decoded.triage === 'RED',
-        capillaryRefillOk: decoded.triage !== 'RED',
-        followsCommands: decoded.triage === 'GREEN' || decoded.triage === 'YELLOW',
-      },
-      routing: {
-        facilityName: 'From QR relay',
-        facilityType: 'hospital',
-        phone: '108',
-        etaMinutes: 0,
-        distanceKm: 0,
-      },
-      emergency: { dial: '108', state: 'Tamil Nadu', language: 'en' },
-      integrity: decoded.integrity,
-    };
-    await saveRelayPacket(stub);
-    setPacket(stub);
+    const full = packetFromQrDecoded(decoded);
+    await saveRelayPacket(full);
+    await appendRelayChain(full);
+    await insertRahVeerClaim({
+      relayId: full.id,
+      lat: full.location.lat,
+      lng: full.location.lng,
+      note: `Scan ${decoded.integrity.slice(0, 12)}`,
+    });
+    setPacket(full);
     Alert.alert(
       'Relay saved',
       `Packet verified locally. Hash ${decoded.integrity.slice(0, 12)}…`
@@ -140,6 +123,11 @@ export default function ScanScreen() {
             </HudText>
           </View>
           <MargiButton label="SMS 108" onPress={sms} variant="secondary" large />
+          <MargiButton
+            label="Rah-Veer Good Samaritan"
+            onPress={() => router.push('/rahveer' as Href)}
+            variant="mint"
+          />
           <MargiButton label="Done" onPress={() => router.back()} variant="ghost" />
         </ScrollView>
       </View>

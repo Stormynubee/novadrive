@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { type Href, router } from 'expo-router';
 import * as Linking from 'expo-linking';
 import { Alert, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -8,6 +8,8 @@ import { HudText } from '../../src/components/HudText';
 import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { formatSms } from '../../src/lib/ghp';
+import { appendRelayChain } from '../../src/lib/relayChain';
+import { insertRahVeerClaim } from '../../src/lib/rahveerDb';
 import { saveRelayPacket } from '../../src/lib/storage';
 import { tokens } from '../../src/theme/tokens';
 
@@ -89,6 +91,13 @@ export default function RelayScreen() {
   const cacheRelay = async () => {
     if (!packet) return;
     await saveRelayPacket(packet);
+    await appendRelayChain(packet);
+    await insertRahVeerClaim({
+      relayId: packet.id,
+      lat: packet.location.lat,
+      lng: packet.location.lng,
+      note: 'Relay cache from packet step',
+    });
     Alert.alert('Relay cached', 'Packet saved securely on this device for bystander handoff.');
   };
 
@@ -145,6 +154,18 @@ export default function RelayScreen() {
         cta={{ label: 'Open scanner', onPress: () => router.push('/scan'), variant: 'ghost' }}
         icon="qr-code-scanner"
         tone="primary"
+      />
+      <StepBlock
+        num={4}
+        title="Rah-Veer · Good Samaritan"
+        body="Log your bystander handoff and open the official MoRTH Good Samaritan portal."
+        cta={{
+          label: 'Open Rah-Veer',
+          onPress: () => router.push('/rahveer' as Href),
+          variant: 'secondary',
+        }}
+        icon="volunteer-activism"
+        tone="tertiary"
       />
     </EmergencyStepShell>
   );

@@ -5,6 +5,23 @@ Product was previously shipped as **NovaDrive**; rebrand to **Margi** in v1.5.0.
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 
+## [2026-05-28] — Phase 2 P1 (v1.7.0)
+
+### Added
+
+- **Drive HUD v1.6 layout:** `DrivingHudLayout`, SOS top strip (`hudTop`), 168px speedometer, fixed chrome, dev-gated demo pills.
+- **Rah-Veer:** Good Samaritan screens, local claim log (`rahveer_claims`), relay chain in SecureStore, scan round-trip via `packetFromQrDecoded`.
+- **Trip intelligence:** DB-backed corridor hazards, `nd_last_trip_plan` cache, collapsible briefing on Trip tab.
+- **Journey debrief:** Scroll sections on complete, `summary_json` on journey logs, Settings → Journey history.
+- **TTS narrator:** `src/lib/tts/narrator.ts` for START FSM on `/emergency/triage` when accessibility TTS is on.
+
+### Changed
+
+- `novadrive-mobile` package version **1.7.0** (includes v1.6.0 HUD work).
+- Manual emergency activation routes through START triage before trauma response.
+
+---
+
 ## [2026-05-28] — Margi rebrand (Care Path)
 
 ### Added

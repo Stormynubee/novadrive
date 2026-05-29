@@ -20,6 +20,9 @@ import { LiveChip } from './LiveChip';
 import { PlanCorridorMap } from './PlanCorridorMap';
 import { useApp } from '../context/AppContext';
 import { toCurrentLocationLabel } from '../lib/location/locationLabel';
+import { saveTripPlanCache } from '../lib/tripPlanCache';
+import type { BriefingCard } from '../lib/tripBriefing';
+import { TripBriefingSection } from './TripBriefingSection';
 import { tokens } from '../theme/tokens';
 
 type RoutePreference = 'safest' | 'fastest';
@@ -150,7 +153,9 @@ export function PlanCorridorScreen() {
   const live = journeyStatus === 'ACTIVE';
 
   const [origin, setOrigin] = useState('Locating…');
+  const [originCoords, setOriginCoords] = useState({ lat: 13.0827, lng: 80.2707 });
   const [destination, setDestination] = useState('');
+  const [briefingCards, setBriefingCards] = useState<BriefingCard[]>([]);
   const [preference, setPreference] = useState<RoutePreference>('safest');
   const [selectedRouteId, setSelectedRouteId] = useState('alpha');
   const gpsReady = useRef(false);
@@ -172,6 +177,7 @@ export function PlanCorridorScreen() {
         }
         const last = await Location.getLastKnownPositionAsync({ maxAge: 90_000 });
         if (last?.coords) {
+          setOriginCoords({ lat: last.coords.latitude, lng: last.coords.longitude });
           setOrigin(
             toCurrentLocationLabel({
               lat: last.coords.latitude,
@@ -179,7 +185,9 @@ export function PlanCorridorScreen() {
             })
           );
         }
-        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });        setOrigin(
+        const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        setOriginCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setOrigin(
           toCurrentLocationLabel({
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
@@ -206,7 +214,7 @@ export function PlanCorridorScreen() {
     setPreference(next);
   }, []);
 
-  const startDriving = useCallback(() => {
+  const startDriving = useCallback(async () => {
     const dest = destination.trim();
     if (!dest) {
       Alert.alert('Destination required', 'Enter your destination ID or area before starting.');
@@ -214,9 +222,17 @@ export function PlanCorridorScreen() {
     }
     const label = `${selectedRoute.name} → ${dest}`;
     setPlannedDestination(label);
+    await saveTripPlanCache({
+      originLabel: origin,
+      destinationLabel: dest,
+      routeId: selectedRoute.id,
+      routeName: selectedRoute.name,
+      savedAt: new Date().toISOString(),
+      briefingSnapshot: briefingCards,
+    });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     router.push('/journey/depart' as Href);
-  }, [destination, selectedRoute.name, setPlannedDestination]);
+  }, [destination, selectedRoute, origin, briefingCards, setPlannedDestination]);
 
   const openLiveHud = () => {
     router.push('/journey' as Href);
@@ -346,10 +362,20 @@ export function PlanCorridorScreen() {
                 ))}
               </View>
 
+              <TripBriefingSection
+                originLabel={origin}
+                destinationLabel={destination}
+                originLat={originCoords.lat}
+                originLng={originCoords.lng}
+                routeId={selectedRoute.id}
+                routeName={selectedRoute.name}
+                onCardsLoaded={setBriefingCards}
+              />
+
               <Pressable onPress={openBriefing} style={styles.briefingLink}>
-                <MaterialIcons name="layers" size={18} color={tokens.primary} />
+                <MaterialIcons name="open-in-new" size={18} color={tokens.primary} />
                 <HudText variant="bodySm" style={styles.briefingLinkText}>
-                  Offline corridor briefing & trauma POIs
+                  Full-screen corridor briefing
                 </HudText>
                 <MaterialIcons name="chevron-right" size={20} color={tokens.outline} />
               </Pressable>

@@ -1,6 +1,6 @@
 {
   "name": "novadrive-mobile",
-  "version": "1.5.0",
+  "version": "1.7.0",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/hanken-grotesk": "^0.4.3",

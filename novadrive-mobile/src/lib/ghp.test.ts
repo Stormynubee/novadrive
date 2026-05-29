@@ -17,6 +17,7 @@ import {
   encodeQrPayload,
   formatSms,
   hashPayload,
+  packetFromQrDecoded,
   qrMinimalJson,
 } from './ghp';
 import type { EmergencySession } from './types';
@@ -82,6 +83,18 @@ describe('qr encode/decode', () => {
 
   it('rejects malformed payload', () => {
     expect(decodeQrPayload('not-a-packet')).toBeNull();
+  });
+
+  it('rebuilds full packet from minimal decode', async () => {
+    const packet = await buildPacket(baseSession());
+    expect(packet).not.toBeNull();
+    const decoded = decodeQrPayload(encodeQrPayload(packet!));
+    expect(decoded).not.toBeNull();
+    const rebuilt = packetFromQrDecoded(decoded!);
+    expect(rebuilt.id).toBe(packet!.id);
+    expect(rebuilt.integrity).toBe(packet!.integrity);
+    expect(rebuilt.location.lat).toBe(packet!.location.lat);
+    expect(rebuilt.victims.breathing).toBe(true);
   });
 });
 

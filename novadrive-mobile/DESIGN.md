@@ -32,7 +32,7 @@
 - **Urgent button:** Orange fill (`secondary`)
 - **Cards:** White surface, 12px radius, subtle blue-tint shadow
 - **Splash:** White field, centered logo, tagline, orange “Get started”
-- **Journey HUD:** High contrast — blue telemetry, orange SOS hold
+- **Journey HUD (v1.6):** Fixed layout (no scroll while driving). Zones top→bottom: header → **full-width SOS strip** (`HoldSOSButton` `hudTop`, 3s hold) → sensor row → **168px** speed ring (40px digits) → end-trip CTA. Dev-only impact/scream pills behind `__DEV__`.
 
 ## 5. Layout Principles
 

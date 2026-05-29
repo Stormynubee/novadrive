@@ -22,8 +22,10 @@ import { StarRating } from '../../src/components/StarRating';
 import {
   getJourneyLog,
   saveJourneyFeedback,
+  saveJourneySummary,
   type FeedbackCategory,
   type JourneyLog,
+  type JourneySummaryJson,
 } from '../../src/lib/journeyDb';
 import { tokens } from '../../src/theme/tokens';
 
@@ -56,6 +58,14 @@ function formatWhen(iso: string): string {
   } catch {
     return iso;
   }
+}
+
+function SectionHeader({ title }: { title: string }) {
+  return (
+    <HudText variant="mono" style={sectionStyles.header}>
+      {title}
+    </HudText>
+  );
 }
 
 function StatCell({ label, value, accent }: { label: string; value: string; accent?: string }) {
@@ -111,6 +121,20 @@ export default function JourneyCompleteScreen() {
         category,
         comment: comment.trim(),
       });
+      if (id && log) {
+        const summary: JourneySummaryJson = {
+          stats: {
+            durationSec: log.durationSec,
+            maxSpeedKmh: log.maxSpeedKmh,
+            impactAlerts: log.impactAlerts,
+            voiceAlerts: log.voiceAlerts,
+          },
+          incidents: { impact: log.impactAlerts, voice: log.voiceAlerts },
+          routeContext: log.destination,
+          feedbackNote: comment.trim(),
+        };
+        await saveJourneySummary(String(id), summary);
+      }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       setSubmitted(true);
     } catch (e) {
@@ -118,7 +142,7 @@ export default function JourneyCompleteScreen() {
     } finally {
       setSubmitting(false);
     }
-  }, [rating, category, comment, id]);
+  }, [rating, category, comment, id, log]);
 
   const goHome = () => router.replace('/(tabs)/explore' as Href);
   const totalAlerts = log ? log.impactAlerts + log.voiceAlerts : 0;
@@ -146,6 +170,7 @@ export default function JourneyCompleteScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
+          <SectionHeader title="JOURNEY STATS" />
           <JourneyTicketFrame
             serial={id ? String(id).slice(0, 8).toUpperCase() : 'NO-ID'}
           >
@@ -189,14 +214,31 @@ export default function JourneyCompleteScreen() {
 
             <View style={styles.divider} />
 
-            <HudText variant="mono" style={styles.sectionTag}>
-              FEEDBACK · ARCHIVED LOCALLY
-            </HudText>
-            <HudText variant="bodySm" style={styles.hint}>
-              Your review improves offline corridor intelligence for other drivers. Nothing is
-              uploaded automatically in this build.
+            <SectionHeader title="INCIDENTS" />
+            {log ? (
+              <View style={styles.incidentRow}>
+                <MaterialIcons
+                  name={log.impactAlerts > 0 ? 'warning' : 'check-circle'}
+                  size={20}
+                  color={log.impactAlerts > 0 ? tokens.secondary : tokens.tertiary}
+                />
+                <HudText variant="bodySm" style={styles.hint}>
+                  Impact flags: {log.impactAlerts} · Voice flags: {log.voiceAlerts}
+                </HudText>
+              </View>
+            ) : null}
+
+            <SectionHeader title="ROUTE CONTEXT" />
+            <HudText variant="bodyMd" style={styles.routeBody}>
+              {log?.destination ?? 'Corridor manifest loading…'}
             </HudText>
 
+            <View style={styles.divider} />
+
+            <SectionHeader title="FEEDBACK" />
+            <HudText variant="bodySm" style={styles.hint}>
+              Archived locally — improves offline corridor intelligence.
+            </HudText>
             {!submitted ? (
               <>
                 <StarRating value={rating} onChange={setRating} />
@@ -320,6 +362,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   thanksTitle: { color: tokens.primary, textAlign: 'center' },
+  incidentRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  routeBody: { color: tokens.onSurface, lineHeight: 22, marginBottom: 8 },
+});
+
+const sectionStyles = StyleSheet.create({
+  header: {
+    fontSize: 10,
+    letterSpacing: 1.6,
+    color: tokens.secondary,
+    marginTop: 4,
+    marginBottom: 8,
+  },
 });
 
 const statStyles = StyleSheet.create({
