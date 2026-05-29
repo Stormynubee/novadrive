@@ -65,7 +65,8 @@ export function createDispatchAdapters({
 }: CreateDispatchAdaptersInput) {
   return {
     async requestDispatch(input: DispatchRequest): Promise<DispatchResult> {
-      const body = JSON.stringify(input);      const traumaPromise = fetchImpl(traumaEndpoint, {
+      const body = JSON.stringify(input);
+      const traumaPromise = fetchImpl(traumaEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,

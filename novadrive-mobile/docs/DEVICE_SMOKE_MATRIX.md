@@ -31,5 +31,11 @@ Run after stabilization changes on a physical Android device (Expo dev client or
 | 24 | Journey + notification | Play phone notification chime during journey | No distress modal |
 | 25 | Journey + test yell | Loud intentional yell near mic (test only) | Distress modal after ~1–2 s confirmation |
 | 26 | Naari only | Safety Mode ON, no active journey, idle on portal/home | Mic policy active; no false modal while idle |
+| 27 | Supabase auth | Sign up → sign out → sign in | Session persists; profile syncs from Supabase |
+| 28 | NGO registry | Settings → NGO → Register → verify in Studio | Verified provider appears in nearby list |
+| 29 | OSRM trip | Trip tab: enter destination online | Real km/min + OSRM polyline on map |
+| 30 | Sarthi BFF | Sarthi with deployed BFF URL | Status chip shows Gemini BFF online |
+| 31 | Auto dispatch | Emergency Auto mode with dispatch URLs | HTTP POST; real responder names; no fake alerts |
+| 32 | Crash source | Dev build journey + simulate crash | Modal shows Sensors/Manual source badge |
 
 **Commands before release:** `npm run typecheck` · `npm test`

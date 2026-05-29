@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { checkSarthiBffHealth, type SarthiBffStatus } from '../lib/sarthi/sarthiHealth';
 import { buildSarthiUserContext } from '../lib/sarthi/buildSarthiContext';
 import {
   createProductionDeps,
@@ -20,7 +21,7 @@ export function useSarthiChat() {
   const threadRef = useRef<SarthiThread | null>(null);
   const [loading, setLoading] = useState(false);
   const [networkOffline, setNetworkOffline] = useState(false);
-  const [bffUnavailable, setBffUnavailable] = useState(!apiBase.trim());
+  const [bffStatus, setBffStatus] = useState<SarthiBffStatus>(!apiBase.trim() ? 'unconfigured' : 'offline');
   const [hydrated, setHydrated] = useState(false);
 
   const context: SarthiUserContext = useMemo(
@@ -37,8 +38,18 @@ export function useSarthiChat() {
   }, [thread]);
 
   useEffect(() => {
-    setBffUnavailable(!apiBase.trim());
+    setBffStatus(!apiBase.trim() ? 'unconfigured' : 'offline');
+    if (!apiBase.trim()) return;
+    let cancelled = false;
+    void checkSarthiBffHealth(apiBase).then((status) => {
+      if (!cancelled) setBffStatus(status);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [apiBase]);
+
+  const bffUnavailable = bffStatus !== 'online';
 
   useEffect(() => {
     let cancelled = false;
@@ -84,7 +95,10 @@ export function useSarthiChat() {
       try {
         const online = await deps.isOnline();
         setNetworkOffline(!online);
-        setBffUnavailable(!apiBase.trim());
+        if (online && apiBase.trim()) {
+          const status = await checkSarthiBffHealth(apiBase);
+          setBffStatus(status);
+        }
 
         const base = threadRef.current ?? createThread(deps, context);
         if (!threadRef.current) {
@@ -138,6 +152,7 @@ export function useSarthiChat() {
     loading,
     offlineMode: networkOffline,
     bffUnavailable,
+    bffStatus,
     hydrated,
     send,
     clearThread,

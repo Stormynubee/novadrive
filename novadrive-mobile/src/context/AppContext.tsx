@@ -24,6 +24,10 @@ import { parseEmergencyText } from '../lib/parseEmergencyText';
 import { buildPacket } from '../lib/ghp';
 import { rankFacilities } from '../lib/facilitiesDb';
 import {
+  createCrashOrchestrator,
+} from '../lib/crash/crashOrchestrator';
+import type { CrashSource } from '../lib/crash/nativeCrashAdapter';
+import {
   CRASH_CONFIG,
   createCrashEngineState,
   accelMagnitudeG,
@@ -65,6 +69,8 @@ import {
   resetDemoApp,
   saveProfile,
 } from '../lib/storage';
+import { getSupabaseClient } from '../lib/supabase/client';
+import { signOutSession } from '../lib/supabase/authSession';
 
 interface AppContextValue {
   profile: UserProfile;
@@ -77,6 +83,7 @@ interface AppContextValue {
   triageResult?: TriageColor;
   chatPrefill?: Partial<FSMContext>;
   crashDialogOpen: boolean;
+  crashSource: 'OS' | 'Sensors' | 'Manual';
   safetyAlertReason: SafetyAlertReason;
   voiceMonitoring: boolean;
   calmCountdown: number;
@@ -132,6 +139,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [triageResult, setTriageResult] = useState<TriageColor | undefined>();
   const [chatPrefill, setChatPrefill] = useState<Partial<FSMContext>>();
   const [crashDialogOpen, setCrashDialogOpen] = useState(false);
+  const [crashSource, setCrashSource] = useState<CrashSource>('Sensors');
   const [safetyAlertReason, setSafetyAlertReason] = useState<SafetyAlertReason>('impact');
   const [voiceMonitoring, setVoiceMonitoring] = useState(false);
   const [calmCountdown, setCalmCountdown] = useState(CRASH_CONFIG.CALM_DIALOG_SECONDS);
@@ -233,7 +241,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const triggerSafetyAlert = useCallback(
-    (reason: SafetyAlertReason) => {
+    (reason: SafetyAlertReason, source: CrashSource = 'Sensors') => {
       const now = Date.now();
       if (reason !== 'simulate' && now - lastSafetyDialogAt.current < 30_000) return;
       if (dialogOpenRef.current) return;
@@ -265,6 +273,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (journeyLogId.current) void incrementJourneyAlerts(journeyLogId.current, 'voice');
       }
       setSafetyAlertReason(reason);
+      setCrashSource(source);
       const prefs = a11yRef.current;
       void hapticCrashAlert(prefs);
       announceA11y(safetyAlertTitle(reason), prefs);
@@ -276,11 +285,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const handleCrashEvent = useCallback(
     (event: CrashEvent) => {
-      if (event === 'CRASH_CANDIDATE') triggerSafetyAlert('impact');
-      if (event === 'SIMULATE_CRASH') triggerSafetyAlert('simulate');
+      if (event === 'CRASH_CANDIDATE') triggerSafetyAlert('impact', 'Sensors');
+      if (event === 'SIMULATE_CRASH') triggerSafetyAlert('simulate', 'Manual');
     },
     [triggerSafetyAlert]
   );
+
+  const crashOrchestratorRef = useRef(
+    createCrashOrchestrator({
+      journeyActive: () => journeyStatusRef.current === 'ACTIVE',
+      onCandidate: (source) => triggerSafetyAlert('impact', source),
+    })
+  );
+
+  useEffect(() => {
+    return crashOrchestratorRef.current.unsubscribe;
+  }, []);
 
   const handlePanicEvent = useCallback(
     (event: PanicVoiceEvent) => {
@@ -678,6 +698,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     dismissCrashDialog();
     resetEmergency();
     setPlannedDestination('');
+    const client = getSupabaseClient();
+    if (client) await signOutSession(client);
     const guest: UserProfile = { mode: 'guest' };
     setProfile(guest);
     await saveProfile(guest);
@@ -698,6 +720,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       triageResult,
       chatPrefill,
       crashDialogOpen,
+      crashSource,
       safetyAlertReason,
       voiceMonitoring,
       calmCountdown,
@@ -746,6 +769,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       triageResult,
       chatPrefill,
       crashDialogOpen,
+      crashSource,
       safetyAlertReason,
       voiceMonitoring,
       calmCountdown,

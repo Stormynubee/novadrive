@@ -23,6 +23,9 @@ import { toCurrentLocationLabel } from '../lib/location/locationLabel';
 import { saveTripPlanCache } from '../lib/tripPlanCache';
 import type { BriefingCard } from '../lib/tripBriefing';
 import { TripBriefingSection } from './TripBriefingSection';
+import { planTripRoute, projectPolylineToViewBox } from '../lib/routing/tripRoute';
+import { MAP_VIEWBOX } from '../lib/corridorMapGeometry';
+import type { LatLng } from '../lib/routing/nominatim';
 import { tokens } from '../theme/tokens';
 
 type RoutePreference = 'safest' | 'fastest';
@@ -158,14 +161,24 @@ export function PlanCorridorScreen() {
   const [briefingCards, setBriefingCards] = useState<BriefingCard[]>([]);
   const [preference, setPreference] = useState<RoutePreference>('safest');
   const [selectedRouteId, setSelectedRouteId] = useState('alpha');
+  const [osrmPolyline, setOsrmPolyline] = useState<LatLng[] | null>(null);
+  const [osrmPathD, setOsrmPathD] = useState<string | undefined>();
+  const [osrmOnline, setOsrmOnline] = useState(false);
+  const [osrmMetrics, setOsrmMetrics] = useState<{ distanceKm: number; minutes: number } | null>(
+    null
+  );
   const gpsReady = useRef(false);
+  const routeFetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const routes = ROUTE_CATALOG[preference];
 
-  const selectedRoute = useMemo(
-    () => routes.find((r) => r.id === selectedRouteId) ?? routes[0],
-    [routes, selectedRouteId]
-  );
+  const selectedRoute = useMemo(() => {
+    const base = routes.find((r) => r.id === selectedRouteId) ?? routes[0];
+    if (osrmMetrics) {
+      return { ...base, distanceKm: osrmMetrics.distanceKm, minutes: osrmMetrics.minutes };
+    }
+    return base;
+  }, [routes, selectedRouteId, osrmMetrics]);
 
   useEffect(() => {
     if (gpsReady.current) return;
@@ -209,6 +222,49 @@ export function PlanCorridorScreen() {
     }
   }, [plannedDestination, destination]);
 
+  useEffect(() => {
+    const dest = destination.trim();
+    if (!dest) {
+      setOsrmPolyline(null);
+      setOsrmPathD(undefined);
+      setOsrmOnline(false);
+      setOsrmMetrics(null);
+      return;
+    }
+    if (routeFetchRef.current) clearTimeout(routeFetchRef.current);
+    routeFetchRef.current = setTimeout(() => {
+      void (async () => {
+        try {
+          const plan = await planTripRoute({
+            origin: originCoords,
+            destinationQuery: dest,
+          });
+          if (!plan) {
+            setOsrmPolyline(null);
+            setOsrmPathD(undefined);
+            setOsrmOnline(false);
+            setOsrmMetrics(null);
+            return;
+          }
+          setOsrmPolyline(plan.route.coordinates);
+          setOsrmPathD(
+            projectPolylineToViewBox(plan.route.coordinates, MAP_VIEWBOX.w, MAP_VIEWBOX.h)
+          );
+          setOsrmOnline(true);
+          setOsrmMetrics({ distanceKm: plan.distanceKm, minutes: plan.minutes });
+        } catch {
+          setOsrmPolyline(null);
+          setOsrmPathD(undefined);
+          setOsrmOnline(false);
+          setOsrmMetrics(null);
+        }
+      })();
+    }, 800);
+    return () => {
+      if (routeFetchRef.current) clearTimeout(routeFetchRef.current);
+    };
+  }, [destination, originCoords]);
+
   const onPreference = useCallback((next: RoutePreference) => {
     Haptics.selectionAsync().catch(() => undefined);
     setPreference(next);
@@ -229,10 +285,14 @@ export function PlanCorridorScreen() {
       routeName: selectedRoute.name,
       savedAt: new Date().toISOString(),
       briefingSnapshot: briefingCards,
+      routePolyline: osrmPolyline ?? undefined,
+      distanceKm: selectedRoute.distanceKm,
+      minutes: selectedRoute.minutes,
+      osrmOnline,
     });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     router.push('/journey/depart' as Href);
-  }, [destination, selectedRoute, origin, briefingCards, setPlannedDestination]);
+  }, [destination, selectedRoute, origin, briefingCards, setPlannedDestination, osrmPolyline, osrmOnline]);
 
   const openLiveHud = () => {
     router.push('/journey' as Href);
@@ -251,6 +311,8 @@ export function PlanCorridorScreen() {
           routeId={selectedRoute.id === 'beta' ? 'beta' : 'alpha'}
           preference={preference}
           hasDestination={destination.trim().length > 0}
+          osrmPathD={osrmPathD}
+          osrmOnline={osrmOnline}
         />
         {live ? (
           <View style={styles.liveBanner}>

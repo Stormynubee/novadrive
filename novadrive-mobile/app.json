@@ -2,7 +2,7 @@
   "expo": {
     "name": "Margi",
     "slug": "novadrive-mobile",
-    "version": "1.5.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "scheme": "margi",
     "userInterfaceStyle": "light",
@@ -44,6 +44,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-dev-client",
       "expo-sqlite",
       "expo-secure-store",
       [

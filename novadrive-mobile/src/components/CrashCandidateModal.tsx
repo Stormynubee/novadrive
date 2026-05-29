@@ -10,12 +10,14 @@ export function CrashCandidateModal({
   visible,
   countdown,
   reason = 'impact',
+  crashSource,
   onDismiss,
   onConfirm,
 }: {
   visible: boolean;
   countdown: number;
   reason?: SafetyAlertReason;
+  crashSource?: 'OS' | 'Sensors' | 'Manual';
   onDismiss: () => void;
   onConfirm: () => void;
 }) {
@@ -36,6 +38,11 @@ export function CrashCandidateModal({
           <HudText variant="bodyMd" style={styles.body}>
             {safetyAlertBody(reason)}
           </HudText>
+          {crashSource ? (
+            <HudText variant="mono" style={styles.sourceBadge}>
+              Detection source: {crashSource}
+            </HudText>
+          ) : null}
           <View style={styles.countdown}>
             <View style={styles.countdownDot} />
             <HudText variant="mono" style={styles.countdownText}>
@@ -83,6 +90,12 @@ const styles = StyleSheet.create({
   },
   title: { color: tokens.primary },
   body: { color: tokens.onSurfaceVariant, marginTop: 8, lineHeight: 22 },
+  sourceBadge: {
+    marginTop: 8,
+    fontSize: 11,
+    color: tokens.primary,
+    letterSpacing: 0.6,
+  },
   countdown: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -5,6 +5,24 @@ Product was previously shipped as **NovaDrive**; rebrand to **Margi** in v1.5.0.
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
 
+## [2026-05-28] — Phase 3 Production Integrations (v2.0.0)
+
+### Added
+
+- **Supabase:** `profiles`, `volunteer_providers`, `dispatch_events` migration + email/password auth tabs.
+- **NGO registry:** `/ngo` register and list screens; alternate transport queries verified volunteers.
+- **OSRM routing:** Nominatim geocode + OSRM driving route; GeoJSON polyline on Trip map; extended trip plan cache.
+- **Sarthi BFF:** `GET /api/sarthi/health`; mobile connection status chip.
+- **HTTP dispatch:** `dispatchOrchestrator` with auto mode POST, `autoDispatchMedical` in body, Supabase audit trail.
+- **Native crash layer:** `nativeCrashAdapter` + `crashOrchestrator` (Android dev build); source badge on calm dialog.
+
+### Changed
+
+- `novadrive-mobile` package version **2.0.0**; requires `expo-dev-client` for native crash hooks.
+- Removed placeholder voice/mic alerts on Sarthi; remediated fake-button CTAs on profile/settings/response.
+
+---
+
 ## [2026-05-28] — Phase 2 P1 (v1.7.0)
 
 ### Added

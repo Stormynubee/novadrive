@@ -18,16 +18,21 @@ export function PlanCorridorMap({
   routeId,
   preference,
   hasDestination,
+  osrmPathD,
+  osrmOnline = false,
 }: {
   routeId: CorridorRouteId;
   preference: 'safest' | 'fastest';
   hasDestination: boolean;
+  osrmPathD?: string;
+  osrmOnline?: boolean;
 }) {
   const activePath = CORRIDOR_PATHS[routeId];
   const ghostId: CorridorRouteId = routeId === 'alpha' ? 'beta' : 'alpha';
   const ghostPath = CORRIDOR_PATHS[ghostId];
   const routeOpacity = hasDestination ? 1 : 0.45;
-  const showGhost = hasDestination && preference === 'safest';
+  const showGhost = hasDestination && preference === 'safest' && !osrmPathD;
+  const routePathD = osrmPathD && hasDestination ? osrmPathD : activePath;
 
   return (
     <View style={styles.wrap}>
@@ -74,30 +79,34 @@ export function PlanCorridorMap({
         ) : null}
 
         <Path
-          d={activePath}
+          d={routePathD}
           stroke={tokens.primary}
           strokeWidth={hasDestination ? 3 : 2}
           fill="none"
           opacity={hasDestination ? 0.4 : 0.25}
         />
         <Path
-          d={activePath}
+          d={routePathD}
           stroke={tokens.secondary}
           strokeWidth={hasDestination ? 4 : 3}
-          strokeDasharray={hasDestination ? undefined : '8 6'}
+          strokeDasharray={hasDestination && !osrmPathD ? undefined : hasDestination ? undefined : '8 6'}
           fill="none"
           opacity={routeOpacity}
         />
 
-        <Path
-          d={`M ${CORRIDOR_ORIGIN.x} ${CORRIDOR_ORIGIN.y} m -6 0 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0`}
-          fill={tokens.primary}
-        />
-        {hasDestination ? (
-          <Path
-            d={`M ${CORRIDOR_DEST.x} ${CORRIDOR_DEST.y} m -6 0 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0`}
-            fill={tokens.secondary}
-          />
+        {!osrmPathD ? (
+          <>
+            <Path
+              d={`M ${CORRIDOR_ORIGIN.x} ${CORRIDOR_ORIGIN.y} m -6 0 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0`}
+              fill={tokens.primary}
+            />
+            {hasDestination ? (
+              <Path
+                d={`M ${CORRIDOR_DEST.x} ${CORRIDOR_DEST.y} m -6 0 a 6 6 0 1 0 12 0 a 6 6 0 1 0 -12 0`}
+                fill={tokens.secondary}
+              />
+            ) : null}
+          </>
         ) : null}
       </Svg>
 
@@ -109,7 +118,7 @@ export function PlanCorridorMap({
 
       <View style={styles.chip} pointerEvents="none">
         <HudText variant="mono" style={styles.chipText}>
-          CORRIDOR PREVIEW · OFFLINE
+          {osrmOnline ? 'OSRM ROUTE · ONLINE' : 'CORRIDOR PREVIEW · OFFLINE'}
         </HudText>
       </View>
     </View>

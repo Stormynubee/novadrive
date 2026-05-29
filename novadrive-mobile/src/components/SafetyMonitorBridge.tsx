@@ -18,6 +18,7 @@ export function SafetyMonitorBridge() {
     crashDialogOpen,
     safetyAlertReason,
     calmCountdown,
+    crashSource,
     dismissCrashDialog,
     beginEmergencyFlow,
     markNavigationTransition,
@@ -77,6 +78,7 @@ export function SafetyMonitorBridge() {
         visible={crashDialogOpen}
         countdown={calmCountdown}
         reason={safetyAlertReason}
+        crashSource={crashSource}
         onDismiss={dismissCrashDialog}
         onConfirm={onConfirmAlert}
       />

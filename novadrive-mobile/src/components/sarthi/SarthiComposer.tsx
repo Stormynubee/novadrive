@@ -27,9 +27,11 @@ export function SarthiComposer({
         onSubmitEditing={onSend}
         returnKeyType="send"
       />
-      <Pressable onPress={onMicPress} hitSlop={8} style={styles.iconBtn}>
-        <MaterialIcons name="mic" size={22} color={tokens.primary} />
-      </Pressable>
+      {onMicPress ? (
+        <Pressable onPress={onMicPress} hitSlop={8} style={styles.iconBtn}>
+          <MaterialIcons name="mic" size={22} color={tokens.primary} />
+        </Pressable>
+      ) : null}
       <Pressable
         onPress={onSend}
         disabled={disabled || !value.trim()}

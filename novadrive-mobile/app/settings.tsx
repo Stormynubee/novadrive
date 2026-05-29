@@ -9,7 +9,6 @@ import { HudText } from '../src/components/HudText';
 import { MargiTopBar } from '../src/components/MargiTopBar';
 import { useApp } from '../src/context/AppContext';
 import type { Lang, SosSensitivity } from '../src/lib/types';
-import { announceA11y } from '../src/lib/a11yRuntime';
 import { TEAM_DISPLAY_NAME } from '../src/lib/brand';
 import { tokens } from '../src/theme/tokens';
 
@@ -146,15 +145,7 @@ export default function SettingsScreen() {
             </View>
             <GovSwitch
               value={settings.biometricAuth}
-              onValueChange={(v) => {
-                updateSettings({ biometricAuth: v });
-                if (v) {
-                  Alert.alert(
-                    'Biometric login',
-                    'On device builds, this will gate app open. Demo mode stores your preference only.'
-                  );
-                }
-              }}
+              onValueChange={(v) => updateSettings({ biometricAuth: v })}
               accessibilityLabel="Biometric authentication"
             />
           </View>
@@ -170,9 +161,7 @@ export default function SettingsScreen() {
             </View>
             <Pressable
               style={styles.updateBtn}
-              onPress={() =>
-                Alert.alert('Update ID', 'Link your Aadhaar in a future release. Guest mode is active for this demo.')
-              }
+              onPress={() => router.push('/medical?fromProfile=1' as Href)}
             >
               <HudText variant="mono" style={styles.updateLabel}>
                 Update
@@ -255,6 +244,14 @@ export default function SettingsScreen() {
           <MaterialIcons name="chevron-right" size={22} color={tokens.outline} />
         </Pressable>
 
+        <Pressable style={styles.linkRow} onPress={() => router.push('/ngo' as Href)}>
+          <MaterialIcons name="local-hospital" size={22} color={tokens.primary} />
+          <HudText variant="bodyMd" style={styles.linkLabel}>
+            NGO volunteer registry
+          </HudText>
+          <MaterialIcons name="chevron-right" size={22} color={tokens.outline} />
+        </Pressable>
+
         <Pressable style={styles.linkRow} onPress={() => router.push('/rahveer' as Href)}>
           <MaterialIcons name="volunteer-activism" size={22} color={tokens.secondary} />
           <HudText variant="bodyMd" style={styles.linkLabel}>
@@ -280,7 +277,7 @@ export default function SettingsScreen() {
             Powered by {TEAM_DISPLAY_NAME}
           </HudText>
           <HudText variant="bodySm" style={styles.footerVer}>
-            Version 2.4.1 (Gov Edition)
+            Version 2.0.0 (Production)
           </HudText>
           <View style={styles.footerLinks}>
             <Pressable onPress={() => Linking.openURL('https://www.meity.gov.in/')}>
@@ -293,12 +290,7 @@ export default function SettingsScreen() {
                 Terms of Service
               </HudText>
             </Pressable>
-            <Pressable
-              onPress={() => {
-                announceA11y('Audit logs are stored locally on this device.', a11y);
-                Alert.alert('Audit logs', 'Local journey and feedback logs are on this device only.');
-              }}
-            >
+            <Pressable onPress={() => router.push('/settings/journey-history' as Href)}>
               <HudText variant="bodySm" style={styles.footerLink}>
                 Audit Logs
               </HudText>

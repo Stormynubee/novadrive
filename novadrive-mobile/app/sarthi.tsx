@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import {
-  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -23,9 +22,16 @@ function sessionLabel() {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+function statusChipLabel(status: string, offlineMode: boolean): string {
+  if (offlineMode) return 'Offline KB';
+  if (status === 'online') return 'Gemini BFF online';
+  if (status === 'unconfigured') return 'BFF not configured';
+  return 'BFF unreachable';
+}
+
 export default function SarthiScreen() {
   const insets = useSafeAreaInsets();
-  const { thread, loading, offlineMode, bffUnavailable, send, clearThread } = useSarthi();
+  const { thread, loading, offlineMode, bffStatus, send, clearThread } = useSarthi();
   const [draft, setDraft] = useState('');
   const sessionTime = useMemo(() => sessionLabel(), []);
 
@@ -45,15 +51,16 @@ export default function SarthiScreen() {
           Encrypted session · {sessionTime}
         </HudText>
       </View>
-      {offlineMode ? (
-        <HudText variant="bodySm" style={styles.offlineBanner}>
-          No network — Sarthi is using on-device safety rules
+      <View style={styles.statusChip}>
+        <MaterialIcons
+          name={bffStatus === 'online' && !offlineMode ? 'cloud-done' : 'cloud-off'}
+          size={14}
+          color={bffStatus === 'online' && !offlineMode ? tokens.tertiary : tokens.secondaryDeep}
+        />
+        <HudText variant="mono" style={styles.statusText}>
+          {statusChipLabel(bffStatus, offlineMode)}
         </HudText>
-      ) : bffUnavailable ? (
-        <HudText variant="bodySm" style={styles.offlineBanner}>
-          BFF not configured — on-device rules (set EXPO_PUBLIC_SARTHI_API_URL in .env)
-        </HudText>
-      ) : null}
+      </View>
       <FlatList
         data={thread.messages}
         keyExtractor={(m) => m.id}
@@ -66,28 +73,11 @@ export default function SarthiScreen() {
         value={draft}
         onChangeText={setDraft}
         onSend={handleSend}
-        onMicPress={() =>
-          Alert.alert('Voice input', 'Voice capture for Sarthi is coming in a follow-up build.')
-        }
         disabled={loading}
       />
       <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 8 }]}>
-        <Pressable
-          onPress={() => {
-            clearThread();
-            Alert.alert('History cleared', 'Sarthi thread reset.');
-          }}
-          style={styles.bottomIcon}
-        >
+        <Pressable onPress={() => clearThread()} style={styles.bottomIcon}>
           <MaterialIcons name="history" size={24} color={tokens.primary} />
-        </Pressable>
-        <Pressable
-          style={styles.micFab}
-          onPress={() =>
-            Alert.alert('Voice input', 'Hold-to-talk for Sarthi is coming soon.')
-          }
-        >
-          <MaterialIcons name="mic" size={28} color={tokens.onSecondary} />
         </Pressable>
         <Pressable onPress={handleSend} style={styles.bottomIcon} disabled={loading || !draft.trim()}>
           <MaterialIcons name="send" size={24} color={tokens.secondary} />
@@ -111,32 +101,29 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.tertiaryFixedDim,
   },
   sessionText: { color: tokens.onTertiaryContainer },
-  offlineBanner: {
-    textAlign: 'center',
-    color: tokens.secondaryDeep,
-    backgroundColor: tokens.secondaryFixed,
-    paddingVertical: 6,
+  statusChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: tokens.radius.chip,
+    backgroundColor: tokens.surfaceContainerHigh,
   },
+  statusText: { fontSize: 10, color: tokens.onSurfaceVariant, letterSpacing: 0.8 },
   list: { flex: 1 },
-  listContent: { padding: tokens.spacing.gutter, paddingBottom: tokens.spacing.stackLg },
+  listContent: { paddingHorizontal: tokens.spacing.gutter, paddingBottom: 12 },
   bottomBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: tokens.spacing.sideMargin,
-    paddingTop: tokens.spacing.base,
-    backgroundColor: tokens.surface,
+    justifyContent: 'space-around',
+    paddingHorizontal: 24,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: tokens.outlineVariant,
+    backgroundColor: tokens.surface,
   },
-  bottomIcon: { padding: 8 },
-  micFab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: tokens.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...tokens.elevation.sos,
-  },
+  bottomIcon: { padding: 12 },
 });

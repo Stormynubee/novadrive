@@ -14,21 +14,28 @@ import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
 import type { GenderIdentity } from '../src/lib/types';
 import { TEAM_DISPLAY_NAME } from '../src/lib/brand';
+import { getSupabaseClient, isSupabaseConfigured } from '../src/lib/supabase/client';
+import {
+  isValidEmail,
+  isValidPassword,
+  profileFromSession,
+  signInWithPassword,
+  signUpWithPassword,
+  type AuthTab,
+} from '../src/lib/supabase/authSession';
+import { fetchRemoteProfile, mergeRemoteIntoProfile } from '../src/lib/supabase/profileSync';
 import { tokens } from '../src/theme/tokens';
 
-function isValidEmail(email: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
-}
-
-/**
- * Stitch `login_page` — secure sign-in with persistent navy labels, "Continue with email" primary
- * navy CTA, secondary saffron "Continue as Guest". Adds a small Aadhaar/Mobile placeholder field
- * matching the Indian-government context (kept guest-compatible — submit goes to email path only).
- */
 export default function AuthScreen() {
-  const { updateProfile } = useApp();
+  const { updateProfile, profile } = useApp();
+  const [tab, setTab] = useState<AuthTab>('signin');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [gender, setGender] = useState<GenderIdentity | undefined>();
+  const [busy, setBusy] = useState(false);
+
+  const supabaseReady = isSupabaseConfigured();
 
   const continueGuest = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
@@ -36,28 +43,107 @@ export default function AuthScreen() {
       mode: 'guest',
       name: 'Guest',
       email: undefined,
+      supabaseUserId: undefined,
       ...(gender ? { gender } : {}),
     });
     router.push('/medical');
   };
 
-  const continueEmail = async () => {
+  const finishAuth = async (sessionProfile: ReturnType<typeof profileFromSession>) => {
+    let merged = {
+      ...profile,
+      ...sessionProfile,
+      ...(gender ? { gender } : {}),
+    };
+    const client = getSupabaseClient();
+    if (client && sessionProfile.supabaseUserId) {
+      const remote = await fetchRemoteProfile(client, sessionProfile.supabaseUserId);
+      merged = mergeRemoteIntoProfile(merged, remote);
+    }
+    await updateProfile(merged);
+    router.push('/medical');
+  };
+
+  const submitSignIn = async () => {
     const trimmed = email.trim();
     if (!isValidEmail(trimmed)) {
+      Alert.alert('Email required', 'Enter a valid email address.');
+      return;
+    }
+    if (!isValidPassword(password)) {
+      Alert.alert('Password required', 'Password must be at least 8 characters.');
+      return;
+    }
+    const client = getSupabaseClient();
+    if (!client) {
       Alert.alert(
-        'Email required',
-        'Enter a valid email to continue, or use Guest mode for the offline demo.'
+        'Supabase not configured',
+        'Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY, or use Guest demo mode.'
       );
       return;
     }
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
-    await updateProfile({
-      mode: 'auth',
-      name: trimmed.split('@')[0],
-      email: trimmed,
-      ...(gender ? { gender } : {}),
-    });
-    router.push('/medical');
+    setBusy(true);
+    try {
+      const { session, error } = await signInWithPassword(client, trimmed, password);
+      if (error || !session) {
+        Alert.alert('Sign in failed', error ?? 'No session returned.');
+        return;
+      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      await finishAuth(profileFromSession(session));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const submitSignUp = async () => {
+    const trimmed = email.trim();
+    if (!isValidEmail(trimmed)) {
+      Alert.alert('Email required', 'Enter a valid email address.');
+      return;
+    }
+    if (!isValidPassword(password)) {
+      Alert.alert('Password required', 'Password must be at least 8 characters.');
+      return;
+    }
+    const client = getSupabaseClient();
+    if (!client) {
+      Alert.alert(
+        'Supabase not configured',
+        'Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY, or use Guest demo mode.'
+      );
+      return;
+    }
+    setBusy(true);
+    try {
+      const { session, error, needsEmailConfirm } = await signUpWithPassword(
+        client,
+        trimmed,
+        password,
+        displayName || trimmed.split('@')[0]
+      );
+      if (error) {
+        Alert.alert('Sign up failed', error);
+        return;
+      }
+      if (needsEmailConfirm) {
+        Alert.alert(
+          'Confirm your email',
+          'Check your inbox to verify the account, then sign in.'
+        );
+        setTab('signin');
+        return;
+      }
+      if (!session) {
+        Alert.alert('Sign up incomplete', 'Try signing in with your new credentials.');
+        setTab('signin');
+        return;
+      }
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      await finishAuth(profileFromSession(session, displayName));
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -81,70 +167,91 @@ export default function AuthScreen() {
         </View>
 
         <HudText variant="headlineLg" style={styles.title}>
-          Sign in to continue
+          {tab === 'guest' ? 'Demo mode' : tab === 'signup' ? 'Create account' : 'Sign in'}
         </HudText>
         <HudText variant="bodyMd" style={styles.body}>
-          Your identity is verified locally. Nothing leaves the device until you build a Golden
-          Hour Packet.
+          {supabaseReady
+            ? 'Your profile syncs to Supabase when signed in. Guest mode stays fully offline on this device.'
+            : 'Supabase keys are not configured — use Guest demo mode. Add keys in .env for production auth.'}
         </HudText>
 
-        <HudCard>
-          <HudText variant="mono" style={styles.label}>
-            Email address
-          </HudText>
-          <MargiInput
-            placeholder="you@example.com"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
-          <HudText variant="bodySm" style={styles.hint}>
-            We use this only to label your journey logs on this device.
-          </HudText>
-          <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
-            Gender (optional)
-          </HudText>
-          <GenderIdentityPicker value={gender} onChange={setGender} />
-          <MargiButton
-            label="Continue with email"
-            onPress={continueEmail}
-            large
-            style={{ marginTop: 16 }}
-          />
-        </HudCard>
-
-        <View style={styles.dividerRow}>
-          <View style={styles.dividerLine} />
-          <HudText variant="mono" style={styles.dividerText}>
-            or
-          </HudText>
-          <View style={styles.dividerLine} />
+        <View style={styles.tabRow}>
+          {(['signin', 'signup', 'guest'] as AuthTab[]).map((key) => (
+            <Pressable
+              key={key}
+              onPress={() => setTab(key)}
+              style={[styles.tab, tab === key && styles.tabActive]}
+            >
+              <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
+                {key === 'signin' ? 'Sign in' : key === 'signup' ? 'Create account' : 'Guest demo'}
+              </HudText>
+            </Pressable>
+          ))}
         </View>
 
-        <MargiButton label="Continue as Guest (demo)" onPress={continueGuest} variant="secondary" large />
-
-        <Pressable
-          onPress={() =>
-            Alert.alert(
-              'Biometric quick-login',
-              'Will be available on stable device builds. Use Guest mode for the demo.',
-              [{ text: 'OK' }]
-            )
-          }
-          style={({ pressed }) => [styles.biometric, pressed && { opacity: 0.85 }]}
-        >
-          <MaterialIcons name="fingerprint" size={28} color={tokens.primary} />
-          <View style={{ flex: 1 }}>
-            <HudText variant="bodyMd" style={styles.bioTitle}>
-              Biometric quick-login
+        {tab !== 'guest' ? (
+          <HudCard>
+            {tab === 'signup' ? (
+              <>
+                <HudText variant="mono" style={styles.label}>
+                  Display name
+                </HudText>
+                <MargiInput
+                  placeholder="Your name"
+                  value={displayName}
+                  onChangeText={setDisplayName}
+                />
+              </>
+            ) : null}
+            <HudText variant="mono" style={styles.label}>
+              Email address
             </HudText>
-            <HudText variant="mono" style={styles.bioSub}>
-              Coming soon · device-bound
+            <MargiInput
+              placeholder="you@example.com"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+            <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
+              Password
             </HudText>
-          </View>
-          <MaterialIcons name="chevron-right" size={22} color={tokens.outline} />
-        </Pressable>
+            <MargiInput
+              placeholder="At least 8 characters"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+            <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
+              Gender (optional)
+            </HudText>
+            <GenderIdentityPicker value={gender} onChange={setGender} />
+            <MargiButton
+              label={busy ? 'Please wait…' : tab === 'signup' ? 'Create account' : 'Sign in'}
+              onPress={() => void (tab === 'signup' ? submitSignUp() : submitSignIn())}
+              large
+              disabled={busy}
+              style={{ marginTop: 16 }}
+            />
+          </HudCard>
+        ) : (
+          <HudCard>
+            <HudText variant="bodyMd" style={styles.hint}>
+              Guest mode keeps all data on this device. Ideal for judges and offline corridor demos.
+            </HudText>
+            <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
+              Gender (optional)
+            </HudText>
+            <GenderIdentityPicker value={gender} onChange={setGender} />
+            <MargiButton
+              label="Continue as Guest"
+              onPress={() => void continueGuest()}
+              variant="secondary"
+              large
+              style={{ marginTop: 16 }}
+            />
+          </HudCard>
+        )}
 
         <HudText variant="mono" style={styles.footer}>
           {TEAM_DISPLAY_NAME} · Government of India · IIT Madras
@@ -166,29 +273,20 @@ const styles = StyleSheet.create({
   brandSub: { color: tokens.onSurfaceVariant, marginTop: 2, fontSize: 10 },
   title: { color: tokens.primary },
   body: { color: tokens.onSurfaceVariant, marginTop: 8, marginBottom: 24, lineHeight: 24 },
-  label: { color: tokens.primary, fontSize: 12, marginBottom: 8 },
-  hint: { color: tokens.onSurfaceVariant, marginTop: 8, lineHeight: 20 },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginVertical: 24,
-  },
-  dividerLine: { flex: 1, height: 1, backgroundColor: tokens.outlineVariant },
-  dividerText: { color: tokens.onSurfaceVariant, fontSize: 11, letterSpacing: 1.4 },
-  biometric: {
-    marginTop: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    padding: 16,
-    backgroundColor: tokens.surface,
+  tabRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+  tab: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: tokens.radius.button,
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
-    borderRadius: tokens.radius.card,
+    alignItems: 'center',
   },
-  bioTitle: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  bioSub: { color: tokens.onSurfaceVariant, fontSize: 10, marginTop: 2 },
+  tabActive: { backgroundColor: tokens.primaryContainer, borderColor: tokens.primary },
+  tabText: { color: tokens.onSurfaceVariant, fontSize: 10, letterSpacing: 0.8 },
+  tabTextActive: { color: tokens.primary },
+  label: { color: tokens.primary, fontSize: 12, marginBottom: 8 },
+  hint: { color: tokens.onSurfaceVariant, lineHeight: 20 },
   footer: {
     textAlign: 'center',
     color: tokens.onSurfaceVariant,

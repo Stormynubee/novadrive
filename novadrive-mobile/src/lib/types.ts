@@ -135,6 +135,8 @@ export interface UserProfile {
   mode: 'guest' | 'auth';
   name?: string;
   email?: string;
+  supabaseUserId?: string;
+  govEmployee?: boolean;
   citizenId?: string;
   avatarUri?: string;
   gender?: GenderIdentity;

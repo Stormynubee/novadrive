@@ -136,7 +136,7 @@ Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 161 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2 P1
+npm test             # 173 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2–3
 npm run verify:docs      # README "N unit tests" matches src/**/*.test.ts
 npm run verify:branding  # no NovaDrive in public GitHub copy
 npm run test:coverage

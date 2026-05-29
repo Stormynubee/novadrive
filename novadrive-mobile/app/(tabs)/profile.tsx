@@ -223,16 +223,20 @@ export default function ProfileTabScreen() {
           <ProfileMenuRow
             icon="badge"
             label="Aadhaar Verification"
-            onPress={() =>
-              Alert.alert('Aadhaar', 'Verification is active for this demo profile.')
+            onPress={() => router.push('/settings' as Href)}
+            chip={
+              profile.mode === 'auth' ? (
+                <LiveChip label="Linked" tone="safe" />
+              ) : (
+                <LiveChip label="Guest" tone="info" />
+              )
             }
-            chip={<LiveChip label="Active" tone="safe" />}
           />
           <View style={rowStyles.divider} />
           <ProfileMenuRow
             icon="military-tech"
             label="Safety Pioneer Status"
-            onPress={() => Alert.alert('Safety Pioneer', 'You are in the top district tier for calm driving.')}
+            onPress={() => router.push('/settings/journey-history' as Href)}
           />
         </SectionCard>
 

@@ -18,8 +18,18 @@ import { FirstAidBoard } from '../../src/components/emergency/FirstAidBoard';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { TraumaCenterPanel } from '../../src/components/emergency/TraumaCenterPanel';
 import { useApp } from '../../src/context/AppContext';
-import { createDispatchAdapters, type DispatchResult } from '../../src/lib/emergency/dispatchAdapters';
-import { toDialUrl } from '../../src/lib/emergency/contactActions';
+import type { DispatchResult } from '../../src/lib/emergency/dispatchAdapters';
+import { toDialUrl, toSmsUrl } from '../../src/lib/emergency/contactActions';
+import {
+  resolveDispatchEndpoints,
+  runHttpDispatch,
+} from '../../src/lib/emergency/dispatchOrchestrator';
+import { getSupabaseClient } from '../../src/lib/supabase/client';
+import {
+  buildVolunteerNotifyResult,
+  listNearbyVerifiedVolunteers,
+} from '../../src/lib/ngo/volunteerProviders';
+import { openMapsNavigate } from '../../src/lib/naariShakti/linkingActions';
 import {
   EMERGENCY_ACTIVATION_PATH,
 } from '../../src/lib/emergency/emergencyNavigation';
@@ -40,6 +50,7 @@ export default function TraumaResponseScreen() {
   const {
     session,
     settings,
+    profile,
     updateSettings,
     setLocation,
     completeTraumaAssessment,
@@ -47,6 +58,8 @@ export default function TraumaResponseScreen() {
     a11y,
   } = useApp();
   const [dispatchResult, setDispatchResult] = useState<DispatchResult | null>(null);
+  const [dispatchError, setDispatchError] = useState<string | null>(null);
+  const [volunteerStatus, setVolunteerStatus] = useState<string | null>(null);
   const [chat, setChat] = useState<ChatMessage[]>([
     {
       role: 'assistant',
@@ -59,13 +72,11 @@ export default function TraumaResponseScreen() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  const adapters = useMemo(
+  const endpointConfig = useMemo(
     () =>
-      createDispatchAdapters({
-        traumaEndpoint:
-          process.env.EXPO_PUBLIC_TRAUMA_DISPATCH_URL ?? 'https://dispatch.novadrive.local/trauma',
-        policeEndpoint:
-          process.env.EXPO_PUBLIC_POLICE_DISPATCH_URL ?? 'https://dispatch.novadrive.local/police',
+      resolveDispatchEndpoints({
+        traumaUrl: process.env.EXPO_PUBLIC_TRAUMA_DISPATCH_URL,
+        policeUrl: process.env.EXPO_PUBLIC_POLICE_DISPATCH_URL,
       }),
     []
   );
@@ -103,7 +114,15 @@ export default function TraumaResponseScreen() {
   }, [remaining, sessionId, completeTraumaAssessment, mode]);
 
   const runDispatch = async () => {
+    if (!endpointConfig.configured) {
+      setDispatchError(
+        'Set EXPO_PUBLIC_TRAUMA_DISPATCH_URL and EXPO_PUBLIC_POLICE_DISPATCH_URL to production endpoints.'
+      );
+      setDispatchResult(null);
+      return;
+    }
     setBusy(true);
+    setDispatchError(null);
     try {
       let freshLocation: { lat: number; lng: number } | null = null;
       if (!session.location) {
@@ -125,22 +144,88 @@ export default function TraumaResponseScreen() {
       const loc = pickDispatchLocation(session.location, freshLocation);
       if (!loc) {
         setDispatchResult(null);
+        setDispatchError('Location unavailable — enable GPS to dispatch responders.');
         return;
       }
-      const result = await adapters.requestDispatch({
-        incidentType: session.incidentType ?? 'road_accident',
-        lat: loc.lat,
-        lng: loc.lng,
-        language: settings.language,
-      });
-      setDispatchResult(result);    } catch {      setDispatchResult({
-        traumaCenter: { name: 'Nearest Trauma Center', phone: '108', etaMinutes: 8 },
-        policeUnit: { name: 'Police Control Room', phone: '112', etaMinutes: 6 },
-        status: 'partial',
-        referenceId: `fallback-${Date.now()}`,
-      });
+      const { result, error } = await runHttpDispatch(
+        {
+          incidentType: session.incidentType ?? 'road_accident',
+          lat: loc.lat,
+          lng: loc.lng,
+          language: settings.language,
+          autoDispatchMedical: settings.autoDispatchMedical,
+          medical: profile.medical,
+          userId: profile.supabaseUserId,
+        },
+        {
+          traumaEndpoint: endpointConfig.trauma,
+          policeEndpoint: endpointConfig.police,
+          supabase: getSupabaseClient(),
+        }
+      );
+      setDispatchResult(result);
+      if (error) setDispatchError(error);
     } finally {
       setBusy(false);
+    }
+  };
+
+  const notifyVolunteers = async () => {
+    const loc = session.location;
+    if (!loc) {
+      Alert.alert('Location required', 'Capture GPS before requesting alternate transport.');
+      return;
+    }
+    const client = getSupabaseClient();
+    if (!client) {
+      Alert.alert('Offline', 'Volunteer registry requires Supabase. Open NGO list from Settings when online.');
+      return;
+    }
+    setBusy(true);
+    try {
+      const volunteers = await listNearbyVerifiedVolunteers(client, loc);
+      const notify = buildVolunteerNotifyResult(volunteers);
+      if (notify.notified.length === 0) {
+        setVolunteerStatus('No verified volunteers within 25 km.');
+        Alert.alert(
+          'No nearby volunteers',
+          'Register providers in NGO registry and verify them in Supabase Studio for demos.'
+        );
+        return;
+      }
+      setVolunteerStatus(
+        `${notify.notified.length} volunteer(s) found: ${notify.notified.map((v) => v.org_name).join(', ')}`
+      );
+      Alert.alert(
+        'Notify volunteers?',
+        `Contact ${notify.smsTargets.length} number(s) via SMS?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Send SMS',
+            onPress: () => {
+              const first = notify.smsTargets[0];
+              const url = toSmsUrl(first);
+              if (url) {
+                void Linking.openURL(
+                  `${url}&body=${encodeURIComponent(
+                    `Margi emergency alternate transport needed. Ref: ${dispatchResult?.referenceId ?? 'pending'}`
+                  )}`
+                );
+              }
+            },
+          },
+        ]
+      );
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const escalateDispatch = async () => {
+    await runDispatch();
+    if (dispatchResult?.referenceId) {
+      setVolunteerStatus(`Re-dispatch sent · ${dispatchResult.referenceId}`);
     }
   };
 
@@ -218,6 +303,20 @@ export default function TraumaResponseScreen() {
 
         <LanguageSelector value={settings.language} onChange={(value) => void updateSettings({ language: value })} />
 
+        {dispatchError ? (
+          <View style={styles.errorCard}>
+            <HudText variant="bodySm" style={styles.errorText}>
+              {dispatchError}
+            </HudText>
+          </View>
+        ) : null}
+
+        {volunteerStatus ? (
+          <HudText variant="bodySm" style={{ color: tokens.onSurfaceVariant }}>
+            {volunteerStatus}
+          </HudText>
+        ) : null}
+
         <FirstAidBoard
           actions={activeReply.actions}
           onPreset={(message) => {
@@ -261,12 +360,8 @@ export default function TraumaResponseScreen() {
           policeUnit={policeUnit}
           dispatchStatus={dispatchResult?.status ?? 'pending'}
           onNavigate={() => router.push('/emergency/route' as Href)}
-          onAlternateTransport={() =>
-            Alert.alert('Alternate transport requested', 'Local network volunteers have been notified.')
-          }
-          onEmergencySignal={() =>
-            Alert.alert('Emergency signal sent', `Dispatch reference: ${dispatchResult?.referenceId ?? 'pending'}`)
-          }
+          onAlternateTransport={() => void notifyVolunteers()}
+          onEmergencySignal={() => void escalateDispatch()}
         />
 
         <View style={styles.mapCard}>
@@ -276,10 +371,21 @@ export default function TraumaResponseScreen() {
           <View style={styles.mapPlaceholder}>
             <MaterialIcons name="map" size={54} color={tokens.primary} />
             <HudText variant="bodySm" style={{ color: tokens.onSurfaceVariant }}>
-              Distance {session.location ? 'live' : 'approx'} · 2.4 km
+              {session.location
+                ? `Live GPS · open Maps for turn-by-turn`
+                : 'Capture location in emergency flow first'}
             </HudText>
           </View>
-          <MargiButton label="Open Route" onPress={() => router.push('/emergency/route' as Href)} />
+          <MargiButton
+            label="Open Route"
+            onPress={() => {
+              if (session.location) {
+                openMapsNavigate(session.location.lat, session.location.lng);
+                return;
+              }
+              router.push('/emergency/route' as Href);
+            }}
+          />
         </View>
 
         <View style={styles.qrCard}>
@@ -371,6 +477,14 @@ const styles = StyleSheet.create({
   voiceText: { color: tokens.onPrimary, fontFamily: 'HankenGrotesk_700Bold' },
   voiceSub: { color: tokens.onPrimaryContainer },
   modeBadge: { color: tokens.secondaryFixedDim, fontFamily: 'PublicSans_700Bold', letterSpacing: 1 },
+  errorCard: {
+    borderRadius: tokens.radius.card,
+    borderWidth: 1,
+    borderColor: tokens.secondary,
+    backgroundColor: tokens.secondaryFixed,
+    padding: 12,
+  },
+  errorText: { color: tokens.secondaryDeep },
   chatCard: {
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
