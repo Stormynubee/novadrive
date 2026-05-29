@@ -14,5 +14,10 @@ module.exports = {
   expo: {
     ...appJson.expo,
     plugins,
+    ...(isJudgeApkBuild && {
+      autolinking: {
+        exclude: ['expo-dev-client', 'expo-dev-menu'],
+      },
+    }),
   },
 };
