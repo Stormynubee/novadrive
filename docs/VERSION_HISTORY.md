@@ -16,7 +16,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 | Tag | Commit | Date | Summary |
 |-----|--------|------|---------|
-| [`v2.0.0-production`](https://github.com/Stormynubee/novadrive/releases/tag/v2.0.0-production) | TBD | 2026-05-28 | Supabase auth, NGO registry, OSRM routing, Gemini BFF health, HTTP dispatch, native crash layer |
+| [`v2.0.0-production`](https://github.com/Stormynubee/novadrive/releases/tag/v2.0.0-production) | `dc22318` | 2026-05-28 | Supabase auth, NGO registry, OSRM routing, Gemini BFF health, HTTP dispatch, native crash layer |
 | [`v1.7.0-p1-features`](https://github.com/Stormynubee/novadrive/releases/tag/v1.7.0-p1-features) | `8ad6dba` | 2026-05-28 | Rah-Veer, offline trip cards, journey debrief/history, FSM TTS narrator |
 | [`v1.6.0-hud-redesign`](https://github.com/Stormynubee/novadrive/releases/tag/v1.6.0-hud-redesign) | `8ad6dba` | 2026-05-28 | Drive HUD: SOS top, compact speedometer, fixed layout |
 | [`v1.5.0-margi-rebrand`](https://github.com/Stormynubee/novadrive/releases/tag/v1.5.0-margi-rebrand) | `50205c7` | 2026-05-28 | Margi Care Path rebrand, `com.margi.app`, MARGI GHP, docs/banner sweep |
