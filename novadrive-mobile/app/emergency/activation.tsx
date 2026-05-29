@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { HudText } from '../../src/components/HudText';
+import { MedicalDisclaimerBanner } from '../../src/components/MedicalDisclaimerBanner';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { useApp } from '../../src/context/AppContext';
 import {
@@ -116,6 +117,8 @@ export default function EmergencyActivationScreen() {
             <MaterialIcons name="shield" size={96} color={tokens.primary} />
           </View>
         </View>
+
+        <MedicalDisclaimerBanner compact />
 
         <View style={styles.statusWrap}>
           <HudText variant="headlineMd" style={styles.statusText}>

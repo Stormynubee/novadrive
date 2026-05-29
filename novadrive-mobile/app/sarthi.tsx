@@ -23,10 +23,10 @@ function sessionLabel() {
 }
 
 function statusChipLabel(status: string, offlineMode: boolean): string {
-  if (offlineMode) return 'Offline KB';
+  if (offlineMode) return 'Offline safety KB — no cloud required';
   if (status === 'online') return 'Gemini BFF online';
-  if (status === 'unconfigured') return 'BFF not configured';
-  return 'BFF unreachable';
+  if (status === 'unconfigured') return 'Offline KB only';
+  return 'Offline KB (BFF unreachable)';
 }
 
 export default function SarthiScreen() {
@@ -61,6 +61,11 @@ export default function SarthiScreen() {
           {statusChipLabel(bffStatus, offlineMode)}
         </HudText>
       </View>
+      {offlineMode ? (
+        <HudText variant="bodySm" style={styles.offlineHint}>
+          Ask about SOS, START triage, GHP, or Naari Shakti — answers stay on-device.
+        </HudText>
+      ) : null}
       <FlatList
         data={thread.messages}
         keyExtractor={(m) => m.id}
@@ -113,6 +118,13 @@ const styles = StyleSheet.create({
     backgroundColor: tokens.surfaceContainerHigh,
   },
   statusText: { fontSize: 10, color: tokens.onSurfaceVariant, letterSpacing: 0.8 },
+  offlineHint: {
+    textAlign: 'center',
+    color: tokens.onSurfaceVariant,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    lineHeight: 18,
+  },
   list: { flex: 1 },
   listContent: { paddingHorizontal: tokens.spacing.gutter, paddingBottom: 12 },
   bottomBar: {

@@ -103,6 +103,26 @@ export function encodeQrPayload(packet: GoldenHourPacket): string {
   return `ND1:${compressed}`;
 }
 
+const DEFAULT_RELAY_WEB_BASE = 'https://margi-tau.vercel.app/relay';
+
+/** Browser-openable relay URL for bystanders without the Margi app installed. */
+export function encodeQrRelayUrl(packet: GoldenHourPacket, webBase = DEFAULT_RELAY_WEB_BASE): string {
+  const payload = encodeQrPayload(packet);
+  return `${webBase}?p=${encodeURIComponent(payload)}`;
+}
+
+/** Recompute checksum for minimal QR fields (detects accidental corruption, not tampering). */
+export async function verifyQrDecodedIntegrity(decoded: QrDecodedMinimal): Promise<boolean> {
+  const core = JSON.stringify({
+    id: decoded.id,
+    triage: decoded.triage,
+    lat: decoded.lat,
+    lng: decoded.lng,
+  });
+  const expected = await hashPayload(core);
+  return decoded.integrity === expected;
+}
+
 export type QrDecodedMinimal = {
   id: string;
   triage: string;

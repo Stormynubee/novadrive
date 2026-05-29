@@ -309,6 +309,72 @@ export const SARTHI_KB_ENTRIES: SarthiKbEntry[] = [
       ta: '{{name}}, நீங்கள் {{mode}} ஆக Margi பயன்படுத்துகிறீர்கள். சுயவிவரத்தில் பெயர்/மருத்துவம் சேர்க்கவும்.',
     },
   },
+  {
+    id: 'offline_sarthi',
+    category: 'app_help',
+    patterns: [/offline|no network|no signal|airplane|dead zone/i],
+    priority: 72,
+    replies: {
+      en: '{{name}}, Sarthi offline KB covers SOS, START triage, GHP, QR relay, and Naari Shakti. Emergency flow works without internet.',
+      hi: '{{name}}, ऑफ़लाइन Sarthi KB में SOS, START ट्रायेज, GHP, QR रिले, Naari Shakti शामिल हैं।',
+      ta: '{{name}}, ஆஃப்லைன் Sarthi KB-ல் SOS, START triage, GHP, QR relay, Naari Shakti உள்ளன.',
+    },
+  },
+  {
+    id: 'crash_detection_help',
+    category: 'distress',
+    patterns: [/crash detect|impact|accelerometer|g-force|pothole/i],
+    priority: 68,
+    replies: {
+      en: '{{name}}, crash detection is experimental (default ~2.8g peak + speed drop). Adjust sensitivity in Profile. Always confirm manually — no auto-dial.',
+      hi: '{{name}}, क्रैश पहचान प्रयोगात्मक (~2.8g). प्रोफ़ाइल में संवेदनशीलता बदलें। हमेशा मैन्युअल पुष्टि करें।',
+      ta: '{{name}}, crash detection experimental (~2.8g). Profile-ல் sensitivity மாற்றவும். கைமுறையாக confirm செய்யவும்.',
+    },
+  },
+  {
+    id: 'voice_experimental',
+    category: 'distress',
+    patterns: [/voice detect|scream|distress voice|yamnet/i],
+    priority: 68,
+    replies: {
+      en: '{{name}}, distress voice is experimental — not validated on highway noise. Toggle in Profile → Voice Crash Detection.',
+      hi: '{{name}}, distress voice प्रयोगात्मक — हाईवे शोर पर सत्यापित नहीं। प्रोफ़ाइल में टॉगल करें।',
+      ta: '{{name}}, distress voice experimental — highway noise-க்கு validate இல்லை. Profile-ல் toggle.',
+    },
+  },
+  {
+    id: 'bystander_relay',
+    category: 'distress',
+    patterns: [/bystander|relay|scan qr|qr code/i],
+    priority: 75,
+    replies: {
+      en: '{{name}}, show GHP QR on packet screen. Bystander scans in Margi or opens the web relay link — SMS 108 when signal returns.',
+      hi: '{{name}}, GHP QR दिखाएं। Upyatri Margi scan या web relay link — signal आने पर SMS 108।',
+      ta: '{{name}}, GHP QR காட்டவும். Bystander Margi scan அல்லது web relay — signal வந்தால் SMS 108.',
+    },
+  },
+  {
+    id: 'poi_disclaimer',
+    category: 'distress',
+    patterns: [/hospital data|poi|facility|trauma center|verified/i],
+    priority: 65,
+    replies: {
+      en: '{{name}}, this build ships ~50 demo POIs (11 curated NH48 names + corridor padding). Always verify facility by phone — not NHA registry synced.',
+      hi: '{{name}}, ~50 demo POI (11 curated + padding). फोन से सुविधा verify करें — NHA sync नहीं।',
+      ta: '{{name}}, ~50 demo POI. தொலைபேசியில் facility verify — NHA sync இல்லை.',
+    },
+  },
+  {
+    id: 'start_disclaimer',
+    category: 'distress',
+    patterns: [/start triage|medical authority|diagnosis|doctor/i],
+    priority: 70,
+    replies: {
+      en: '{{name}}, START triage is decision support only — not a diagnosis. Call 108/112 when possible. Based on public START protocol, not physician-certified in this build.',
+      hi: '{{name}}, START triage केवल decision support — diagnosis नहीं। 108/112 कॉल करें।',
+      ta: '{{name}}, START triage decision support மட்டும் — diagnosis அல்ல. 108/112 அழைக்கவும்.',
+    },
+  },
 ];
 
 const LANGS: Lang[] = ['en', 'hi', 'ta'];

@@ -172,7 +172,7 @@ A **structured, dispatch-ready brief** — not raw chat logs:
 - Victim status flags
 - Selected facility (name, type, phone, ETA, distance)
 - State emergency number (108/112) + language
-- Integrity hash (tamper detection)
+- Integrity checksum (SHA-256 — detects accidental corruption, not cryptographic signing)
 - Relay chain audit log
 
 **Why it matters:** 108 dispatchers lose minutes asking "where are you? what happened?" GHP **pre-answers** those questions.
@@ -836,7 +836,7 @@ roadsafetyhackathon/
 | 0:45 | Phone B scans QR | "Victim phone dead — bystander carries the packet." |
 | 0:55 | Disable airplane mode on Phone B | "Bystander drives 5 km — signal returns." |
 | 1:05 | SMS to 108 pre-filled | "Information reaches dispatch before the ambulance is called." |
-| 1:15 | Show POI count + offline architecture slide | "14,000+ POIs, fully offline triage, open-source stack." |
+| 1:15 | Show POI count + offline architecture slide | "~50 demo POIs (11 curated NH48 trauma names + corridor padding), fully offline triage." |
 
 **Backup:** Pre-record 2-minute demo video if live Wi-Fi fails.
 
@@ -879,7 +879,7 @@ expect(triage({ respiratoryRateOver30: true })).toBe('RED');
 
 // ghpCompressor.test.ts
 expect(roundTrip(ghpWithTamilLandmark)).toEqual(ghpWithTamilLandmark);
-expect(verifyIntegrity(tamperedPacket)).toBe(false);
+expect(verifyQrDecodedIntegrity(tamperedDecode)).resolves.toBe(false);
 
 // offlineRouter.test.ts
 expect(route('RED', chennaiCoords)[0].traumaTier).toBeLessThanOrEqual(2);

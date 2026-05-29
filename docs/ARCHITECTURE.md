@@ -16,7 +16,7 @@ Margi (shipped in repo as `novadrive-mobile`) is a **client-heavy** emergency sy
 
 | Module | Responsibility |
 |--------|----------------|
-| `startTriageFSM.ts` | START protocol — single medical authority |
+| `startTriageFSM.ts` | START protocol — deterministic FSM (decision support; see START_TRIAGE_MEDICAL_REVIEW.md) |
 | `parseEmergencyText.ts` | Offline keyword → FSM slot prefill |
 | `facilitiesDb.ts` | SQLite seed + Haversine + tier filter |
 | `ghp.ts` | Packet build, SMS text, lz-string QR, SHA-256 |

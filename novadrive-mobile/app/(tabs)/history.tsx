@@ -217,7 +217,7 @@ export default function CommunityTabScreen() {
             System Feedback & Design Input
           </HudText>
           <HudText variant="bodyMd" style={styles.formSub}>
-            Help IIT Madras refine the Nova Drive intelligence. Your situational input improves
+            Help IIT Madras refine the Margi intelligence. Your situational input improves
             algorithm accuracy.
           </HudText>
 

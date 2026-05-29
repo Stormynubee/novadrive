@@ -10,13 +10,14 @@ import { MargiButton } from '../../src/components/MargiButton';
 import { QrQuietZone } from '../../src/components/QrQuietZone';
 import { SeverityHero } from '../../src/components/SeverityHero';
 import { useApp } from '../../src/context/AppContext';
-import { encodeQrPayload, formatSms } from '../../src/lib/ghp';
+import { encodeQrPayload, encodeQrRelayUrl, formatSms } from '../../src/lib/ghp';
 import { tokens } from '../../src/theme/tokens';
 
 export default function PacketScreen() {
   const { buildGhp, session, triageResult, profile } = useApp();
   const [loading, setLoading] = useState(true);
   const [qr, setQr] = useState('');
+  const [relayUrl, setRelayUrl] = useState('');
   const [error, setError] = useState<string | null>(null);
   const pulse = useRef(new Animated.Value(0.4)).current;
 
@@ -39,6 +40,7 @@ export default function PacketScreen() {
       if (cancelled) return;
       if (p) {
         setQr(encodeQrPayload(p));
+        setRelayUrl(encodeQrRelayUrl(p));
         setError(null);
       } else {
         setError(
@@ -88,8 +90,18 @@ export default function PacketScreen() {
       {sms && !loading ? <DispatchPanel text={sms} /> : null}
       {sha ? (
         <HudText variant="mono" style={styles.sha}>
-          {`SHA-256: ${sha}…`}
+          {`Checksum (corruption only): ${sha}…`}
         </HudText>
+      ) : null}
+      {relayUrl && !loading ? (
+        <HudCard accent="tertiary">
+          <HudText variant="bodySm" style={{ lineHeight: 20 }}>
+            Bystander without Margi: share this link — opens in any browser when online.
+          </HudText>
+          <HudText variant="mono" style={styles.relayUrl} selectable>
+            {relayUrl}
+          </HudText>
+        </HudCard>
       ) : null}
       {qr && !loading ? (
         <QrQuietZone>
@@ -115,5 +127,12 @@ const styles = StyleSheet.create({
     fontFamily: 'PublicSans_700Bold',
     letterSpacing: 1,
     textAlign: 'center',
+    marginBottom: 8,
+  },
+  relayUrl: {
+    fontSize: 10,
+    color: tokens.primary,
+    marginTop: 8,
+    lineHeight: 16,
   },
 });

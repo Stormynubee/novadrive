@@ -9,7 +9,7 @@ import { HudText } from '../src/components/HudText';
 import { MargiButton } from '../src/components/MargiButton';
 import { MargiTopBar } from '../src/components/MargiTopBar';
 import { ScreenShell } from '../src/components/ScreenShell';
-import { decodeQrPayload, formatSms, packetFromQrDecoded } from '../src/lib/ghp';
+import { decodeQrPayload, formatSms, packetFromQrDecoded, verifyQrDecodedIntegrity } from '../src/lib/ghp';
 import { appendRelayChain } from '../src/lib/relayChain';
 import { insertRahVeerClaim } from '../src/lib/rahveerDb';
 import { saveRelayPacket } from '../src/lib/storage';
@@ -63,6 +63,7 @@ export default function ScanScreen() {
       return;
     }
     const full = packetFromQrDecoded(decoded);
+    const checksumOk = await verifyQrDecodedIntegrity(decoded);
     await saveRelayPacket(full);
     await appendRelayChain(full);
     await insertRahVeerClaim({
@@ -73,8 +74,10 @@ export default function ScanScreen() {
     });
     setPacket(full);
     Alert.alert(
-      'Relay saved',
-      `Packet verified locally. Hash ${decoded.integrity.slice(0, 12)}…`
+      checksumOk ? 'Relay saved' : 'Relay saved (checksum mismatch)',
+      checksumOk
+        ? `Packet checksum OK. Hash ${decoded.integrity.slice(0, 12)}… — not cryptographic proof of origin.`
+        : `Data may be corrupted. Hash ${decoded.integrity.slice(0, 12)}… does not match payload.`
     );
   };
 

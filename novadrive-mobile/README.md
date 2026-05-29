@@ -22,10 +22,10 @@ Design reference: [DESIGN.md](DESIGN.md) · Stabilization spec: [docs/superpower
 - Plan Corridor map, route cards (Alpha-1 / Beta), offline briefing (`trip/plan`, `trip/discover`)
 - Route calibration screen → live speedometer HUD, sensor status, hold-to-SOS (3s)
 - Foreground GPS + **CrashEngine** (impact/throw) + **Distress voice watch** (policy + spectral classifier; optional YAMNet in dev client)
-- Calm 15s distress dialog — **no auto triage or 108 at countdown 0**; no backdrop dismiss
-- Hold-to-SOS → START triage FSM → trauma-tier SQLite routing
+- Calm 15s distress dialog — **no auto triage at countdown 0**; at 0s may open SMS 108 composer (user taps Send); no backdrop dismiss
+- Hold-to-SOS → opens SMS 108 composer with GPS, then activation → trauma response
 - Offline keyword parser on emergency chat
-- Golden Hour Packet (GHP) + lz-string QR + SHA-256 integrity
+- Golden Hour Packet (GHP) + lz-string QR + checksum (corruption detection)
 - Bystander QR scan + SecureStore relay cache + SMS 108 intent
 - **Sarthi** floating AI assistant (mini window on tabs, full `/sarthi` screen) — live LLM via Next.js BFF when online, offline rules when not
 - **Naari Shakti** women's safety portal — gender-gated home stack, protocol modal, full dashboard at `/naari-shakti`
@@ -87,7 +87,7 @@ Device checklist rows 13–15: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_M
 3. Start mobile: `npm run start:lan` — Sarthi FAB on main tabs; hidden during journey / emergency / scan.
 4. **Language:** Profile → Settings → Regional & Language (`en` / `hi` / `ta`) — Sarthi offline KB and Gemini replies follow this.
 5. **First Home visit each session:** Sarthi banner — *"I'm here to help you"* (localized).
-6. **Offline:** 24+ crisis/FAQ playbooks in `src/lib/sarthi/sarthiKnowledgeBase.ts`; high-priority matches skip the network for speed.
+6. **Offline:** 30+ crisis/FAQ playbooks in `src/lib/sarthi/sarthiKnowledgeBase.ts`; high-priority matches skip the network for speed. Offline mode shows explicit KB banner — no misleading "Gemini online" chip.
 
 Design spec: [docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md](docs/superpowers/specs/2026-05-23-sarthi-assistant-design.md)
 
@@ -117,7 +117,17 @@ flowchart LR
 | **Expo Go** | Metering dB + spectral proxies; no ONNX |
 | **Dev client / APK** | Same pipeline; optional YAMNet when model + `onnxruntime-react-native` are installed |
 
-Profile → **Voice Crash Detection** toggle; **Distress voice sensitivity** (low / medium / high) when enabled.
+Profile → **Voice Crash Detection** toggle (**experimental**) ; **Distress voice sensitivity** (low / medium / high) when enabled.
+
+### CrashEngine thresholds (documented defaults)
+
+| Setting | Accel peak (g) | Impact peak | Impact severe | Jerk | Notes |
+|---------|----------------|-------------|---------------|------|-------|
+| **High** (default) | 2.8 | 2.4 | 3.2 | 1.6 | + speed drop: was >25 km/h, now <5 km/h |
+| **Medium** | ×1.12 stricter | same scale | | | Profile → sensitivity |
+| **Low** | ×1.28 stricter | same scale | | | Fewer false positives on rough roads |
+
+Source: `src/lib/crashEngine.ts` — **not field-calibrated on Indian highways**; confirm manually.
 
 For YAMNet: see [scripts/export-yamnet-distress-onnx.md](scripts/export-yamnet-distress-onnx.md) (`npx expo prebuild` required — not Expo Go).
 
@@ -136,7 +146,7 @@ Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 173 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2–3
+npm test             # 177 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2–3
 npm run verify:docs      # README "N unit tests" matches src/**/*.test.ts
 npm run verify:branding  # no NovaDrive in public GitHub copy
 npm run test:coverage

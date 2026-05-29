@@ -17,6 +17,9 @@ export function NaariEmergencyHud({ visible, onCancel }: Props) {
           DISTRESS SIGNAL INITIATED
         </HudText>
         <ActivityIndicator size="large" color={tokens.onSecondary} style={styles.spinner} />
+        <HudText variant="bodyMd" style={styles.recordingNotice}>
+          Recording started for your safety. Audio is stored on this device only.
+        </HudText>
         <HudText variant="bodyMd" style={styles.body}>
           GPS coordinates transmitted. Dispatching immediate response team to your location.
         </HudText>
@@ -50,6 +53,13 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   spinner: { marginVertical: 24 },
+  recordingNotice: {
+    color: tokens.onSecondary,
+    textAlign: 'center',
+    marginBottom: 12,
+    maxWidth: 320,
+    fontFamily: 'PublicSans_700Bold',
+  },
   body: { color: tokens.onSecondary, textAlign: 'center', marginBottom: 32, maxWidth: 320 },
   primaryBtn: {
     width: '100%',

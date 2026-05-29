@@ -3,6 +3,7 @@ import { type Href, router } from 'expo-router';
 import { APP_DISPLAY_NAME, TEAM_DISPLAY_NAME } from '../lib/brand';
 import { MargiTopBar } from './MargiTopBar';
 import { useApp } from '../context/AppContext';
+import { openEmergencySmsIntent } from '../lib/emergencySms';
 import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
 import { useQuickMenu } from '../context/QuickMenuContext';
 
@@ -35,6 +36,7 @@ export function DashboardHeader({
         onMenu={openSettings}
         onEmergency={() => {
           beginEmergencyFlow();
+          void openEmergencySmsIntent('sos_hold');
           router.push(EMERGENCY_SELECTION_PATH as Href);
         }}
       />
@@ -53,6 +55,7 @@ export function DashboardHeader({
       trailingIcon={showSettings ? 'settings' : undefined}
       onEmergency={() => {
         beginEmergencyFlow();
+        void openEmergencySmsIntent('sos_hold');
         router.push(EMERGENCY_SELECTION_PATH as Href);
       }}
     />

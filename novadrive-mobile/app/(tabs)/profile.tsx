@@ -266,8 +266,8 @@ export default function ProfileTabScreen() {
             label="Voice Crash Detection"
             hint={
               journeyLive && voiceMonitoring
-                ? 'Listening during active journey'
-                : 'Only while app is open and drive mode is active'
+                ? 'Experimental — confirm manually · listening during journey'
+                : 'Experimental — not validated for highway noise'
             }
             right={
               <GovSwitch

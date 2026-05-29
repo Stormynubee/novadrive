@@ -18,6 +18,7 @@ import {
   formatSms,
   hashPayload,
   packetFromQrDecoded,
+  verifyQrDecodedIntegrity,
   qrMinimalJson,
 } from './ghp';
 import type { EmergencySession } from './types';
@@ -104,5 +105,23 @@ describe('hashPayload', () => {
     const h2 = await hashPayload('{"a":1}');
     expect(h1).toBe(h2);
     expect(h1).toMatch(/^mg-/);
+  });
+});
+
+describe('verifyQrDecodedIntegrity', () => {
+  it('accepts valid encoded packet', async () => {
+    const packet = await buildPacket(baseSession());
+    expect(packet).not.toBeNull();
+    const decoded = decodeQrPayload(encodeQrPayload(packet!));
+    expect(decoded).not.toBeNull();
+    expect(await verifyQrDecodedIntegrity(decoded!)).toBe(true);
+  });
+
+  it('rejects tampered integrity field', async () => {
+    const packet = await buildPacket(baseSession());
+    const decoded = decodeQrPayload(encodeQrPayload(packet!));
+    expect(decoded).not.toBeNull();
+    decoded!.integrity = 'mg-deadbeef';
+    expect(await verifyQrDecodedIntegrity(decoded!)).toBe(false);
   });
 });

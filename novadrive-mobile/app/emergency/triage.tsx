@@ -12,8 +12,17 @@ import {
   EMERGENCY_RESPONSE_PATH,
   shouldGateTriageWithoutIncident,
 } from '../../src/lib/emergency/emergencyNavigation';
+import { MedicalDisclaimerBanner } from '../../src/components/MedicalDisclaimerBanner';
 import { speakFsmPrompt } from '../../src/lib/tts/narrator';
 import { tokens } from '../../src/theme/tokens';
+
+function triagePromptForLanguage(
+  question: NonNullable<ReturnType<typeof getQuestion>>,
+  language: string
+): string {
+  if (language === 'hi' && question.promptHi) return question.promptHi;
+  return question.prompt;
+}
 
 /**
  * START triage FSM — spoken prompts when accessibility TTS is enabled.
@@ -81,9 +90,10 @@ export default function TriageScreen() {
       subtitle="Answer each question for triage color tagging."
       showBack
     >
+      <MedicalDisclaimerBanner compact />
       <HudCard accent="primary">
         <HudText variant="headlineMd" style={{ color: tokens.primary, marginBottom: 8 }}>
-          {question.prompt}
+          {triagePromptForLanguage(question, settings.language)}
         </HudText>
         {a11y.ttsEnabled ? (
           <HudText variant="mono" style={{ color: tokens.secondary, marginBottom: 12 }}>

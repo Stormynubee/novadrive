@@ -40,13 +40,19 @@ export function CrashCandidateModal({
           </HudText>
           {crashSource ? (
             <HudText variant="mono" style={styles.sourceBadge}>
-              Detection source: {crashSource}
+              Detection source: {crashSource} · Experimental — confirm manually
             </HudText>
-          ) : null}
+          ) : (
+            <HudText variant="mono" style={styles.sourceBadge}>
+              Experimental — confirm manually before calling 108
+            </HudText>
+          )}
           <View style={styles.countdown}>
             <View style={styles.countdownDot} />
             <HudText variant="mono" style={styles.countdownText}>
-              {countdown > 0 ? `${countdown}s · take a breath` : 'Ready when you are'}
+              {countdown > 0
+                ? `${countdown}s · take a breath`
+                : 'SMS 108 composer may open — cancel in Messages if you are okay'}
             </HudText>
           </View>
           <MargiButton label="I need help" onPress={onConfirm} variant="secondary" large />

@@ -73,11 +73,11 @@ export function SarthiMiniWindow({
       <SarthiChatHeader compact onClose={onClose} />
       {offlineMode ? (
         <HudText variant="bodySm" style={styles.banner}>
-          No network — using on-device safety rules
+          Offline — Sarthi uses on-device safety KB (30+ topics). Cloud AI unavailable.
         </HudText>
       ) : bffUnavailable ? (
         <HudText variant="bodySm" style={styles.banner}>
-          BFF not configured — on-device rules (set EXPO_PUBLIC_SARTHI_API_URL)
+          Offline KB active — set EXPO_PUBLIC_SARTHI_API_URL for Gemini when online
         </HudText>
       ) : null}
       {showQuickLinks ? (

@@ -51,6 +51,9 @@ export function FacilityCard({
       {warnFar ? (
         <Text style={styles.warn}>Outside offline pack — verify by phone</Text>
       ) : null}
+      <Text style={styles.dataNote}>
+        Demo POI seed (~50 nodes). Not NHA-verified — confirm facility by phone before routing.
+      </Text>
     </Pressable>
   );
 }
@@ -115,4 +118,11 @@ const styles = StyleSheet.create({
     fontFamily: 'PublicSans_700Bold',
   },
   warn: { color: tokens.error, fontSize: 12, marginTop: 8, fontFamily: 'PublicSans_700Bold' },
+  dataNote: {
+    color: tokens.onSurfaceVariant,
+    fontSize: 11,
+    marginTop: 8,
+    fontFamily: 'PublicSans_400Regular',
+    lineHeight: 16,
+  },
 });
