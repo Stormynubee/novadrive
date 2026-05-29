@@ -32,6 +32,10 @@ jobs:
         working-directory: novadrive-mobile
         run: npm install --legacy-peer-deps
 
+      - name: Strip dev client for judge APK
+        working-directory: novadrive-mobile
+        run: npm uninstall expo-dev-client --legacy-peer-deps
+
       - name: Prebuild Android
         working-directory: novadrive-mobile
         run: npx expo prebuild --platform android --non-interactive --clean
