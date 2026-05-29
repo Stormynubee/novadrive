@@ -9,7 +9,6 @@ jobs:
   build-apk:
     runs-on: ubuntu-latest
     env:
-      CI: true
       MARGI_JUDGE_APK: '1'
     steps:
       - uses: actions/checkout@v4
@@ -28,11 +27,9 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install dependencies (judge APK — no dev client)
+      - name: Install dependencies
         working-directory: novadrive-mobile
-        run: |
-          npm install --legacy-peer-deps
-          npm uninstall expo-dev-client --no-save
+        run: npm install --legacy-peer-deps
 
       - name: Prebuild Android
         working-directory: novadrive-mobile

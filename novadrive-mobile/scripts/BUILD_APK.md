@@ -1,51 +1,51 @@
 # Build Margi debug APK (judges / CI)
 
-## One-time setup
+Margi ships **without `expo-dev-client`**. The previously pinned `expo-dev-client@56` was incompatible with Expo SDK 54 and broke Android builds (`expo-dev-menu` Kotlin errors).
 
-- JDK 17+
-- Android SDK (Android Studio or command-line tools)
-- `ANDROID_HOME` set
+## Fastest: GitHub Actions
 
-## CI / judge builds (no dev client)
+1. [Android debug APK workflow](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml) → **Run workflow**
+2. Download artifact **`margi-debug-apk`** → rename/use as **`margi-debug.apk`**
 
-GitHub Actions sets `CI=true` and `MARGI_JUDGE_APK=1` so `app.config.js` omits `expo-dev-client` and avoids `expo-dev-menu` compile failures. Locally:
-
-```bash
-set MARGI_JUDGE_APK=1
-npx expo prebuild --platform android --clean
-```
-
-## Build
+## Local build (one command)
 
 ```bash
 cd novadrive-mobile
 npm install --legacy-peer-deps
-npx expo prebuild --platform android --clean
-cd android
-./gradlew assembleDebug
+npm run android:apk
 ```
 
-**Windows (PowerShell):**
+**Windows (PowerShell):** same commands.
 
-```powershell
-cd novadrive-mobile
-npx expo prebuild --platform android --clean
-cd android
-.\gradlew.bat assembleDebug
-```
-
-Output APK:
+Output:
 
 `novadrive-mobile/android/app/build/outputs/apk/debug/app-debug.apk`
 
-Copy to release artifact name:
+The script deletes stale `android/` first so an old prebuild cannot reintroduce `expo-dev-menu`.
+
+## Manual steps
 
 ```bash
-cp android/app/build/outputs/apk/debug/app-debug.apk ../margi-debug.apk
+cd novadrive-mobile
+npm install --legacy-peer-deps
+rm -rf android   # or Remove-Item -Recurse -Force android on Windows
+npx expo prebuild --platform android --clean
+cd android
+./gradlew assembleDebug   # gradlew.bat on Windows
 ```
 
-## GitHub Release
+## Optional: custom dev client (developers only)
 
-Upload `margi-debug.apk` to release **`v2.0.0-production`** (or latest). Link from [JUDGE_START_HERE.md](../../JUDGE_START_HERE.md).
+If you need Expo dev menu for day-to-day native debugging:
 
-CI: see [.github/workflows/android-apk.yml](../../.github/workflows/android-apk.yml) on `workflow_dispatch` or release publish.
+```bash
+npx expo install expo-dev-client@~6.0.21
+```
+
+Add `"expo-dev-client"` back to `app.json` plugins temporarily. **Do not** use that config for judge/release APK builds.
+
+## Requirements
+
+- JDK 17+
+- Android SDK (`ANDROID_HOME`)
+- ~4 GB free disk for Gradle caches
