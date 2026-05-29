@@ -56,12 +56,12 @@ The mobile app calls your **Next.js BFF** in `novadrive/` — not Google directl
 2. Import **Stormynubee/Margi** (or your fork).
 3. **Root Directory:** click Edit → set to **`novadrive`** (not repo root).
 4. Framework: **Next.js** (auto-detected).
-5. **Important:** If build fails with *"No install required for static brief site"*, the repo root `vercel.json` was picked up. Either:
-   - Pull latest `master` (includes `novadrive/vercel.json`), **or**
-   - In Vercel → Project → **Settings → Build** override:
-     - Install Command: `npm install`
-     - Build Command: `npm run build`
-     - Output Directory: leave default (Next.js)
+5. **Build settings (critical for monorepo):** expand **Build and Output Settings** before first deploy:
+   - **Install Command:** `npm install` (override ON)
+   - **Build Command:** `npm run build` (override ON)
+   - **Output Directory:** **leave blank** (override ON, delete any `docs/site` value)
+   
+   The repo root `vercel.json` is for the static **brief site** only. If Output Directory is `docs/site`, the Sarthi BFF build will fail even though `next build` succeeds.
 6. **Environment variables** (Production + Preview):
 
    | Name | Value |
@@ -121,6 +121,8 @@ Open **Sarthi** → status chip should say **Gemini BFF online**. Ask a non-KB q
 | Chip says “BFF unreachable” | Wrong URL, Vercel deploy failed, or phone has no internet |
 | Health returns 503 | Missing `GOOGLE_GENERATIVE_AI_API_KEY` on Vercel |
 | Works on emulator, not phone | LAN URL (`192.168.x.x`) only works on same Wi‑Fi — use Vercel URL on physical devices |
+| Build: *No Next.js version detected* | Install Command was static-site echo — set `npm install` |
+| Build: *output directory docs/site not found* | **Clear Output Directory** in Vercel → Settings → Build (must be empty for Next.js) |
 | CORS errors | BFF already sends CORS headers; ensure you hit `/api/sarthi/chat` via the deployed domain |
 
 ---
