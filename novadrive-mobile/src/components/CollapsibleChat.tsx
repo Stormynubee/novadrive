@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { NovaInput } from './NovaInput';
-import { NovaButton } from './NovaButton';
+import { MargiInput } from './MargiInput';
+import { MargiButton } from './MargiButton';
 import { HudCard } from './HudCard';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
@@ -34,13 +34,13 @@ export function CollapsibleChat({
       </Pressable>
       {open ? (
         <View style={styles.body}>
-          <NovaInput
+          <MargiInput
             multiline
             placeholder='e.g. "not breathing, cannot walk"'
             value={value}
             onChangeText={onChangeText}
           />
-          <NovaButton label="Send" onPress={onSend} variant="ghost" />
+          <MargiButton label="Send" onPress={onSend} variant="ghost" />
           {appliedTags?.map((t) => (
             <HudText key={t} variant="mono" style={styles.tag}>
               Applied: {t}

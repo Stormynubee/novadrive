@@ -1,7 +1,7 @@
 import { Modal, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudText } from './HudText';
-import { NovaButton } from './NovaButton';
+import { MargiButton } from './MargiButton';
 import type { SafetyAlertReason } from '../lib/safetyAlert';
 import { safetyAlertBody, safetyAlertTitle } from '../lib/safetyAlert';
 import { tokens } from '../theme/tokens';
@@ -42,8 +42,8 @@ export function CrashCandidateModal({
               {countdown > 0 ? `${countdown}s · take a breath` : 'Ready when you are'}
             </HudText>
           </View>
-          <NovaButton label="I need help" onPress={onConfirm} variant="secondary" large />
-          <NovaButton
+          <MargiButton label="I need help" onPress={onConfirm} variant="secondary" large />
+          <MargiButton
             label="I am okay"
             onPress={onDismiss}
             variant="mint"

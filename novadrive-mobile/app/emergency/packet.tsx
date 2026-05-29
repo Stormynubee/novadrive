@@ -6,7 +6,7 @@ import { DispatchPanel } from '../../src/components/DispatchPanel';
 import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { QrQuietZone } from '../../src/components/QrQuietZone';
 import { SeverityHero } from '../../src/components/SeverityHero';
 import { useApp } from '../../src/context/AppContext';
@@ -61,9 +61,9 @@ export default function PacketScreen() {
   const sha = packet?.integrity?.slice(0, 12);
 
   const footer = error ? (
-    <NovaButton label="Back to route" onPress={() => router.back()} variant="secondary" large />
+    <MargiButton label="Back to route" onPress={() => router.back()} variant="secondary" large />
   ) : (
-    <NovaButton label="Continue to relay" onPress={() => router.push('/emergency/relay')} disabled={!packet} large />
+    <MargiButton label="Continue to relay" onPress={() => router.push('/emergency/relay')} disabled={!packet} large />
   );
 
   return (

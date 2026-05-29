@@ -6,7 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { GovSwitch } from '../src/components/GovSwitch';
 import { HudCard } from '../src/components/HudCard';
 import { HudText } from '../src/components/HudText';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { useApp } from '../src/context/AppContext';
 import type { Lang, SosSensitivity } from '../src/lib/types';
 import { announceA11y } from '../src/lib/a11yRuntime';
@@ -79,7 +79,7 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.root}>
-      <NovaTopBar
+      <MargiTopBar
         title={`ID: #${citizenId.replace('ND-', '')}`}
         subtitle="Configuration"
         showBack

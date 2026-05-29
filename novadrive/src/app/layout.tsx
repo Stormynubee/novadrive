@@ -23,11 +23,11 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'NovaDrive — Offline Emergency Co-Pilot',
+  title: 'Margi — Offline Emergency Co-Pilot',
   description:
     'START triage, trauma-tier routing, and dispatch packets when signal fails. Road Safety Hackathon 2026.',
   manifest: '/manifest.json',
-  appleWebApp: { capable: true, title: 'NovaDrive' },
+  appleWebApp: { capable: true, title: 'Margi' },
 };
 
 export const viewport: Viewport = {

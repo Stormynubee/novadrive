@@ -7,7 +7,7 @@ import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { EMERGENCY_ACTIVATION_PATH } from '../../src/lib/emergency/emergencyNavigation';
 import { reverseGeocodePlace } from '../../src/lib/geocode';
@@ -47,7 +47,7 @@ export default function LocateScreen() {
     <>
       {loading ? <ActivityIndicator color={tokens.primary} /> : null}
       {!session.location ? (
-        <NovaButton
+        <MargiButton
           label="Capture location"
           onPress={capture}
           variant="secondary"
@@ -56,13 +56,13 @@ export default function LocateScreen() {
         />
       ) : (
         <>
-          <NovaButton
+          <MargiButton
             label="Continue to activation"
             onPress={() => router.push(EMERGENCY_ACTIVATION_PATH as Href)}
             variant="secondary"
             large
           />
-          <NovaButton label="Recapture" onPress={capture} variant="ghost" disabled={loading} />
+          <MargiButton label="Recapture" onPress={capture} variant="ghost" disabled={loading} />
         </>
       )}
     </>

@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp } from '../context/AppContext';
 import { HudText } from './HudText';
-import { NovaTopBar } from './NovaTopBar';
+import { MargiTopBar } from './MargiTopBar';
 import { tokens } from '../theme/tokens';
 
 export function ScreenShell({
@@ -47,7 +47,7 @@ export function ScreenShell({
       style={[styles.safe, a11y.highContrast && styles.highContrast]}
       edges={hudBar ? [] : ['top']}
     >
-      {hudBar ? <NovaTopBar title={title ?? 'NOVA DRIVE'} subtitle={subtitle} showBack={showBack} /> : null}
+      {hudBar ? <MargiTopBar title={title ?? 'Margi'} subtitle={subtitle} showBack={showBack} /> : null}
       {noScroll ? (
         <View style={styles.scroll}>{inner}</View>
       ) : (

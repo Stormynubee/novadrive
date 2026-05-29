@@ -1,6 +1,6 @@
 # Security
 
-NovaDrive handles **sensitive medical and location data** during emergencies.
+Margi handles **sensitive medical and location data** during emergencies.
 
 ## What we do
 

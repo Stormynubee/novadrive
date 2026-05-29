@@ -10,10 +10,10 @@ import {
 import { type Href, router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NovaTopBar } from '../NovaTopBar';
+import { MargiTopBar } from '../MargiTopBar';
 import { HudCard } from '../HudCard';
 import { HudText } from '../HudText';
-import { NovaButton } from '../NovaButton';
+import { MargiButton } from '../MargiButton';
 import { useApp } from '../../context/AppContext';
 import { resolveBriefHighlightDisplay } from '../../lib/home/briefHighlightDisplay';
 import {
@@ -117,7 +117,7 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
   if (!brief) {
     return (
       <View style={[styles.root, { paddingBottom: insets.bottom }]}>
-        <NovaTopBar title="Safety brief" showBack onBack={() => router.back()} variant="surface" />
+        <MargiTopBar title="Safety brief" showBack onBack={() => router.back()} variant="surface" />
         <View style={styles.center}>
           <HudText variant="headlineMd" style={styles.titleNavy}>
             Brief not found
@@ -125,7 +125,7 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
           <HudText variant="bodyMd" style={styles.muted}>
             This advisory may have been archived or the link is invalid.
           </HudText>
-          <NovaButton label="Back" onPress={() => router.back()} large />
+          <MargiButton label="Back" onPress={() => router.back()} large />
         </View>
       </View>
     );
@@ -150,7 +150,7 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
 
   return (
     <View style={[styles.root, { paddingBottom: insets.bottom }]}>
-      <NovaTopBar title={brief.title} showBack onBack={() => router.back()} variant="surface" />
+      <MargiTopBar title={brief.title} showBack onBack={() => router.back()} variant="surface" />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
         <View style={styles.hero}>
           <View style={[styles.heroStripe, { backgroundColor: colors.heroAccent }]} />
@@ -326,7 +326,7 @@ export function SafetyBriefExperienceScreen({ slug }: { slug: string }) {
             </HudText>
           </View>
         ) : null}
-        <NovaButton
+        <MargiButton
           label={acknowledged ? 'Withdraw acknowledgment' : 'Acknowledge brief'}
           onPress={onAcknowledge}
           variant={acknowledged ? 'ghost' : checklistDone ? 'primary' : 'ghost'}

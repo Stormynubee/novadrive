@@ -58,7 +58,7 @@ const DETAILS: Record<string, SafetyBriefDetail> = {
     paragraphs: [
       'New AI-assisted fatigue detection guidelines are now deployed for commercial drivers operating on national highways and state expressways.',
       'Drivers should take a mandatory rest break every 4 hours or 250 km, whichever comes first. Fleet operators must log rest compliance in the institutional journey record.',
-      'NovaDrive surfaces fatigue-risk segments on your corridor map when telemetry is active. If you feel drowsy, use the nearest trauma-ready facility listed in Trip planning or activate Quick SOS.',
+      'Margi surfaces fatigue-risk segments on your corridor map when telemetry is active. If you feel drowsy, use the nearest trauma-ready facility listed in Trip planning or activate Quick SOS.',
       'This protocol is informational and does not replace operator-specific duty rules or medical advice.',
     ],
     checklist: [
@@ -157,7 +157,7 @@ export function buildBriefShareMessage(brief: SafetyBriefDetail): string {
     brief.region,
     brief.paragraphs[0],
     corridorLine,
-    '— NovaDrive Safety Brief',
+    '— Margi Safety Brief',
   ]
     .filter(Boolean)
     .join('\n');

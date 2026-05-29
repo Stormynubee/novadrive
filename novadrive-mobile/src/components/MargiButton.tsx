@@ -3,16 +3,7 @@ import { tokens } from '../theme/tokens';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'mint';
 
-/**
- * GovTech buttons (DESIGN.md §Components/Buttons).
- *
- *   primary   — Deep Navy fill, white label. Default CTA.
- *   secondary — Emergency Saffron fill. High-contrast for urgent action ("emergency" in DESIGN.md).
- *   ghost     — Transparent, navy outline + navy label. "View history", "Cancel".
- *   danger    — Saffron container + red label / error border. Destructive confirm.
- *   mint      — Indian-green tonal pill, used for "I am okay" calm-down replies.
- */
-export function NovaButton({
+export function MargiButton({
   label,
   onPress,
   variant = 'primary',

@@ -1,4 +1,4 @@
-# Hackathon submission — NovaDrive (RoadSoS 2026)
+# Hackathon submission — Margi (RoadSoS 2026)
 
 **Team repo:** [github.com/Stormynubee/novadrive](https://github.com/Stormynubee/novadrive)  
 **Brief site:** [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app)  
@@ -16,9 +16,9 @@
 | Offline POI routing | SQLite in app | ✅ 50+ seeded nodes |
 | GHP + QR + SMS 108 | `emergency/packet`, `relay`, `scan` | ✅ |
 | Naari Shakti portal | `app/naari-shakti.tsx`, `src/lib/naariShakti/` | ✅ |
-| Distress voice detection | `src/lib/voice/*`, design spec, smoke rows 23–26 | ✅ 135 mobile unit tests |
-| Implementation plan | `docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md` | ✅ |
-| Team brief + PDF | `docs/NOVADRIVE_MASTER_BRIEF.md` | ✅ |
+| Distress voice detection | `src/lib/voice/*`, design spec, smoke rows 23–26 | ✅ 148 mobile unit tests |
+| Implementation plan | `docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md` | ✅ |
+| Team brief + PDF | `docs/MARGI_MASTER_BRIEF.md` | ✅ |
 | Slide deck | Team asset (7 slides per plan §20) | Team |
 | Word doc + 90s script | Team asset | Team |
 

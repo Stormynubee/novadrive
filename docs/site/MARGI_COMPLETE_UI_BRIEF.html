@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>NovaDrive — Complete Project & UI Brief (PDF)</title>
+  <title>Margi — Complete Project & UI Brief (PDF)</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
@@ -94,7 +94,7 @@
 <body>
   <div class="cover">
     <div style="font-size:48pt;margin-bottom:16px;">⬡</div>
-    <h1>NovaDrive</h1>
+    <h1>Margi</h1>
     <p class="sub">Complete Project & UI Design Brief</p>
     <p class="sub" style="color:#FBBF24;font-weight:600;">Signal drops. The critical minute doesn't.</p>
     <div class="meta">
@@ -131,7 +131,7 @@
 
   <div class="page">
     <h2>1. Executive summary</h2>
-    <p><strong>NovaDrive</strong> is an offline-first emergency co-pilot for Indian highways. When mobile signal fails after a crash, victims and bystanders still get START medical triage, trauma-tier hospital routing (not “nearest pin”), a human-readable <strong>Golden Hour Packet (GHP)</strong> for 108, and a <strong>QR bystander relay</strong> until any phone regains network.</p>
+    <p><strong>Margi</strong> is an offline-first emergency co-pilot for Indian highways. When mobile signal fails after a crash, victims and bystanders still get START medical triage, trauma-tier hospital routing (not “nearest pin”), a human-readable <strong>Golden Hour Packet (GHP)</strong> for 108, and a <strong>QR bystander relay</strong> until any phone regains network.</p>
     <table>
       <tr><th>Item</th><th>Detail</th></tr>
       <tr><td>Primary app</td><td><code>novadrive-mobile/</code> — Expo SDK 54, Android via Expo Go / APK</td></tr>
@@ -142,7 +142,7 @@
     </table>
 
     <h2>2. Deep analogies</h2>
-    <div class="box"><strong>Dead-zone phone call:</strong> You try 108 — one bar, then silence. NovaDrive writes the perfect handoff note before the call drops.</div>
+    <div class="box"><strong>Dead-zone phone call:</strong> You try 108 — one bar, then silence. Margi writes the perfect handoff note before the call drops.</div>
     <div class="box"><strong>Wrong fire station:</strong> Nearest clinic ≠ trauma center. RED patients route to tier-1/2 trauma, not closest pin.</div>
     <div class="box"><strong>GHP = pilot mayday:</strong> One screen a dispatcher reads in 10 seconds — triage, location, facility, ETA, hash.</div>
     <div class="box"><strong>QR sneakernet:</strong> Your phone offline; bystander scans QR; packet rides on their phone until SMS to 108 works.</div>
@@ -151,7 +151,7 @@
 
     <h2>3. Hackathon (RoadSoS)</h2>
     <table>
-      <tr><th>Criterion</th><th>NovaDrive response</th></tr>
+      <tr><th>Criterion</th><th>Margi response</th></tr>
       <tr><td>Offline</td><td>FSM + SQLite POI + GHP + QR on device</td></tr>
       <tr><td>AI chatbot</td><td>Text UI + offline keyword parser; optional LLM online</td></tr>
       <tr><td>Location services</td><td>GPS + trauma-tier routing + Trip Info corridor (planned)</td></tr>
@@ -214,7 +214,7 @@ flowchart TB
     <h3>6.1 Onboarding (current + planned)</h3>
     <div class="screen-mock">
       <div class="title">Splash — CURRENT → REFINEMENT R1</div>
-      <p style="color:#8B9BB0">CURRENT: Text “NovaDrive”, tagline, grey body copy, Get started.</p>
+      <p style="color:#8B9BB0">CURRENT: Text “Margi”, tagline, grey body copy, Get started.</p>
       <p style="color:#FBBF24">PLANNED: Logo animation 0.8s → wordmark → tagline → grey subline “Offline triage · trauma routing · QR relay” → Get started button fade-in.</p>
     </div>
     <div class="screen-mock">
@@ -304,7 +304,7 @@ flowchart LR
     </table>
 
     <h2>9. Golden Hour Packet</h2>
-    <pre>NOVADRIVE GHP
+    <pre>MARGI GHP
 Triage: RED
 Location: NH48 km 87 (13.08270, 80.27070)
 Facility: Apollo Highway Trauma (~12km, ~18min)
@@ -376,7 +376,7 @@ Hash: nd-a3f2c891</pre>
     <p><strong>Sequence (~2.5s before button enabled):</strong></p>
     <ol>
       <li><strong>0–0.8s:</strong> Logo mark scales in (spring), subtle amber glow ring</li>
-      <li><strong>0.8–1.4s:</strong> Wordmark “NovaDrive” fades up</li>
+      <li><strong>0.8–1.4s:</strong> Wordmark “Margi” fades up</li>
       <li><strong>1.4–2.0s:</strong> Tagline: <em>“Signal drops. The critical minute doesn’t.”</em></li>
       <li><strong>2.0s+:</strong> Grey subline: <em>“Offline triage · trauma routing · QR relay for 108”</em></li>
       <li><strong>Get started</strong> button fades in (primary amber)</li>
@@ -578,11 +578,11 @@ scripts/              ingestCorridors.py → POI DB</pre>
 
     <h2>20. Related documents</h2>
     <ul>
-      <li><code>docs/NOVADRIVE_REFINEMENT_PLAN.md</code> — full refinement spec</li>
-      <li><code>docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md</code> — P0 implementation</li>
-      <li><code>docs/NOVADRIVE_MASTER_BRIEF.md</code> — master brief</li>
-      <li><code>docs/NOVADRIVE_TEAM_GUIDE.html</code> — team share (browser)</li>
-      <li><code>docs/NOVADRIVE_COMPLETE_PROJECT.pdf</code> — this PDF</li>
+      <li><code>docs/MARGI_REFINEMENT_PLAN.md</code> — full refinement spec</li>
+      <li><code>docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md</code> — P0 implementation</li>
+      <li><code>docs/MARGI_MASTER_BRIEF.md</code> — master brief</li>
+      <li><code>docs/MARGI_TEAM_GUIDE.html</code> — team share (browser)</li>
+      <li><code>docs/MARGI_COMPLETE_PROJECT.pdf</code> — this PDF</li>
     </ul>
   </div>
 

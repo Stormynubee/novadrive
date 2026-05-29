@@ -1,8 +1,8 @@
 import { router } from 'expo-router';
-import { NovaTopBar } from './NovaTopBar';
+import { MargiTopBar } from './MargiTopBar';
 
 /**
- * Legacy import surface. Routes through the new NovaTopBar so older screens (`ScreenShell`,
+ * Legacy import surface. Routes through the new MargiTopBar so older screens (`ScreenShell`,
  * `EmergencyStepShell`) keep their imports without a sweep.
  */
 export function HudAppBar({
@@ -19,8 +19,8 @@ export function HudAppBar({
   void showBrand;
   void live;
   return (
-    <NovaTopBar
-      title="NOVA DRIVE"
+    <MargiTopBar
+      title="Margi"
       showBack={showBack}
       onBack={onBack ?? (() => router.back())}
     />

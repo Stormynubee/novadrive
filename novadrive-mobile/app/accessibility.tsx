@@ -4,8 +4,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { AccessibilityToggleCard } from '../src/components/AccessibilityToggleCard';
 import { HudText } from '../src/components/HudText';
-import { NovaButton } from '../src/components/NovaButton';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiButton } from '../src/components/MargiButton';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { OnboardingShell } from '../src/components/OnboardingShell';
 import { TextSizeSlider } from '../src/components/TextSizeSlider';
 import { useApp } from '../src/context/AppContext';
@@ -108,7 +108,7 @@ export default function AccessibilityScreen() {
         subtitle="Customize your Nova Drive experience for safer, distraction-free navigation."
       >
         {toggles}
-        <NovaButton label="Enter NovaDrive" onPress={finish} large style={{ marginTop: 8 }} />
+        <MargiButton label="Enter Margi" onPress={finish} large style={{ marginTop: 8 }} />
       </OnboardingShell>
     );
   }
@@ -116,7 +116,7 @@ export default function AccessibilityScreen() {
   return (
     <View style={[styles.root, { backgroundColor: tokens.background }]}>
       <StatusBar style="light" />
-      <NovaTopBar title="NOVA DRIVE" showBack onBack={() => router.back()} />
+      <MargiTopBar title="Margi" showBack onBack={() => router.back()} />
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 32 }]}
         showsVerticalScrollIndicator={false}
@@ -128,7 +128,7 @@ export default function AccessibilityScreen() {
           Customize your Nova Drive experience for safer, distraction-free navigation.
         </HudText>
         {toggles}
-        <NovaButton label="Save & close" onPress={finish} large style={{ marginTop: 16 }} />
+        <MargiButton label="Save & close" onPress={finish} large style={{ marginTop: 16 }} />
       </ScrollView>
     </View>
   );

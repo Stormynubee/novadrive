@@ -2,8 +2,9 @@ import { type Href, router } from 'expo-router';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { APP_DISPLAY_NAME } from '../lib/brand';
 import { HudText } from './HudText';
-import { NovaButton } from './NovaButton';
+import { MargiButton } from './MargiButton';
 import { tokens } from '../theme/tokens';
 
 export type QuickMenuItem = {
@@ -93,10 +94,7 @@ function MenuRow({
   );
 }
 
-/**
- * GovTech slide-out quick menu — replaces native Alert for hamburger navigation.
- */
-export function NovaQuickMenuSheet({
+export function MargiQuickMenuSheet({
   visible,
   onClose,
   items = DEFAULT_ITEMS,
@@ -119,30 +117,20 @@ export function NovaQuickMenuSheet({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-      statusBarTranslucent
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <View style={styles.root}>
-        <View
-          style={[styles.drawer, { paddingBottom: Math.max(insets.bottom, 16) }]}
-          accessibilityViewIsModal
-        >
+        <View style={[styles.drawer, { paddingBottom: Math.max(insets.bottom, 16) }]} accessibilityViewIsModal>
           <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
             <Pressable
               onPress={onClose}
               style={({ pressed }) => [styles.headerBtn, pressed && styles.headerBtnPressed]}
-              accessibilityRole="button"
               accessibilityLabel="Back and close menu"
             >
               <MaterialIcons name="arrow-back" size={24} color={tokens.onPrimary} />
             </Pressable>
             <View style={styles.headerTitles}>
               <HudText variant="mono" style={styles.headerKicker}>
-                NOVA DRIVE
+                {APP_DISPLAY_NAME.toUpperCase()}
               </HudText>
               <HudText variant="headlineMd" style={styles.headerTitle}>
                 Quick links
@@ -151,7 +139,6 @@ export function NovaQuickMenuSheet({
             <Pressable
               onPress={onClose}
               style={({ pressed }) => [styles.headerBtn, pressed && styles.headerBtnPressed]}
-              accessibilityRole="button"
               accessibilityLabel="Close menu"
             >
               <MaterialIcons name="close" size={24} color={tokens.onPrimary} />
@@ -162,11 +149,7 @@ export function NovaQuickMenuSheet({
             Jump to settings, vault, and profile. Tap outside or use back to close.
           </HudText>
 
-          <ScrollView
-            style={styles.list}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          >
+          <ScrollView style={styles.list} contentContainerStyle={styles.listContent} showsVerticalScrollIndicator={false}>
             <HudText variant="mono" style={styles.sectionTag}>
               NAVIGATION
             </HudText>
@@ -187,17 +170,10 @@ export function NovaQuickMenuSheet({
           </ScrollView>
 
           <View style={styles.footer}>
-            <NovaButton
-              label="Back"
-              onPress={onClose}
-              variant="primary"
-              large
-              style={styles.backBtn}
-            />
+            <MargiButton label="Back" onPress={onClose} variant="primary" large style={styles.backBtn} />
             <Pressable
               onPress={onClose}
               style={({ pressed }) => [styles.closeLink, pressed && styles.closeLinkPressed]}
-              accessibilityRole="button"
               accessibilityLabel="Close menu"
             >
               <MaterialIcons name="close" size={18} color={tokens.primary} />
@@ -208,12 +184,7 @@ export function NovaQuickMenuSheet({
           </View>
         </View>
 
-        <Pressable
-          style={styles.backdrop}
-          onPress={onClose}
-          accessibilityRole="button"
-          accessibilityLabel="Close menu"
-        />
+        <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="Close menu" />
       </View>
     </Modal>
   );
@@ -222,14 +193,8 @@ export function NovaQuickMenuSheet({
 const DRAWER_WIDTH = 300;
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,10,30,0.48)',
-  },
+  root: { flex: 1, flexDirection: 'row' },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,86,179,0.35)' },
   drawer: {
     width: DRAWER_WIDTH,
     maxWidth: '88%',
@@ -255,11 +220,7 @@ const styles = StyleSheet.create({
   },
   headerBtnPressed: { backgroundColor: 'rgba(255,255,255,0.12)' },
   headerTitles: { flex: 1, minWidth: 0 },
-  headerKicker: {
-    fontSize: 9,
-    letterSpacing: 1.4,
-    color: tokens.onPrimaryContainer,
-  },
+  headerKicker: { fontSize: 9, letterSpacing: 1.4, color: tokens.onPrimaryContainer },
   headerTitle: {
     color: tokens.onPrimary,
     fontFamily: 'HankenGrotesk_800ExtraBold',
@@ -306,17 +267,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rowIconUrgent: {
-    backgroundColor: tokens.secondaryFixed,
-  },
+  rowIconUrgent: { backgroundColor: tokens.secondaryFixed },
   rowText: { flex: 1, minWidth: 0 },
   rowLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   rowHint: { color: tokens.onSurfaceVariant, marginTop: 2 },
-  divider: {
-    height: 1,
-    backgroundColor: tokens.outlineVariant,
-    marginLeft: 66,
-  },
+  divider: { height: 1, backgroundColor: tokens.outlineVariant, marginLeft: 66 },
   footer: {
     paddingHorizontal: 12,
     paddingTop: 8,

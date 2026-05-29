@@ -7,9 +7,9 @@ import * as Haptics from 'expo-haptics';
 import { StatusBar } from 'expo-status-bar';
 import { HudCard } from '../src/components/HudCard';
 import { HudText } from '../src/components/HudText';
-import { NovaButton } from '../src/components/NovaButton';
-import { NovaInput } from '../src/components/NovaInput';
-import { NovaLogo } from '../src/components/NovaLogo';
+import { MargiButton } from '../src/components/MargiButton';
+import { MargiInput } from '../src/components/MargiInput';
+import { MargiLogo } from '../src/components/MargiLogo';
 import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
 import type { GenderIdentity } from '../src/lib/types';
@@ -68,10 +68,10 @@ export default function AuthScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.brandRow}>
-          <NovaLogo size={36} showWordmark={false} />
+          <MargiLogo size={36} showWordmark={false} />
           <View>
             <HudText variant="headlineMd" style={styles.brandTitle}>
-              NOVA DRIVE
+              Margi
             </HudText>
             <HudText variant="mono" style={styles.brandSub}>
               Secure sign-in
@@ -91,7 +91,7 @@ export default function AuthScreen() {
           <HudText variant="mono" style={styles.label}>
             Email address
           </HudText>
-          <NovaInput
+          <MargiInput
             placeholder="you@example.com"
             value={email}
             onChangeText={setEmail}
@@ -105,7 +105,7 @@ export default function AuthScreen() {
             Gender (optional)
           </HudText>
           <GenderIdentityPicker value={gender} onChange={setGender} />
-          <NovaButton
+          <MargiButton
             label="Continue with email"
             onPress={continueEmail}
             large
@@ -121,7 +121,7 @@ export default function AuthScreen() {
           <View style={styles.dividerLine} />
         </View>
 
-        <NovaButton label="Continue as Guest (demo)" onPress={continueGuest} variant="secondary" large />
+        <MargiButton label="Continue as Guest (demo)" onPress={continueGuest} variant="secondary" large />
 
         <Pressable
           onPress={() =>

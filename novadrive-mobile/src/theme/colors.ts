@@ -1,8 +1,8 @@
 import { tokens } from './tokens';
 
 /**
- * Back-compat aliases used across older screens. The original "Night-Highway HUD" semantics
- * (amber/cyan/mint) are mapped into the new GovTech palette (navy/saffron/green) so legacy
+ * Back-compat aliases used across older screens. Margi Care Path tokens map legacy
+ * amber/cyan/mint slot names to royal blue / orange / green so legacy
  * imports keep compiling — every consumer either renders fine on the new theme or has been
  * migrated explicitly.
  */

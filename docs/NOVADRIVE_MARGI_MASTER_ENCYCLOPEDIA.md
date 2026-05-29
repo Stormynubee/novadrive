@@ -1,0 +1,3 @@
+# Moved
+
+Renamed to **[MARGI_MASTER_ENCYCLOPEDIA.md](./MARGI_MASTER_ENCYCLOPEDIA.md)**.

@@ -1,7 +1,7 @@
 import { Alert, Linking, Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudText } from '../HudText';
-import { NovaButton } from '../NovaButton';
+import { MargiButton } from '../MargiButton';
 import { toDialUrl, toSmsUrl } from '../../lib/emergency/contactActions';
 import { tokens } from '../../theme/tokens';
 
@@ -67,7 +67,7 @@ export function TraumaCenterPanel({
             · {traumaCenter.phone}
           </HudText>
         </View>
-        <NovaButton label="Navigate" onPress={onNavigate} />
+        <MargiButton label="Navigate" onPress={onNavigate} />
       </View>
 
       <View style={styles.statusGrid}>
@@ -96,8 +96,8 @@ export function TraumaCenterPanel({
       </View>
 
       <View style={styles.actions}>
-        <NovaButton label="Request Alternate" variant="ghost" onPress={onAlternateTransport} />
-        <NovaButton label="Emergency Signal" variant="secondary" onPress={onEmergencySignal} />
+        <MargiButton label="Request Alternate" variant="ghost" onPress={onAlternateTransport} />
+        <MargiButton label="Emergency Signal" variant="secondary" onPress={onEmergencySignal} />
       </View>
 
       <View style={styles.contacts}>

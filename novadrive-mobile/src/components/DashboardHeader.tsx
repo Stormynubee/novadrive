@@ -1,16 +1,14 @@
 import { type Href, router } from 'expo-router';
 
-import { NovaTopBar } from './NovaTopBar';
-
+import { APP_DISPLAY_NAME } from '../lib/brand';
+import { MargiTopBar } from './MargiTopBar';
 import { useApp } from '../context/AppContext';
 import { EMERGENCY_SELECTION_PATH } from '../lib/emergency/emergencyNavigation';
 import { useQuickMenu } from '../context/QuickMenuContext';
 
-/**
- * Standard tab header — NOVA DRIVE chrome, menu + settings gear, saffron emergency share.
- */
+/** Standard tab header — Margi chrome, menu + settings gear, orange emergency share. */
 export function DashboardHeader({
-  title = 'NOVA DRIVE',
+  title = APP_DISPLAY_NAME,
   subtitle = 'by Team Vortex',
   showBack,
   showSettings = true,
@@ -32,7 +30,7 @@ export function DashboardHeader({
 
   if (planCorridorChrome) {
     return (
-      <NovaTopBar
+      <MargiTopBar
         title={title}
         onMenu={openSettings}
         onEmergency={() => {
@@ -46,7 +44,7 @@ export function DashboardHeader({
   const handleMenu = showSettings ? (onMenuPress ?? openMenu) : undefined;
 
   return (
-    <NovaTopBar
+    <MargiTopBar
       title={title}
       subtitle={subtitle}
       showBack={showBack}

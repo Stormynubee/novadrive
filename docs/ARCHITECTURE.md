@@ -1,8 +1,8 @@
-# NovaDrive Architecture
+# Margi Architecture
 
 ## System context
 
-NovaDrive is a **client-heavy** emergency system: medical decisions and routing run on-device; the network is optional enhancement for SMS 108 and future LLM slot-fill.
+Margi (shipped in repo as `novadrive-mobile`) is a **client-heavy** emergency system: medical decisions and routing run on-device; the network is optional enhancement for SMS 108 and future LLM slot-fill.
 
 | Layer | Technology | Role |
 |-------|------------|------|
@@ -46,4 +46,4 @@ Output: calm **15s dialog** — user confirms; **no automatic triage or 108** at
 
 Always-on scream ML, auto-dial, background GPS illusion, PWA-only core demo, fake crash APIs, NGO marketplace in P0.
 
-See [NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md](./NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md) §3.
+See [MARGI_FINAL_IMPLEMENTATION_PLAN.md](./MARGI_FINAL_IMPLEMENTATION_PLAN.md) §3.

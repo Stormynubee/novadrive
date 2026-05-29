@@ -1,8 +1,8 @@
-# NovaDrive Mobile (P0)
+# Margi Mobile (P0)
 
-**Signal drops. The critical minute doesn't.**
+**When signal drops, the path still holds.**
 
-**Team Vortex** · Native Expo app for **IIT Madras Road Safety Hackathon 2026** — **RoadSoS** track (GovTech navy / saffron UI).
+**Team Vortex** · Native Expo app for **IIT Madras Road Safety Hackathon 2026** — **RoadSoS** track (Care Path royal blue / saffron UI).
 
 **Expo SDK 54** — matches the current **Play Store Expo Go** app (SDK 56 requires a newer Expo Go not on Play Store yet).
 
@@ -136,8 +136,9 @@ Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 135 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti
-npm run verify:docs  # README "N unit tests" matches src/**/*.test.ts
+npm test             # 148 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding
+npm run verify:docs      # README "N unit tests" matches src/**/*.test.ts
+npm run verify:branding  # no NovaDrive in public GitHub copy
 npm run test:coverage
 ```
 
@@ -292,4 +293,4 @@ python scripts/ingestCorridors.py --corridor NH48 --min-pois 50 --out data/emerg
 
 ## Plan
 
-See [docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md](../docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md).
+See [docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md](../docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md).

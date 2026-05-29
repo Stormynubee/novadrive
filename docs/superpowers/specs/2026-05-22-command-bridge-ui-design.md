@@ -1,4 +1,4 @@
-# NovaDrive — Command Bridge UI Revamp
+# Margi — Command Bridge UI Revamp
 
 > **Status:** Approved — ready for implementation plan  
 > **Date:** 2026-05-22  
@@ -11,7 +11,7 @@
 
 ## 1. Executive summary
 
-NovaDrive’s P0 and refinement pass (R1–R9) shipped the **medical spine** and a partial **Night-Highway HUD**. This spec defines **Command Bridge**: a cohesive rebrand and UI system that maximizes **hackathon demo impact**, delivers a **bold but calm** visual identity, and makes the **emergency flow** step-clear under stress — without changing triage logic, routing algorithms, or offline packet encoding.
+Margi’s P0 and refinement pass (R1–R9) shipped the **medical spine** and a partial **Night-Highway HUD**. This spec defines **Command Bridge**: a cohesive rebrand and UI system that maximizes **hackathon demo impact**, delivers a **bold but calm** visual identity, and makes the **emergency flow** step-clear under stress — without changing triage logic, routing algorithms, or offline packet encoding.
 
 **Success criteria:**
 - Judge sees brand + live journey in ~30 seconds from cold open
@@ -73,7 +73,7 @@ Evolves `docs/design/refs/stitch_nova_drive_mobile_interface/night_highway_hud/D
 | Time | Element |
 |------|---------|
 | 0–0.6s | Logo scale 0.7→1 spring; one amber ring pulse |
-| 0.6–1.2s | Wordmark NovaDrive (Syne 700) |
+| 0.6–1.2s | Wordmark Margi (Syne 700) |
 | 1.2–1.8s | Tagline: *Signal drops. The critical minute doesn’t.* |
 | 1.8–2.2s | Subline (mono): *Offline triage · trauma routing · QR relay* |
 | 2.2s+ | Get started (amber, max-width 320) |
@@ -85,7 +85,7 @@ Evolves `docs/design/refs/stitch_nova_drive_mobile_interface/night_highway_hud/D
 
 ### 3.2 Home — mission dashboard
 
-1. `HudAppBar` — mark + NovaDrive + cyan **Co-pilot ready** chip  
+1. `HudAppBar` — mark + Margi + cyan **Co-pilot ready** chip  
 2. Time-based greeting + optional name  
 3. Hero `HudCard` (amber accent) — headline, value prop, journey status mono chips (`IDLE` / `ACTIVE` / `PAUSED`)  
 4. Full-width **Start journey** (amber) + **Plan route A→B** (ghost cyan)  

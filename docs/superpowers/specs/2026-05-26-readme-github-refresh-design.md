@@ -8,7 +8,7 @@
 
 Balanced presentation:
 
-- **Judges (first fold):** What NovaDrive does, two safety lanes (Golden Hour drive flow vs Naari Shakti), honest demo limits, quick paths to run the app and optional Naari beat.
+- **Judges (first fold):** What Margi does, two safety lanes (Golden Hour drive flow vs Naari Shakti), honest demo limits, quick paths to run the app and optional Naari beat.
 - **Developers (below):** Monorepo layout, commands, architecture links, contributing pointers.
 
 ## Messaging pillars

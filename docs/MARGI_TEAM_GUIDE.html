@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NovaDrive — Complete Team Guide (Architecture, Analogies & Hackathon)</title>
+  <title>Margi — Complete Team Guide (Architecture, Analogies & Hackathon)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -172,7 +172,7 @@
 <body>
   <div class="layout">
     <nav>
-      <h2>NovaDrive</h2>
+      <h2>Margi</h2>
       <p class="tagline">Signal drops. The critical minute doesn't.</p>
       <a href="#vision">Vision &amp; analogies</a>
       <a href="#hackathon">Hackathon alignment</a>
@@ -194,7 +194,7 @@
 
     <main>
       <div class="hero">
-        <p class="tag">NovaDrive — Complete Team Guide</p>
+        <p class="tag">Margi — Complete Team Guide</p>
         <h1>Architecture, deep analogies &amp; everything for RoadSoS 2026</h1>
         <p class="muted">
           IIT Madras National Road Safety Hackathon · CoERS &amp; RBG Labs · Deadline <strong>May 31, 2026</strong><br />
@@ -210,12 +210,12 @@
       <h2 id="vision">1. Vision &amp; deep analogies (memorize these)</h2>
 
       <p>
-        NovaDrive is not “another maps app with hospital pins.” It is a <strong>calm emergency co-pilot</strong> that keeps working when the highway has no signal — because that is exactly when the golden hour matters most.
+        Margi is not “another maps app with hospital pins.” It is a <strong>calm emergency co-pilot</strong> that keeps working when the highway has no signal — because that is exactly when the golden hour matters most.
       </p>
 
       <div class="analogy">
         <strong>Analogy — The dead zone phone call:</strong><br />
-        Imagine you're hurt on NH48. You try to call 108 — one bar, then nothing. The operator asks “where are you?” and “how bad is it?” but you cannot explain lat/lng or medical terms. <em>NovaDrive is the friend who already wrote the perfect handoff note before the call dropped.</em>
+        Imagine you're hurt on NH48. You try to call 108 — one bar, then nothing. The operator asks “where are you?” and “how bad is it?” but you cannot explain lat/lng or medical terms. <em>Margi is the friend who already wrote the perfect handoff note before the call dropped.</em>
       </div>
 
       <div class="analogy">
@@ -258,7 +258,7 @@
 
       <h3>How we score on judge criteria</h3>
       <table>
-        <tr><th>Criterion</th><th>NovaDrive answer</th></tr>
+        <tr><th>Criterion</th><th>Margi answer</th></tr>
         <tr><td>Geographic accuracy</td><td>SQLite POI from OSM + corridor seed (50+ nodes); Haversine sort</td></tr>
         <tr><td>Valid emergency contacts</td><td>Real phones where verified; <code>unverified</code> if missing — never fake “108” as hospital line</td></tr>
         <tr><td>Offline capability</td><td>FSM + SQLite + GHP + QR on device; SMS when online</td></tr>
@@ -268,7 +268,7 @@
 
       <h2 id="architecture">3. System architecture (high level)</h2>
 
-      <p>NovaDrive is <strong>client-heavy</strong>: medical decisions and routing run on the phone. The cloud is optional (auth, future LLM).</p>
+      <p>Margi is <strong>client-heavy</strong>: medical decisions and routing run on the phone. The cloud is optional (auth, future LLM).</p>
 
       <div class="mermaid">
 flowchart TB
@@ -302,9 +302,9 @@ flowchart TB
 ├── novadrive-mobile/     ← PRIMARY (Expo SDK 54, Android APK)
 ├── novadrive/            ← Web UI mirror (Next.js)
 ├── docs/
-│   ├── NOVADRIVE_TEAM_GUIDE.html   ← this file
-│   ├── NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md
-│   ├── NOVADRIVE_MASTER_BRIEF.md
+│   ├── MARGI_TEAM_GUIDE.html   ← this file
+│   ├── MARGI_FINAL_IMPLEMENTATION_PLAN.md
+│   ├── MARGI_MASTER_BRIEF.md
 │   └── site/             ← Vercel team brief
 └── scripts/ingestCorridors.py</pre>
 
@@ -375,7 +375,7 @@ stateDiagram-v2
 
       <p>Human-readable dispatch brief — ≤800 bytes for SMS. Operators cannot decode Base64; we send plain language.</p>
 
-      <pre>NOVADRIVE GHP
+      <pre>MARGI GHP
 Triage: RED
 Location: NH48 km 87 (13.08270, 80.27070)
 Facility: Apollo Highway Trauma (~12km, ~18min)
@@ -481,7 +481,7 @@ npm run start:tunnel    # laptop hotspot: use tunnel
 
       <h2 id="slides">14. Seven slides (outline)</h2>
       <ol>
-        <li>Welcome — Team + NovaDrive + RoadSoS</li>
+        <li>Welcome — Team + Margi + RoadSoS</li>
         <li>Problem — Golden hour, dead zones, wrong hospital</li>
         <li>Solution — Offline triage + GHP + QR relay</li>
         <li>Architecture — FSM spine + SQLite + diagram</li>
@@ -518,9 +518,9 @@ npm run start:tunnel    # laptop hotspot: use tunnel
       </ul>
 
       <div class="footer">
-        <p>NovaDrive · CoERS Road Safety Hackathon 2026 · Share freely with all team members.</p>
-        <p>Source docs: <code>docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md</code> · <code>docs/NOVADRIVE_MASTER_BRIEF.md</code></p>
-        <p>Generated team guide — open locally: <code>docs/NOVADRIVE_TEAM_GUIDE.html</code></p>
+        <p>Margi · CoERS Road Safety Hackathon 2026 · Share freely with all team members.</p>
+        <p>Source docs: <code>docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md</code> · <code>docs/MARGI_MASTER_BRIEF.md</code></p>
+        <p>Generated team guide — open locally: <code>docs/MARGI_TEAM_GUIDE.html</code></p>
       </div>
     </main>
   </div>

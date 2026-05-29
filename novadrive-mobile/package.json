@@ -1,6 +1,6 @@
 {
   "name": "novadrive-mobile",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "main": "expo-router/entry",
   "dependencies": {
     "@expo-google-fonts/hanken-grotesk": "^0.4.3",
@@ -60,6 +60,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "verify:docs": "node scripts/verify-readme-stats.mjs",
+    "verify:branding": "node scripts/verify-public-branding.mjs",
     "postinstall": "node scripts/patch-foojay-gradle.js"
   },
   "private": true

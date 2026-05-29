@@ -304,9 +304,9 @@ export const SARTHI_KB_ENTRIES: SarthiKbEntry[] = [
     patterns: [/who am i|my name|account|sign in|guest/i],
     priority: 50,
     replies: {
-      en: '{{name}}, you are using NovaDrive as {{mode}}. Add your name and medical info in Profile for personalized Sarthi and packet handoff.',
-      hi: '{{name}}, आप {{mode}} के रूप में NovaDrive उपयोग कर रहे हैं। व्यक्तिगत सारथी के लिए प्रोफ़ाइल में नाम/चिकित्सा जोड़ें।',
-      ta: '{{name}}, நீங்கள் {{mode}} ஆக NovaDrive பயன்படுத்துகிறீர்கள். சுயவிவரத்தில் பெயர்/மருத்துவம் சேர்க்கவும்.',
+      en: '{{name}}, you are using Margi as {{mode}}. Add your name and medical info in Profile for personalized Sarthi and packet handoff.',
+      hi: '{{name}}, आप {{mode}} के रूप में Margi उपयोग कर रहे हैं। व्यक्तिगत सारथी के लिए प्रोफ़ाइल में नाम/चिकित्सा जोड़ें।',
+      ta: '{{name}}, நீங்கள் {{mode}} ஆக Margi பயன்படுத்துகிறீர்கள். சுயவிவரத்தில் பெயர்/மருத்துவம் சேர்க்கவும்.',
     },
   },
 ];

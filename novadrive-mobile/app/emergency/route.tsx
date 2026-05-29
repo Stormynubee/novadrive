@@ -5,7 +5,7 @@ import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { FacilityCard } from '../../src/components/FacilityCard';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { rankFacilities } from '../../src/lib/facilitiesDb';
 import { EMERGENCY_RESPONSE_PATH } from '../../src/lib/emergency/emergencyNavigation';
@@ -36,7 +36,7 @@ export default function RouteScreen() {
         title="Route"
         subtitle="Capture your location first."
         showBack
-        footer={<NovaButton label="Back to locate" onPress={() => router.replace('/emergency/locate')} large />}
+        footer={<MargiButton label="Back to locate" onPress={() => router.replace('/emergency/locate')} large />}
       >
         {null}
       </EmergencyStepShell>
@@ -51,7 +51,7 @@ export default function RouteScreen() {
         subtitle="Complete trauma response assessment first."
         showBack
         footer={
-          <NovaButton
+          <MargiButton
             label="Back to response"
             onPress={() => router.replace(EMERGENCY_RESPONSE_PATH as Href)}
             large
@@ -71,7 +71,7 @@ export default function RouteScreen() {
         subtitle="Notify 108 / police. No hospital routing for BLACK tag."
         showBack
         footer={
-          <NovaButton label="Build packet for 108" onPress={() => router.push('/emergency/packet')} large />
+          <MargiButton label="Build packet for 108" onPress={() => router.push('/emergency/packet')} large />
         }
       >
         {null}
@@ -89,13 +89,13 @@ export default function RouteScreen() {
 
   const footer = (
     <>
-      <NovaButton
+      <MargiButton
         label="Build Golden Hour Packet"
         onPress={() => goPacket(list.find((x) => x.id === selected))}
         large
         disabled={!selected && list.length > 0}
       />
-      <NovaButton label="Call 108" onPress={() => Linking.openURL('tel:108')} variant="ghost" />
+      <MargiButton label="Call 108" onPress={() => Linking.openURL('tel:108')} variant="ghost" />
     </>
   );
 
@@ -115,7 +115,7 @@ export default function RouteScreen() {
             No facilities within 100 km in the offline pack. Call 108 — expand the regional POI
             seed for your state to extend the routing range.
           </HudText>
-          <NovaButton
+          <MargiButton
             label="Build packet anyway (108)"
             onPress={() =>
               goPacket({

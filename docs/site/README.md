@@ -1,4 +1,4 @@
-# NovaDrive Team Brief — Site & PDF
+# Margi Team Brief — Site & PDF
 
 Static site for the hackathon team brief. Deployed on Vercel.
 
@@ -8,13 +8,13 @@ Static site for the hackathon team brief. Deployed on Vercel.
 node docs/site/build-docs.js
 ```
 
-Source: [`../NOVADRIVE_MASTER_BRIEF.md`](../NOVADRIVE_MASTER_BRIEF.md) → `index.html`
+Source: [`../MARGI_MASTER_BRIEF.md`](../MARGI_MASTER_BRIEF.md) → `index.html`
 
 ## Complete UI brief (HTML)
 
-**Live:** [roadsafetyhackathon-six.vercel.app/novadrive-complete.html](https://roadsafetyhackathon-six.vercel.app/novadrive-complete.html)
+**Live:** [roadsafetyhackathon-six.vercel.app/margi-complete.html](https://roadsafetyhackathon-six.vercel.app/margi-complete.html)
 
-**Local file:** `docs/site/novadrive-complete.html`
+**Local file:** `docs/site/margi-complete.html`
 
 ## PDF
 

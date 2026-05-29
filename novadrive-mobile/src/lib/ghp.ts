@@ -1,5 +1,6 @@
 import * as Crypto from 'expo-crypto';
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
+import { GHP_HASH_PREFIX, GHP_SMS_HEADER } from './brand';
 import { formatIceLine } from './storage';
 import type { EmergencySession, GoldenHourPacket, MedicalProfile } from './types';
 
@@ -12,7 +13,7 @@ export async function hashPayload(payload: string): Promise<string> {
     Crypto.CryptoDigestAlgorithm.SHA256,
     payload
   );
-  return `nd-${digest.slice(0, 8)}`;
+  return `${GHP_HASH_PREFIX}-${digest.slice(0, 8)}`;
 }
 
 const DISPATCH_108: EmergencySession['facility'] = {
@@ -72,7 +73,7 @@ export function formatSms(packet: GoldenHourPacket, medical?: MedicalProfile): s
   const loc = packet.location;
   const line = loc.landmark ?? `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
   let body =
-    `NOVADRIVE GHP\n` +
+    `${GHP_SMS_HEADER}\n` +
     `Triage: ${packet.triage}\n` +
     `Location: ${line}\n` +
     `Facility: ${packet.routing.facilityName} (~${Math.round(packet.routing.distanceKm)}km, ~${packet.routing.etaMinutes}min)\n` +

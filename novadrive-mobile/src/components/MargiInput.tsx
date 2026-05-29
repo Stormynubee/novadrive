@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { Platform, StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 import { tokens } from '../theme/tokens';
 
-/**
- * Strict, rectangular input — 1px navy border, thickens to 2px on focus (DESIGN.md §Inputs).
- * Persistent labels are placed by the call-site above the field, NOT inside.
- */
-export function NovaInput(props: TextInputProps & { multiline?: boolean }) {
+export function MargiInput(props: TextInputProps & { multiline?: boolean }) {
   const [focused, setFocused] = useState(false);
   return (
     <View style={[styles.wrap, focused && styles.focused]}>
@@ -38,7 +34,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: tokens.primary,
     margin: -1,
-    // keep visual stable on Android — don't add expensive shadows during focus.
     ...(Platform.OS === 'android'
       ? {}
       : {

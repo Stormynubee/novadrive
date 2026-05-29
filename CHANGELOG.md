@@ -1,8 +1,25 @@
 # Changelog
 
-All notable changes to the NovaDrive monorepo (IIT Madras Road Safety Hackathon 2026, RoadSoS).
+All notable changes to the Margi monorepo (IIT Madras Road Safety Hackathon 2026, RoadSoS).  
+Product was previously shipped as **Margi**; rebrand to **Margi** in v1.5.0.
 
 **Full commit-by-commit history with tags and fork link:** [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md)
+
+## [2026-05-28] — Margi rebrand (Care Path)
+
+### Added
+
+- **Margi** product identity: Care Path design tokens (`#0056b3` / `#ff8c00`), `src/lib/brand.ts`, `MargiLogo`, `Margi*` UI components.
+- Native IDs: `com.margi.app`, deep link scheme `margi://`.
+- Design spec: [docs/superpowers/specs/2026-05-28-margi-rebrand-design.md](docs/superpowers/specs/2026-05-28-margi-rebrand-design.md).
+
+### Changed
+
+- GHP SMS header `MARGI GHP`, integrity hash prefix `mg-` (QR envelope `ND1:` unchanged).
+- Splash, onboarding, and tab chrome use Margi branding.
+- See [novadrive-mobile/assets/MARGI_ASSETS.md](novadrive-mobile/assets/MARGI_ASSETS.md) for store icon regeneration after adding `margi-logo-source.png`.
+
+---
 
 ## [2026-05-28] — Distress voice detection hardening
 

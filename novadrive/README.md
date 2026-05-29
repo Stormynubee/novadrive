@@ -1,4 +1,4 @@
-# NovaDrive Web (prototype)
+# Margi Web (prototype)
 
 Next.js mirror of the emergency flow for team demos and quick iteration. **Judges should use `novadrive-mobile/`** for APK, sensors, camera, and SMS.
 

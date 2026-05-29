@@ -1,4 +1,4 @@
-# NovaDrive Stabilization Design Spec
+# Margi Stabilization Design Spec
 
 **Date:** 2026-05-23  
 **Status:** Implemented (phased rollout)  

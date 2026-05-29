@@ -1,7 +1,7 @@
 # Sarthi Assistant — Design Spec
 
-**Sarthi — AI Assistant · Powered by NovaDrive**  
-Road safety co-pilot for IIT Madras RoadSoS / NovaDrive mobile P0.
+**Sarthi — AI Assistant · Powered by Margi**  
+Road safety co-pilot for IIT Madras RoadSoS / Margi mobile P0.
 
 ## Purpose
 

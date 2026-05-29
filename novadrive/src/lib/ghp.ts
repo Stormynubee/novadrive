@@ -48,7 +48,7 @@ export function formatSms(packet: GoldenHourPacket): string {
     ? `${loc.nhCode ?? 'NH'} km ${loc.nhKm ?? '—'}`
     : `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`;
   return (
-    `NOVADRIVE GHP\n` +
+    `MARGI GHP\n` +
     `Triage: ${packet.triage}\n` +
     `Location: ${line}\n` +
     `Facility: ${packet.routing.facilityName} (${packet.routing.distanceKm}km ~${packet.routing.etaMinutes}m)\n` +

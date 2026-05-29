@@ -50,7 +50,7 @@ describe('buildPacket', () => {
   it('builds packet with integrity hash', async () => {
     const packet = await buildPacket(baseSession(), { bloodType: 'O+' });
     expect(packet?.triage).toBe('YELLOW');
-    expect(packet?.integrity).toMatch(/^nd-[a-f0-9]{8}$/);
+    expect(packet?.integrity).toMatch(/^mg-[a-f0-9]{8}$/);
     expect(packet?.routing.facilityName).toBe('Govt GH');
   });
 });
@@ -60,7 +60,7 @@ describe('formatSms', () => {
     const packet = await buildPacket(baseSession());
     expect(packet).not.toBeNull();
     const sms = formatSms(packet!, { bloodType: 'B+' });
-    expect(sms).toContain('NOVADRIVE GHP');
+    expect(sms).toContain('MARGI GHP');
     expect(sms).toContain('YELLOW');
     expect(sms).toContain('OMR Junction');
     expect(sms).toContain('Hash:');
@@ -86,10 +86,10 @@ describe('qr encode/decode', () => {
 });
 
 describe('hashPayload', () => {
-  it('returns stable nd- prefix', async () => {
+  it('returns stable mg- prefix', async () => {
     const h1 = await hashPayload('{"a":1}');
     const h2 = await hashPayload('{"a":1}');
     expect(h1).toBe(h2);
-    expect(h1).toMatch(/^nd-/);
+    expect(h1).toMatch(/^mg-/);
   });
 });

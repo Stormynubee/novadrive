@@ -44,7 +44,7 @@ export default function RelayPage() {
       <p className="mb-6 text-sm text-[var(--nova-muted)]">
         {online
           ? 'Signal available — SMS 108 with pre-filled dispatch packet.'
-          : 'Show QR to a bystander. They scan in NovaDrive and relay when they have signal.'}
+          : 'Show QR to a bystander. They scan in Margi and relay when they have signal.'}
       </p>
 
       {packet && (
@@ -59,7 +59,7 @@ export default function RelayPage() {
               aria-label="Distress QR code"
             />
             <p className="mt-4 text-center text-xs text-[var(--nova-muted)]">
-              Scan with NovaDrive → Scan distress QR
+              Scan with Margi → Scan distress QR
             </p>
           </div>
           <div className="mt-4">

@@ -11,8 +11,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
-import { NovaButton } from '../../src/components/NovaButton';
-import { NovaTopBar } from '../../src/components/NovaTopBar';
+import { MargiButton } from '../../src/components/MargiButton';
+import { MargiTopBar } from '../../src/components/MargiTopBar';
 import { ScreenEnter } from '../../src/components/ScreenEnter';
 import { StarRating } from '../../src/components/StarRating';
 import {
@@ -67,7 +67,7 @@ export default function PreTripFeedbackScreen() {
   return (
     <ScreenEnter variant="slide">
       <View style={styles.root}>
-        <NovaTopBar
+        <MargiTopBar
           title="PRE-TRIP PULSE"
           subtitle="Quick corridor note"
           showBack
@@ -133,13 +133,13 @@ export default function PreTripFeedbackScreen() {
             />
           </HudCard>
 
-          <NovaButton
+          <MargiButton
             label={busy ? 'Saving…' : 'Save note'}
             onPress={submit}
             large
             disabled={busy}
           />
-          <NovaButton label="Cancel" onPress={() => router.back()} variant="ghost" />
+          <MargiButton label="Cancel" onPress={() => router.back()} variant="ghost" />
         </ScrollView>
       </View>
     </ScreenEnter>

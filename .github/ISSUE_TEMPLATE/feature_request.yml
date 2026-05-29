@@ -22,4 +22,4 @@ body:
       label: Scope check
       options:
         - label: Does not require auto-dial or always-on mic ML
-        - label: Documented in or aligned with NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md
+        - label: Documented in or aligned with MARGI_FINAL_IMPLEMENTATION_PLAN.md

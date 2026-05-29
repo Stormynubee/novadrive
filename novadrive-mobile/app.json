@@ -1,32 +1,32 @@
 {
   "expo": {
-    "name": "NovaDrive",
+    "name": "Margi",
     "slug": "novadrive-mobile",
-    "version": "1.0.0",
+    "version": "1.5.0",
     "orientation": "portrait",
-    "scheme": "novadrive",
+    "scheme": "margi",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#000a1e"
+      "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.novadrive.app",
+      "bundleIdentifier": "com.margi.app",
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "NovaDrive uses your location during an active journey to route emergencies and build the Golden Hour Packet.",
-        "NSCameraUsageDescription": "NovaDrive uses the camera to scan bystander relay QR codes.",
-        "NSMicrophoneUsageDescription": "NovaDrive records short emergency audio during Naari Shakti distress activation and may listen for distress sounds during an active journey.",
-        "NSPhotoLibraryUsageDescription": "NovaDrive uses your photo library so if you choose a profile picture."
+        "NSLocationWhenInUseUsageDescription": "Margi uses your location during an active journey to route emergencies and build the Golden Hour Packet.",
+        "NSCameraUsageDescription": "Margi uses the camera to scan bystander relay QR codes.",
+        "NSMicrophoneUsageDescription": "Margi records short emergency audio during Naari Shakti distress activation and may listen for distress sounds during an active journey.",
+        "NSPhotoLibraryUsageDescription": "Margi uses your photo library so you can choose a profile picture."
       }
     },
     "android": {
-      "package": "com.novadrive.app",
+      "package": "com.margi.app",
       "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
-        "backgroundColor": "#000a1e",
+        "backgroundColor": "#ffffff",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -49,26 +49,26 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "NovaDrive uses location during an active journey for emergency routing."
+          "locationWhenInUsePermission": "Margi uses your location during an active journey to route emergencies and build the Golden Hour Packet."
         }
       ],
       [
         "expo-camera",
         {
-          "cameraPermission": "NovaDrive scans QR codes so bystanders can relay your Golden Hour Packet."
+          "cameraPermission": "Margi uses the camera to scan bystander relay QR codes."
         }
       ],
       "expo-font",
       [
         "expo-audio",
         {
-          "microphonePermission": "NovaDrive listens for distress sounds during an active journey only — nothing is recorded or sent automatically."
+          "microphonePermission": "Margi listens for distress sounds during an active journey only — nothing is recorded or sent automatically."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "NovaDrive uses your photo library when you choose a profile picture."
+          "photosPermission": "Margi uses your photo library when you choose a profile picture."
         }
       ]
     ],

@@ -2,7 +2,7 @@ import { type Href, router } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { NaariShaktiHero } from '../src/components/naari/NaariShaktiHero';
 import { NaariEmergencyButton } from '../src/components/naari/NaariEmergencyButton';
 import { NaariQuickActions } from '../src/components/naari/NaariQuickActions';
@@ -90,7 +90,7 @@ export default function NaariShaktiScreen() {
 
   return (
     <View style={styles.root}>
-      <NovaTopBar title="NOVA DRIVE" showBack />
+      <MargiTopBar title="Margi" showBack />
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 32 }]}
         showsVerticalScrollIndicator={false}

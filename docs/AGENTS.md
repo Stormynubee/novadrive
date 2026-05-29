@@ -1,4 +1,4 @@
-# NovaDrive — AI agent guide
+# Margi — AI agent guide
 
 For **Team Vortex** and judges using Cursor (or similar) on this repo.
 
@@ -17,7 +17,7 @@ For **Team Vortex** and judges using Cursor (or similar) on this repo.
 1. **Safety-critical logic** in `novadrive-mobile/src/lib/` — use TDD: failing test first, minimal fix, green suite.
 2. **Do not change** START triage FSM outcomes or GHP wire format without updating tests.
 3. **Never commit** `.env`, API keys, or `data/*.db`.
-4. Before claiming “done” on mobile: `npm run typecheck` and `npm test` in `novadrive-mobile`.
+4. Before claiming “done” on mobile: `npm run typecheck`, `npm test`, `npm run verify:docs`, and `npm run verify:branding` in `novadrive-mobile`.
 5. Optional device check: [DEVICE_SMOKE_MATRIX.md](../novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md).
 
 ## Recommended Cursor skills (install locally)

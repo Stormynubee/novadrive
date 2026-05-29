@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
+import { tokens } from '../theme/tokens';
 import { useThemeTokens } from '../theme/useThemeTokens';
 
 type Accent = 'primary' | 'secondary' | 'tertiary' | 'danger' | 'none';
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderWidth: 1,
     elevation: 2,
-    shadowColor: '#000a1e',
+    shadowColor: tokens.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,

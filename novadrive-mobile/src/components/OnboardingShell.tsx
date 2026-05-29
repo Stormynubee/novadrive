@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HudText } from './HudText';
-import { NovaLogo } from './NovaLogo';
+import { MargiLogo } from './MargiLogo';
 import { tokens } from '../theme/tokens';
 
 /**
  * Onboarding wrapper used by /auth, /medical, /accessibility. White GovTech surface, miniature
- * NovaDrive emblem, persistent step indicator (4px navy filled / saffron-on-current).
+ * Margi emblem, persistent step indicator (4px navy filled / saffron-on-current).
  */
 export function OnboardingShell({
   step,
@@ -37,7 +37,7 @@ export function OnboardingShell({
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.brandRow}>
-            <NovaLogo size={36} showWordmark={false} />
+            <MargiLogo size={36} showWordmark={false} />
             <View>
               <HudText
                 variant="headlineMd"
@@ -47,7 +47,7 @@ export function OnboardingShell({
                   color: tokens.primary,
                 }}
               >
-                NOVA DRIVE
+                Margi
               </HudText>
               <HudText variant="mono" style={styles.kicker}>
                 Government of India · IIT Madras

@@ -13,7 +13,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import QRCode from 'react-native-qrcode-svg';
 import { HudText } from '../../src/components/HudText';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { FirstAidBoard } from '../../src/components/emergency/FirstAidBoard';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { TraumaCenterPanel } from '../../src/components/emergency/TraumaCenterPanel';
@@ -279,7 +279,7 @@ export default function TraumaResponseScreen() {
               Distance {session.location ? 'live' : 'approx'} · 2.4 km
             </HudText>
           </View>
-          <NovaButton label="Open Route" onPress={() => router.push('/emergency/route' as Href)} />
+          <MargiButton label="Open Route" onPress={() => router.push('/emergency/route' as Href)} />
         </View>
 
         <View style={styles.qrCard}>
@@ -304,14 +304,14 @@ export default function TraumaResponseScreen() {
         </View>
 
         <View style={styles.bottomActions}>
-          <NovaButton
+          <MargiButton
             label={busy ? 'Dispatching...' : 'Refresh Dispatch Status'}
             onPress={() => void runDispatch()}
             variant="ghost"
             disabled={busy}
           />
-          <NovaButton label="Proceed to Facility Routing" onPress={() => router.push('/emergency/route' as Href)} large />
-          <NovaButton
+          <MargiButton label="Proceed to Facility Routing" onPress={() => router.push('/emergency/route' as Href)} large />
+          <MargiButton
             label="Cancel SOS"
             onPress={() => {
               resetEmergency();

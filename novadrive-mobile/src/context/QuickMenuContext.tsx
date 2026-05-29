@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import { NovaQuickMenuSheet } from '../components/NovaQuickMenuSheet';
+import { MargiQuickMenuSheet } from '../components/MargiQuickMenuSheet';
 
 type QuickMenuContextValue = {
   openMenu: () => void;
@@ -24,7 +24,7 @@ export function QuickMenuProvider({ children }: { children: ReactNode }) {
   return (
     <QuickMenuContext.Provider value={value}>
       {children}
-      <NovaQuickMenuSheet visible={open} onClose={closeMenu} />
+      <MargiQuickMenuSheet visible={open} onClose={closeMenu} />
     </QuickMenuContext.Provider>
   );
 }

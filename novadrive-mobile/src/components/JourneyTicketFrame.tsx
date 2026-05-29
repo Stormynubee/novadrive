@@ -23,7 +23,7 @@ export function JourneyTicketFrame({
       <View style={styles.ticket}>
         <View style={styles.topStripe}>
           <HudText variant="mono" style={styles.stripeLabel}>
-            NOVADRIVE · JOURNEY MANIFEST
+            MARGI · JOURNEY MANIFEST
           </HudText>
           <HudText variant="mono" style={styles.serial}>
             #{serial}

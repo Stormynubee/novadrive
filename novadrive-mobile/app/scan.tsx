@@ -6,8 +6,8 @@ import * as Linking from 'expo-linking';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudCard } from '../src/components/HudCard';
 import { HudText } from '../src/components/HudText';
-import { NovaButton } from '../src/components/NovaButton';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiButton } from '../src/components/MargiButton';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { ScreenShell } from '../src/components/ScreenShell';
 import { decodeQrPayload, formatSms } from '../src/lib/ghp';
 import { saveRelayPacket } from '../src/lib/storage';
@@ -40,7 +40,7 @@ export default function ScanScreen() {
             Tap below to grant camera access. The camera is used only on this screen, never in
             the background.
           </HudText>
-          <NovaButton
+          <MargiButton
             label="Grant camera"
             onPress={requestPermission}
             variant="secondary"
@@ -56,7 +56,7 @@ export default function ScanScreen() {
     setScanned(true);
     const decoded = decodeQrPayload(data);
     if (!decoded) {
-      Alert.alert('Invalid QR', 'Could not decode the NovaDrive packet.');
+      Alert.alert('Invalid QR', 'Could not decode the Margi packet.');
       setScanned(false);
       return;
     }
@@ -114,7 +114,7 @@ export default function ScanScreen() {
   if (scanned && packet) {
     return (
       <View style={styles.root}>
-        <NovaTopBar title="RELAY RECEIVED" subtitle="Golden Hour Packet" showBack />
+        <MargiTopBar title="RELAY RECEIVED" subtitle="Golden Hour Packet" showBack />
         <ScrollView contentContainerStyle={styles.relayScroll}>
           <HudCard accent="tertiary">
             <View style={styles.relayHead}>
@@ -139,8 +139,8 @@ export default function ScanScreen() {
               {formatSms(packet)}
             </HudText>
           </View>
-          <NovaButton label="SMS 108" onPress={sms} variant="secondary" large />
-          <NovaButton label="Done" onPress={() => router.back()} variant="ghost" />
+          <MargiButton label="SMS 108" onPress={sms} variant="secondary" large />
+          <MargiButton label="Done" onPress={() => router.back()} variant="ghost" />
         </ScrollView>
       </View>
     );
@@ -165,7 +165,7 @@ export default function ScanScreen() {
       </View>
       <View style={styles.hint}>
         <HudText variant="bodyMd" style={styles.hintText}>
-          Point at a NovaDrive relay QR
+          Point at a Margi relay QR
         </HudText>
       </View>
     </View>

@@ -1,52 +1,50 @@
 /**
- * NovaDrive — GovTech design tokens (Stitch nova_drive_design_system/DESIGN.md).
+ * Margi — Care Path design tokens (logo: heart, path, vitality).
  *
- * Light, institutional, navy-forward. Saffron is reserved for urgent action; green for "safe".
- * Old amber/cyan slot keys (`primary`, `secondary`, `tertiary`) are preserved so the rest of the
- * app keeps compiling, but the values now point at the new GovTech palette.
+ * Light, trustworthy surfaces. Royal blue brand chrome; orange for urgent action; green for safe.
  */
 export const tokens = {
   // ── surfaces ───────────────────────────────────────────────────────────
-  background: '#f8f9fa',
+  background: '#f8f9fb',
   surface: '#ffffff',
   surfaceContainerLowest: '#ffffff',
-  surfaceContainerLow: '#f3f4f5',
-  surfaceContainer: '#edeeef',
-  surfaceContainerHigh: '#e7e8e9',
-  surfaceContainerHighest: '#e1e3e4',
-  surfaceDim: '#d9dadb',
-  inverseSurface: '#2e3132',
-  inverseOnSurface: '#f0f1f2',
+  surfaceContainerLow: '#f3f5f8',
+  surfaceContainer: '#e8ecf2',
+  surfaceContainerHigh: '#dde3eb',
+  surfaceContainerHighest: '#d1d9e4',
+  surfaceDim: '#c8d0dc',
+  inverseSurface: '#1a2a3d',
+  inverseOnSurface: '#f0f4f8',
 
   // ── ink ────────────────────────────────────────────────────────────────
-  onSurface: '#191c1d',
-  onSurfaceVariant: '#44474e',
-  outline: '#74777f',
-  outlineVariant: '#c4c6cf',
-  innerHighlight: 'rgba(0,10,30,0.06)',
+  onSurface: '#1a2a3d',
+  onSurfaceVariant: '#4a5568',
+  outline: '#6b7280',
+  outlineVariant: '#c5cdd8',
+  innerHighlight: 'rgba(0,86,179,0.06)',
 
-  // ── primary (Deep Navy: brand chrome + primary CTAs) ───────────────────
-  primary: '#000a1e',
+  // ── primary (Royal Blue: brand + primary CTAs) ─────────────────────────
+  primary: '#0056b3',
   onPrimary: '#ffffff',
-  primaryContainer: '#002147',
-  onPrimaryContainer: '#708ab5',
-  primaryFixed: '#d6e3ff',
-  primaryFixedDim: '#aec7f6',
-  inversePrimary: '#aec7f6',
+  primaryContainer: '#d6e8f7',
+  onPrimaryContainer: '#003d80',
+  primaryFixed: '#b3d4f0',
+  primaryFixedDim: '#7eb8e8',
+  inversePrimary: '#7eb8e8',
 
-  // ── secondary (Emergency Saffron: urgent action + active state) ────────
-  secondary: '#fe6b00',
+  // ── secondary (Vibrant Orange: urgent action + active state) ─────────────
+  secondary: '#ff8c00',
   onSecondary: '#ffffff',
-  secondaryContainer: '#fe6b00',
-  onSecondaryContainer: '#572000',
-  secondaryDeep: '#a04100',
-  secondaryFixed: '#ffdbcc',
-  secondaryFixedDim: '#ffb693',
+  secondaryContainer: '#ffe8cc',
+  onSecondaryContainer: '#5c3d00',
+  secondaryDeep: '#cc7000',
+  secondaryFixed: '#ffd9a8',
+  secondaryFixedDim: '#ffb84d',
 
-  // ── tertiary (Indian Green: safe / verified status) ────────────────────
+  // ── tertiary (Safe Green: verified status) ─────────────────────────────
   tertiary: '#249c53',
   onTertiary: '#ffffff',
-  tertiaryContainer: '#89faa5',
+  tertiaryContainer: '#b8f0c8',
   onTertiaryContainer: '#00210b',
   tertiaryFixedDim: '#6cdd8c',
 
@@ -56,15 +54,15 @@ export const tokens = {
   errorContainer: '#ffdad6',
   onErrorContainer: '#93000a',
 
-  // ── triage colors (carry over from MARS START) ─────────────────────────
+  // ── triage colors (MARS START) ─────────────────────────────────────────
   triage: {
     red: '#ba1a1a',
-    yellow: '#fe6b00',
+    yellow: '#ff8c00',
     green: '#249c53',
     black: '#44474e',
   },
 
-  // ── shape & spacing (Soft Level 1: 4–12px) ─────────────────────────────
+  // ── shape & spacing ────────────────────────────────────────────────────
   radius: {
     button: 8,
     card: 12,
@@ -75,24 +73,24 @@ export const tokens = {
   },
   spacing: { base: 8, gutter: 16, sideMargin: 24, stackSm: 8, stackMd: 16, stackLg: 32 },
 
-  // ── elevation (subtle gradients, not heavy shadows) ────────────────────
+  // ── elevation ──────────────────────────────────────────────────────────
   elevation: {
     card: {
-      shadowColor: '#000a1e',
-      shadowOpacity: 0.04,
+      shadowColor: '#0056b3',
+      shadowOpacity: 0.06,
       shadowRadius: 4,
       shadowOffset: { width: 0, height: 1 },
       elevation: 1,
     },
     floating: {
-      shadowColor: '#000a1e',
-      shadowOpacity: 0.08,
+      shadowColor: '#0056b3',
+      shadowOpacity: 0.1,
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
       elevation: 4,
     },
     sos: {
-      shadowColor: '#fe6b00',
+      shadowColor: '#ff8c00',
       shadowOpacity: 0.45,
       shadowRadius: 24,
       shadowOffset: { width: 0, height: 6 },

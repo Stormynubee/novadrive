@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { View, StyleSheet } from 'react-native';
-import { NovaTabBar } from '../../src/components/NovaTabBar';
+import { MargiTabBar } from '../../src/components/MargiTabBar';
 import { SarthiOverlayBridge } from '../../src/components/sarthi/SarthiOverlayBridge';
 import { QuickMenuProvider } from '../../src/context/QuickMenuContext';
 import { tokens } from '../../src/theme/tokens';
@@ -22,7 +22,7 @@ export default function TabsLayout() {
         <Tabs.Screen name="history" />
         <Tabs.Screen name="profile" />
       </Tabs>
-      <NovaTabBar />
+      <MargiTabBar />
       <SarthiOverlayBridge />
     </View>
     </QuickMenuProvider>

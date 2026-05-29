@@ -13,9 +13,9 @@ export const sarthiStrings = {
     ta: 'நான் உங்களுக்கு உதவ இங்கே இருக்கிறேன்.',
   },
   welcome: {
-    en: '{{name}}, I am Sarthi — powered by NovaDrive. Encrypted session started. Ask about your corridor, SOS, or safety plan.',
-    hi: '{{name}}, मैं सारथी हूँ — NovaDrive द्वारा संचालित। सुरक्षित सत्र शुरू। कॉरिडोर, SOS या सुरक्षा योजना पूछें।',
-    ta: '{{name}}, நான் சார்த்தி — NovaDrive மூலம். பாதுகாப்பான அமர்வு தொடங்கியது. காரிடார், SOS அல்லது பாதுகாப்பு திட்டம் கேளுங்கள்.',
+    en: '{{name}}, I am Sarthi — powered by Margi. Encrypted session started. Ask about your corridor, SOS, or safety plan.',
+    hi: '{{name}}, मैं सारथी हूँ — Margi द्वारा संचालित। सुरक्षित सत्र शुरू। कॉरिडोर, SOS या सुरक्षा योजना पूछें।',
+    ta: '{{name}}, நான் சார்த்தி — Margi மூலம். பாதுகாப்பான அமர்வு தொடங்கியது. காரிடார், SOS அல்லது பாதுகாப்பு திட்டம் கேளுங்கள்.',
   },
   fallback: {
     en: '{{name}}, I am Sarthi. Ask about corridors, SOS, triage, breakdowns, or offline safety. Profile → Settings for language.',

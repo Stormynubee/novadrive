@@ -1,41 +1,43 @@
-# Design System: NovaDrive Mobile (Night-Highway HUD)
+# Design System: Margi (Care Path)
 
-**Source:** Stitch export `stitch_nova_drive_mobile_interface/night_highway_hud/DESIGN.md`  
-**Reference screens:** `drive_dashboard`, `journey_telemetry_init`, `journey_departure_transition_2`
+**Product:** Margi — highway safety co-pilot (IIT Madras RoadSoS 2026)  
+**Logo:** Two figures forming a heart around a winding path and EKG pulse — royal blue `#0056b3` and orange `#ff8c00`.
 
 ## 1. Visual Theme & Atmosphere
 
-A **nocturnal highway HUD** — calm authority, not panic UI. Dark void backgrounds with amber navigation actions and cyan live telemetry. Glass-tonal cards with thin borders, no drop shadows. Bottom tab bar uses amber squircle for the active drive tab.
+**Care Path** — compassionate, institutional, light. Trust on white and soft gray-blue surfaces; urgency via orange, not alarm-red chrome. Rounded shapes echo the logo curves.
 
 ## 2. Color Palette & Roles
 
 | Name | Hex | Role |
 |------|-----|------|
-| Void Navy | `#0c1321` | App background |
-| Surface Low | `#151b2a` | Tab bar, secondary tiles |
-| Surface High | `#232a39` | Hero cards |
-| Signal Amber | `#fbbf24` | Primary CTAs, active tab, Start Journey |
-| On Amber | `#6c4f00` | Text on amber buttons |
-| Telemetry Cyan | `#5de6ff` | Live GPS, speed, progress fills |
-| System Mint | `#82fbca` | “System secure” status dot |
-| Ice Text | `#dce2f6` | Primary copy |
-| Warm Fog | `#d3c5ac` | Secondary copy |
-| Error Rose | `#ffb4ab` | SOS accents |
+| Canvas | `#f8f9fb` | App background |
+| Surface | `#ffffff` | Cards, sheets |
+| Royal Blue | `#0056b3` | Primary CTAs, wordmark, tab chrome |
+| Vibrant Orange | `#ff8c00` | SOS, urgent actions, active tab accent |
+| Safe Green | `#249c53` | Verified / system secure |
+| Ink | `#1a2a3d` | Primary copy |
+| Muted | `#4a5568` | Secondary copy |
+| Error | `#ba1a1a` | Critical alerts |
 
 ## 3. Typography
 
-- **Sora / Syne** — wordmark, headlines, speed display  
-- **DM Sans** — body  
-- **JetBrains Mono** — labels (`SYS.CHECK`, `km / h`, step headers)
+- **Hanken Grotesk** — wordmark **Margi**, headlines
+- **Public Sans** — body
+- **JetBrains Mono** — journey HUD labels (`km/h`, `SYS.CHECK`)
 
 ## 4. Component Stylings
 
-- **Start Journey:** Single amber button *inside* hero card — no duplicate outer box  
-- **Dashboard header:** Hex icon + NOVADRIVE + “System secure” (not “Co-pilot ready”)  
-- **Bottom tabs:** Speed (drive), Explore, History, Settings — amber fill when active  
-- **Telemetry init:** Reticle circles + modal card + thin cyan progress (not misaligned dot-line)  
-- **Journey HUD:** Large cyan speed, Impact watch + Voice watch shields, Test impact / Test scream pills, red Hold SOS  
+- **Primary button:** Royal blue fill, white label, 8px radius
+- **Urgent button:** Orange fill (`secondary`)
+- **Cards:** White surface, 12px radius, subtle blue-tint shadow
+- **Splash:** White field, centered logo, tagline, orange “Get started”
+- **Journey HUD:** High contrast — blue telemetry, orange SOS hold
 
 ## 5. Layout Principles
 
-16px mobile gutters, 96px bottom inset for tab bar, hero card 24px padding, action grid 2 columns for SOS + QR only. Settings and profile via tab + stack screens.
+16px gutters, 96px bottom inset for tab bar, generous whitespace on onboarding.
+
+## 6. Logo
+
+Use `MargiLogo` component. Do not stretch below 48px width. Clear space = height of the “M” cap height on all sides.

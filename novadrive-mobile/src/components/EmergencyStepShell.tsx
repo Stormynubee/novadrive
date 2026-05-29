@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useApp } from '../context/AppContext';
 import { HudText } from './HudText';
-import { NovaTopBar } from './NovaTopBar';
+import { MargiTopBar } from './MargiTopBar';
 import { ProgressRail, type RailStep } from './ProgressRail';
 import { tokens } from '../theme/tokens';
 
@@ -42,7 +42,7 @@ export function EmergencyStepShell({
       style={[styles.safe, a11y.highContrast && styles.highContrast]}
       edges={['bottom']}
     >
-      <NovaTopBar title="EMERGENCY" subtitle={`Step ${n} · ${step}`} showBack={showBack} />
+      <MargiTopBar title="EMERGENCY" subtitle={`Step ${n} · ${step}`} showBack={showBack} />
       <ScrollView
         contentContainerStyle={styles.scroll}
         keyboardShouldPersistTaps="handled"

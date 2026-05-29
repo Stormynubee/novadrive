@@ -32,4 +32,4 @@ Gender-gated women’s safety portal inside Nova Drive mobile: home access card,
 
 ## Visual source
 
-User HTML mockups: home card, protocol modal, portal dashboard (GovTech navy + saffron).
+User HTML mockups: home card, protocol modal, portal dashboard (Care Path royal blue + saffron).

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** Implement task-by-task. Medical spine unchanged.
 
-**Goal:** Ship Command Bridge rebrand (A+C+D) across NovaDrive mobile.
+**Goal:** Ship Command Bridge rebrand (A+C+D) across Margi mobile.
 
 **Architecture:** Theme tokens → Hud* components → screen migrations in 3 phases.
 

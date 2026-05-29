@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping improve NovaDrive.
+Thanks for helping improve Margi.
 
 ## Repository map
 
@@ -37,6 +37,8 @@ node docs/site/build-docs.js
    ```bash
    npm run typecheck
    npm test
+   npm run verify:docs
+   npm run verify:branding
    ```
 4. Do not commit secrets, `.env`, or generated `data/*.db`
 5. For journey/safety UI changes, run the [device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) on a physical device when you can
@@ -52,7 +54,7 @@ For new behavior or bug fixes in `novadrive-mobile/src/lib/`:
 
 ## Medical / safety changes
 
-Changes to `startTriageFSM.ts`, `crashEngine.ts`, `ghp.ts`, or `parseEmergencyText.ts` **must** include or update unit tests. Follow START rules in [`docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md`](docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md) §8.
+Changes to `startTriageFSM.ts`, `crashEngine.ts`, `ghp.ts`, or `parseEmergencyText.ts` **must** include or update unit tests. Follow START rules in [`docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md`](docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md) §8.
 
 ## AI assistants
 

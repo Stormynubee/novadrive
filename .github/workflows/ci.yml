@@ -8,7 +8,7 @@ on:
 
 jobs:
   mobile-fsm:
-    name: NovaDrive mobile — FSM tests
+    name: Margi mobile — FSM tests
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -23,9 +23,11 @@ jobs:
       - run: npm install --legacy-peer-deps
       - run: npm run typecheck
       - run: npm test
+      - run: npm run verify:docs
+      - run: npm run verify:branding
 
   web-build:
-    name: NovaDrive web — production build
+    name: Margi web — production build
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -5,7 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { formatSms } from '../../src/lib/ghp';
 import { saveRelayPacket } from '../../src/lib/storage';
@@ -67,7 +67,7 @@ function StepBlock({
           }
         />
       </View>
-      <NovaButton
+      <MargiButton
         label={cta.label}
         onPress={cta.onPress}
         variant={cta.variant ?? 'ghost'}
@@ -111,7 +111,7 @@ export default function RelayScreen() {
       subtitle="When signal returns, one tap dials 108 with a human-readable packet."
       showBack
       footer={
-        <NovaButton
+        <MargiButton
           label="Finish & return home"
           variant="secondary"
           large

@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudCard } from '../src/components/HudCard';
 import { HudText } from '../src/components/HudText';
-import { NovaButton } from '../src/components/NovaButton';
-import { NovaInput } from '../src/components/NovaInput';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiButton } from '../src/components/MargiButton';
+import { MargiInput } from '../src/components/MargiInput';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { OnboardingShell } from '../src/components/OnboardingShell';
 import { GenderIdentityPicker } from '../src/components/GenderIdentityPicker';
 import { useApp } from '../src/context/AppContext';
@@ -45,7 +45,7 @@ function EmergencyContactCard({
       <HudText variant="mono" style={contactStyles.fieldLabel}>
         Full Name
       </HudText>
-      <NovaInput
+      <MargiInput
         value={contact.fullName}
         onChangeText={(t) => onChange({ ...contact, fullName: t })}
         placeholder="e.g. Sarah Jenkins"
@@ -53,7 +53,7 @@ function EmergencyContactCard({
       <HudText variant="mono" style={contactStyles.fieldLabel}>
         Relationship
       </HudText>
-      <NovaInput
+      <MargiInput
         value={contact.relationship}
         onChangeText={(t) => onChange({ ...contact, relationship: t })}
         placeholder="e.g. Spouse, Parent, Sibling"
@@ -61,7 +61,7 @@ function EmergencyContactCard({
       <HudText variant="mono" style={contactStyles.fieldLabel}>
         Phone Number
       </HudText>
-      <NovaInput
+      <MargiInput
         value={contact.phone}
         onChangeText={(t) => onChange({ ...contact, phone: t })}
         placeholder="+91 98765 43210"
@@ -170,7 +170,7 @@ export default function MedicalScreen() {
         <HudText variant="mono" style={styles.label}>
           Known allergies
         </HudText>
-        <NovaInput
+        <MargiInput
           placeholder="e.g. Penicillin, peanuts"
           value={m.allergies ?? ''}
           onChangeText={(t) => updateField('allergies', t)}
@@ -182,7 +182,7 @@ export default function MedicalScreen() {
         <HudText variant="mono" style={styles.label}>
           Chronic medical conditions
         </HudText>
-        <NovaInput
+        <MargiInput
           placeholder="e.g. Type 2 diabetes, asthma"
           value={m.conditions ?? ''}
           onChangeText={(t) => updateField('conditions', t)}
@@ -194,7 +194,7 @@ export default function MedicalScreen() {
         <HudText variant="mono" style={styles.label}>
           Current medications
         </HudText>
-        <NovaInput
+        <MargiInput
           placeholder="List ongoing prescriptions…"
           value={m.medications ?? ''}
           onChangeText={(t) => updateField('medications', t)}
@@ -219,13 +219,13 @@ export default function MedicalScreen() {
       </HudCard>
 
       <View style={styles.actions}>
-        <NovaButton
+        <MargiButton
           label="Cancel"
           variant="ghost"
           onPress={() => (inProfile ? router.back() : router.replace('/auth' as Href))}
           style={{ flex: 1 }}
         />
-        <NovaButton
+        <MargiButton
           label={inProfile ? 'Save & continue' : 'Save & continue'}
           onPress={save}
           large
@@ -250,7 +250,7 @@ export default function MedicalScreen() {
 
   return (
     <View style={styles.root}>
-      <NovaTopBar title="MEDICAL PROFILE" subtitle="Emergency vault" showBack />
+      <MargiTopBar title="MEDICAL PROFILE" subtitle="Emergency vault" showBack />
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 32 }]}
         keyboardShouldPersistTaps="handled"

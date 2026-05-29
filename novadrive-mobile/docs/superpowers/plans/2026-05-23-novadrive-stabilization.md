@@ -1,8 +1,8 @@
-# NovaDrive Stabilization Implementation Plan
+# Margi Stabilization Implementation Plan
 
 > **For agentic workers:** Use executing-plans or implement task-by-task. Steps use checkbox (`- [ ]`) syntax.
 
-**Goal:** Stabilize NovaDrive mobile (routing, journey safety, tests, Stitch-aligned Trip/HUD) without changing Plan Corridor → Calibration → Live HUD product flow.
+**Goal:** Stabilize Margi mobile (routing, journey safety, tests, Stitch-aligned Trip/HUD) without changing Plan Corridor → Calibration → Live HUD product flow.
 
 **Architecture:** Phased fixes in `AppContext` + safety bridges first; pure helpers in `src/lib` with Jest; shared `PlanCorridorScreen` for Trip tab.
 

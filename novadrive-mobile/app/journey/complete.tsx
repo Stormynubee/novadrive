@@ -16,7 +16,7 @@ import { JourneyTicketFrame } from '../../src/components/JourneyTicketFrame';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
-import { NovaButton } from '../../src/components/NovaButton';
+import { MargiButton } from '../../src/components/MargiButton';
 import { ScreenEnter } from '../../src/components/ScreenEnter';
 import { StarRating } from '../../src/components/StarRating';
 import {
@@ -233,7 +233,7 @@ export default function JourneyCompleteScreen() {
                   multiline
                   maxLength={500}
                 />
-                <NovaButton
+                <MargiButton
                   label={submitting ? 'Saving…' : 'Submit feedback'}
                   onPress={submitFeedback}
                   large
@@ -255,7 +255,7 @@ export default function JourneyCompleteScreen() {
             )}
           </JourneyTicketFrame>
 
-          <NovaButton label="Back to home" onPress={goHome} variant="ghost" />
+          <MargiButton label="Back to home" onPress={goHome} variant="ghost" />
         </ScrollView>
       </View>
     </ScreenEnter>

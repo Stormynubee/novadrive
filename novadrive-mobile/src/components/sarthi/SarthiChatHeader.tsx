@@ -21,7 +21,7 @@ export function SarthiChatHeader({
         </HudText>
         {!compact ? (
           <HudText variant="bodySm" style={styles.subtitle}>
-            Powered by NovaDrive
+            Powered by Margi
           </HudText>
         ) : null}
       </View>

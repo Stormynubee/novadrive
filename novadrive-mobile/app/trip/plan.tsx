@@ -17,8 +17,8 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
-import { NovaInput } from '../../src/components/NovaInput';
-import { NovaTopBar } from '../../src/components/NovaTopBar';
+import { MargiInput } from '../../src/components/MargiInput';
+import { MargiTopBar } from '../../src/components/MargiTopBar';
 import { ScreenEnter } from '../../src/components/ScreenEnter';
 import { TripBriefingCard } from '../../src/components/TripBriefingCard';
 import { useApp } from '../../src/context/AppContext';
@@ -93,7 +93,7 @@ export default function TripPlanScreen() {
   return (
     <ScreenEnter variant="slide" delay={60}>
       <View style={styles.root}>
-        <NovaTopBar
+        <MargiTopBar
           title="PLAN CORRIDOR"
           subtitle="Point A · Point B"
           showBack
@@ -138,12 +138,12 @@ export default function TripPlanScreen() {
                 <HudText variant="mono" style={styles.fieldLabel}>
                   Pickup · GPS
                 </HudText>
-                <NovaInput value={pointA} editable={false} />
+                <MargiInput value={pointA} editable={false} />
                 <View style={{ height: 14 }} />
                 <HudText variant="mono" style={styles.fieldLabel}>
                   Drop-off
                 </HudText>
-                <NovaInput
+                <MargiInput
                   value={pointB}
                   onChangeText={setPointB}
                   placeholder="e.g. Chennai → Trichy (NH48)"
@@ -216,7 +216,7 @@ export default function TripPlanScreen() {
                 </View>
                 <LiveChip label="Offline" tone="safe" />
               </View>
-              <NovaInput
+              <MargiInput
                 value={query}
                 onChangeText={setQuery}
                 placeholder="Filter by keyword (e.g. flood, hospital, police)"

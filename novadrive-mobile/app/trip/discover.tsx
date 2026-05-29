@@ -8,8 +8,8 @@ import { ScreenEnter } from '../../src/components/ScreenEnter';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
 import { LiveChip } from '../../src/components/LiveChip';
-import { NovaButton } from '../../src/components/NovaButton';
-import { NovaTopBar } from '../../src/components/NovaTopBar';
+import { MargiButton } from '../../src/components/MargiButton';
+import { MargiTopBar } from '../../src/components/MargiTopBar';
 import { tokens } from '../../src/theme/tokens';
 
 /**
@@ -27,7 +27,7 @@ export default function RouteDiscoverScreen() {
   return (
     <ScreenEnter variant="slide">
       <View style={styles.root}>
-        <NovaTopBar
+        <MargiTopBar
           title="ROUTE DISCOVERY"
           subtitle="Offline corridor intel"
           showBack
@@ -139,7 +139,7 @@ export default function RouteDiscoverScreen() {
             </HudText>
           </Pressable>
 
-          <NovaButton
+          <MargiButton
             label="Cancel"
             onPress={() => router.back()}
             variant="ghost"

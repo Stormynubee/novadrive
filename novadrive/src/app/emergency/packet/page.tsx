@@ -52,7 +52,7 @@ export default function PacketPage() {
             <button
               type="button"
               className="nova-btn-secondary flex-1"
-              onClick={() => navigator.share?.({ title: 'NovaDrive GHP', text: 'Emergency packet' })}
+              onClick={() => navigator.share?.({ title: 'Margi GHP', text: 'Emergency packet' })}
             >
               <Share2 className="h-4 w-4" aria-hidden />
               Share

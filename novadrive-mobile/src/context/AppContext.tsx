@@ -436,7 +436,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     if (status !== 'granted') {
       Alert.alert(
         'Location needed',
-        'NovaDrive needs location access to monitor your corridor while driving.',
+        'Margi needs location access to monitor your corridor while driving.',
         [{ text: 'OK' }]
       );
       throw new Error('Location permission required for journey mode.');

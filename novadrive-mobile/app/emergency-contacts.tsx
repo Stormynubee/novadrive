@@ -5,9 +5,9 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudCard } from '../src/components/HudCard';
 import { HudText } from '../src/components/HudText';
-import { NovaButton } from '../src/components/NovaButton';
-import { NovaInput } from '../src/components/NovaInput';
-import { NovaTopBar } from '../src/components/NovaTopBar';
+import { MargiButton } from '../src/components/MargiButton';
+import { MargiInput } from '../src/components/MargiInput';
+import { MargiTopBar } from '../src/components/MargiTopBar';
 import { useApp } from '../src/context/AppContext';
 import type { EmergencyContact } from '../src/lib/types';
 import {
@@ -52,7 +52,7 @@ export default function EmergencyContactsScreen() {
 
   return (
     <View style={styles.root}>
-      <NovaTopBar title="EMERGENCY CONTACTS" subtitle="Family & ICE" showBack />
+      <MargiTopBar title="EMERGENCY CONTACTS" subtitle="Family & ICE" showBack />
       <ScrollView
         contentContainerStyle={[styles.scroll, { paddingBottom: insets.bottom + 32 }]}
         keyboardShouldPersistTaps="handled"
@@ -91,7 +91,7 @@ export default function EmergencyContactsScreen() {
           <HudText variant="mono" style={styles.label}>
             Full Name
           </HudText>
-          <NovaInput
+          <MargiInput
             value={contact.fullName}
             onChangeText={(t) => {
               userEdited.current = true;
@@ -102,7 +102,7 @@ export default function EmergencyContactsScreen() {
           <HudText variant="mono" style={styles.label}>
             Relationship
           </HudText>
-          <NovaInput
+          <MargiInput
             value={contact.relationship}
             onChangeText={(t) => {
               userEdited.current = true;
@@ -113,7 +113,7 @@ export default function EmergencyContactsScreen() {
           <HudText variant="mono" style={styles.label}>
             Phone Number
           </HudText>
-          <NovaInput
+          <MargiInput
             value={contact.phone}
             onChangeText={(t) => {
               userEdited.current = true;
@@ -125,8 +125,8 @@ export default function EmergencyContactsScreen() {
         </HudCard>
 
         <View style={styles.actions}>
-          <NovaButton label="Cancel" variant="ghost" onPress={() => router.back()} style={{ flex: 1 }} />
-          <NovaButton label="Save & continue" onPress={save} large style={{ flex: 1 }} />
+          <MargiButton label="Cancel" variant="ghost" onPress={() => router.back()} style={{ flex: 1 }} />
+          <MargiButton label="Save & continue" onPress={save} large style={{ flex: 1 }} />
         </View>
       </ScrollView>
     </View>

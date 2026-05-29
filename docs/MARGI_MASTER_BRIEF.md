@@ -1,6 +1,6 @@
-# NovaDrive — Master Team Brief
+# Margi — Master Team Brief
 
-**Project:** NovaDrive (Road Safety Hackathon 2026 — RoadSoS Track)  
+**Project:** Margi (Road Safety Hackathon 2026 — RoadSoS Track)  
 **Organizer:** CoERS & RBG Labs, IIT Madras (with MoRTH)  
 **Document version:** 1.0  
 **Last updated:** May 2026  
@@ -42,9 +42,9 @@
 
 ## 1. Executive Summary
 
-**NovaDrive** is an **offline-first, AI-powered emergency chatbot** (Progressive Web App) designed for the **RoadSoS** problem statement at the IIT Madras National Road Safety Hackathon 2026.
+**Margi** is an **offline-first, AI-powered emergency chatbot** (Progressive Web App) designed for the **RoadSoS** problem statement at the IIT Madras National Road Safety Hackathon 2026.
 
-When a road accident happens — often with **no mobile signal** on highways — victims and bystanders lose precious minutes trying to explain location, injury severity, and which hospital to use. NovaDrive compresses that chaos into a **60-second guided triage conversation**, routes the victim to the **correct trauma-tier facility** (not just the nearest clinic), builds a **Golden Hour Packet (GHP)** dispatch brief, and if offline, passes that packet through a **human QR relay chain** until any phone regains signal and can SMS **108/112**.
+When a road accident happens — often with **no mobile signal** on highways — victims and bystanders lose precious minutes trying to explain location, injury severity, and which hospital to use. Margi compresses that chaos into a **60-second guided triage conversation**, routes the victim to the **correct trauma-tier facility** (not just the nearest clinic), builds a **Golden Hour Packet (GHP)** dispatch brief, and if offline, passes that packet through a **human QR relay chain** until any phone regains signal and can SMS **108/112**.
 
 **Tagline:** *The network failed. The golden hour didn't.*
 
@@ -66,7 +66,7 @@ When a road accident happens — often with **no mobile signal** on highways —
 
 ### RoadSoS Evaluation Criteria (What Judges Score)
 
-| Criterion | How NovaDrive Addresses It |
+| Criterion | How Margi Addresses It |
 |-----------|-------------------------------|
 | Data reliability & geographic accuracy | Pre-built, verified SQLite POI database from OSM + manual corridor verification |
 | Valid emergency contacts fetched & displayed | Hospitals, police, ambulance, towing — with real phone tags where available |
@@ -98,7 +98,7 @@ India records ~**1.7 lakh road deaths/year**. On highways, accidents often occur
 
 ### Solution
 
-NovaDrive is a **conversational emergency agent** that:
+Margi is a **conversational emergency agent** that:
 1. Runs **START medical triage** (international first-responder protocol)
 2. Finds the **right tier** of emergency facility offline
 3. Generates a **dispatch-ready Golden Hour Packet**
@@ -108,7 +108,7 @@ NovaDrive is a **conversational emergency agent** that:
 
 | Audience | Pitch |
 |----------|-------|
-| **30 sec (judges)** | NovaDrive is an offline AI emergency chatbot. In 60 seconds it triages injuries, routes RED cases to trauma centers, builds a 108-ready brief, and if there's no signal — a bystander scans a QR and carries that brief until they get network. |
+| **30 sec (judges)** | Margi is an offline AI emergency chatbot. In 60 seconds it triages injuries, routes RED cases to trauma centers, builds a 108-ready brief, and if there's no signal — a bystander scans a QR and carries that brief until they get network. |
 | **Technical** | LLM-as-skin, FSM-as-spine, sql.js POI store, Haversine spatial query with trauma-tier filter, lz-string GHP encoding, IndexedDB human relay. |
 | **Emotional** | When the network fails, the golden hour doesn't. |
 
@@ -208,7 +208,7 @@ When victim phone has **no signal**:
 
 ```mermaid
 flowchart TB
-    subgraph Client["NovaDrive PWA (Next.js 14)"]
+    subgraph Client["Margi PWA (Next.js 14)"]
         Gate[Landing Gate]
         Chat[Triage Chat UI]
         Agent[LLM Slot Filler]
@@ -341,7 +341,7 @@ Trigger sms:108?body=... OR navigator.share() OR copy-to-clipboard
 
 ```mermaid
 flowchart TB
-  Home["NovaDrive Home"]
+  Home["Margi Home"]
   Home --> Start["Start Emergency<br/>Victim / Bystander-help"]
   Home --> Scan["Scan Distress QR<br/>Bystander"]
   Home --> Download["Download Corridor Pack<br/>Pre-trip offline prep"]
@@ -351,7 +351,7 @@ flowchart TB
 
 ```mermaid
 mindmap
-  root((NovaDrive))
+  root((Margi))
     INPUT
       Voice Web Speech API
       Text chat
@@ -452,7 +452,7 @@ export interface TriageContext {
 
 ### Medical Disclaimer (Required in UI)
 
-> *NovaDrive provides decision support only. It is not a medical diagnosis. In an emergency, always call 108/112 when possible.*
+> *Margi provides decision support only. It is not a medical diagnosis. In an emergency, always call 108/112 when possible.*
 
 ---
 
@@ -509,7 +509,7 @@ export interface GoldenHourPacket {
 ### SMS Template Example (English)
 
 ```
-🚨 ROAD EMERGENCY - NovaDrive
+🚨 ROAD EMERGENCY - Margi
 Triage: RED | Victims: 1
 Location: NH48 km 87 (13.082700, 80.270700)
 Injuries: Not walking, breathing, severe bleeding suspected
@@ -706,7 +706,7 @@ onQRScanned(payload) {
 ```
 roadsafetyhackathon/
 ├── docs/
-│   └── NOVADRIVE_MASTER_BRIEF.md          ← this document
+│   └── MARGI_MASTER_BRIEF.md          ← this document
 ├── scripts/
 │   ├── ingestCorridors.py                  # Overpass → SQLite
 │   └── verify_pois.py                      # Manual verification helper
@@ -848,7 +848,7 @@ roadsafetyhackathon/
 
 | Slide | Content |
 |-------|---------|
-| 1 | Welcome — Team name, NovaDrive, RoadSoS |
+| 1 | Welcome — Team name, Margi, RoadSoS |
 | 2 | Problem — Golden hour, dead zones, wrong hospital routing |
 | 3 | Solution — Offline AI triage chatbot + GHP + human relay |
 | 4 | Architecture — FSM + SQLite + QR relay diagram |
@@ -915,9 +915,9 @@ expect(route('RED', chennaiCoords)[0].traumaTier).toBeLessThanOrEqual(2);
 
 ## 24. Competitive Advantages
 
-### Why NovaDrive Beats Typical Submissions
+### Why Margi Beats Typical Submissions
 
-| Typical team builds | NovaDrive builds |
+| Typical team builds | Margi builds |
 |--------------------|-------------------|
 | Map with hospital pins | START triage + trauma-tier routing |
 | Generic chatbot | FSM-backed medical protocol + AI skin |
@@ -1024,7 +1024,7 @@ flowchart LR
         B5[Native Hybrid App]
     end
 
-    subgraph After["NovaDrive"]
+    subgraph After["Margi"]
         A1[START FSM Chatbot]
         A2[SQLite POI DB]
         A3[GHP Packet]
@@ -1063,6 +1063,6 @@ sequenceDiagram
 
 ---
 
-*End of NovaDrive Master Team Brief — share freely with all team members.*
+*End of Margi Master Team Brief — share freely with all team members.*
 
 **Document maintainer:** Update this file when scope, corridor, or demo script changes. Do not re-introduce rejected features without team vote.

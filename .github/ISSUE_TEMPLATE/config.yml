@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Team guide (HTML)
-    url: https://github.com/Stormynubee/novadrive/blob/master/docs/NOVADRIVE_TEAM_GUIDE.html
+    url: https://github.com/Stormynubee/novadrive/blob/master/docs/MARGI_TEAM_GUIDE.html
     about: Onboarding and roles for Team Vortex
   - name: Device smoke matrix
     url: https://github.com/Stormynubee/novadrive/blob/master/novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md

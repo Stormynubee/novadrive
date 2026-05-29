@@ -112,7 +112,7 @@ export default function JourneyDepartScreen() {
         <View style={styles.content}>
           <View style={styles.header}>
             <HudText variant="headlineMd" style={styles.brand}>
-              NOVA DRIVE
+              Margi
             </HudText>
             <HudText variant="mono" style={styles.team}>
               TEAM VORTEX

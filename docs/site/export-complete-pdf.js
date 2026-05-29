@@ -1,10 +1,10 @@
-/** Generate NovaDrive Complete Project PDF for UI team */
+/** Generate Margi Complete Project PDF for UI team */
 const fs = require('fs');
 const path = require('path');
 
-const htmlPath = path.join(__dirname, 'novadrive-complete.html');
-const pdfPath = path.join(__dirname, 'NOVADRIVE_COMPLETE_PROJECT.pdf');
-const pdfPathDocs = path.join(__dirname, '..', 'NOVADRIVE_COMPLETE_PROJECT.pdf');
+const htmlPath = path.join(__dirname, 'margi-complete.html');
+const pdfPath = path.join(__dirname, 'MARGI_COMPLETE_PROJECT.pdf');
+const pdfPathDocs = path.join(__dirname, '..', 'MARGI_COMPLETE_PROJECT.pdf');
 
 async function main() {
   if (!fs.existsSync(htmlPath)) {
@@ -44,7 +44,7 @@ async function main() {
     printBackground: true,
     margin: { top: '16mm', bottom: '16mm', left: '12mm', right: '12mm' },
     displayHeaderFooter: true,
-    headerTemplate: `<div style="font-size:7px;width:100%;padding:0 12mm;color:#374151;font-family:Arial,sans-serif;display:flex;justify-content:space-between;"><span>NovaDrive — Complete Project & UI Brief</span><span>RoadSoS 2026</span></div>`,
+    headerTemplate: `<div style="font-size:7px;width:100%;padding:0 12mm;color:#374151;font-family:Arial,sans-serif;display:flex;justify-content:space-between;"><span>Margi — Complete Project & UI Brief</span><span>RoadSoS 2026</span></div>`,
     footerTemplate: `<div style="font-size:7px;width:100%;padding:0 12mm;color:#6b7280;font-family:Arial,sans-serif;display:flex;justify-content:space-between;"><span>IIT Madras · May 31, 2026 deadline</span><span>Page <span class="pageNumber"></span> / <span class="totalPages"></span></span></div>`,
   });
 

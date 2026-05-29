@@ -1,4 +1,4 @@
-# NovaDrive device smoke matrix
+# Margi device smoke matrix
 
 Run after stabilization changes on a physical Android device (Expo dev client or release build).
 

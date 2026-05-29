@@ -74,7 +74,7 @@ export default function JourneyScreen() {
             <MaterialIcons name="menu" size={24} color={tokens.onPrimary} />
           </Pressable>
           <HudText variant="headlineMd" style={styles.headerTitle}>
-            NOVA DRIVE
+            Margi
           </HudText>
           <Pressable
             onPress={() => {

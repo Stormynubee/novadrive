@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/Stormynubee/novadrive">
-    <img src="docs/assets/banner.png" alt="NovaDrive — Signal drops. The critical minute doesn't. Team Vortex · IIT Madras RoadSoS 2026" width="100%" />
+    <img src="docs/assets/banner.png" alt="Margi — When signal drops, the path still holds. Team Vortex · IIT Madras RoadSoS 2026" width="100%" />
   </a>
 </p>
 
@@ -19,7 +19,8 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 |---|---|
 | **GitHub** | [github.com/Stormynubee/novadrive](https://github.com/Stormynubee/novadrive) |
 | **Live brief site** | [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app) |
-| **Complete UI brief (HTML)** | [novadrive-complete.html](https://roadsafetyhackathon-six.vercel.app/novadrive-complete.html) |
+| **Complete UI brief (HTML)** | [margi-complete.html](https://roadsafetyhackathon-six.vercel.app/margi-complete.html) |
+| **Master encyclopedia** | [docs/MARGI_MASTER_ENCYCLOPEDIA.md](docs/MARGI_MASTER_ENCYCLOPEDIA.md) |
 | **Submission checklist** | [docs/SUBMISSION.md](docs/SUBMISSION.md) |
 | **Changelog (latest work)** | [CHANGELOG.md](CHANGELOG.md) |
 | **All versions & commits** | [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) |
@@ -28,7 +29,7 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 
 ---
 
-## Why NovaDrive
+## Why Margi
 
 When cellular signal fails on NH corridors, victims and bystanders still get structured help through **two parallel safety lanes**:
 
@@ -122,14 +123,16 @@ flowchart TB
   G -.-> QR
 ```
 
-Full detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md](docs/NOVADRIVE_FINAL_IMPLEMENTATION_PLAN.md)
+Full detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · [docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md](docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md)
+
+> **Repo slug:** GitHub remains [Stormynubee/novadrive](https://github.com/Stormynubee/novadrive); the product name is **Margi**.
 
 ---
 
 ## Monorepo layout
 
 ```
-novadrive-mobile/          # PRIMARY — Expo app → Android APK (GovTech UI)
+novadrive-mobile/          # PRIMARY — Expo app → Android APK (Margi Care Path UI)
   src/components/home/     # Stacked ENTER DRIVE MODE + Naari portal cards
   src/components/naari/  # Naari Shakti UI
   src/lib/voice/         # Distress voice policy, classifier, optional YAMNet
@@ -153,6 +156,7 @@ data/                      # Generated SQLite (gitignored)
 
 See **[CHANGELOG.md](CHANGELOG.md)**:
 
+- **2026-05-28 — Margi rebrand (v1.5.0)** — Care Path palette (`#0056b3` / `#ff8c00`), `com.margi.app`, `margi://`, `MARGI GHP`, Margi UI components, judge docs renamed to `MARGI_*`, banner/site sweep ([release notes](release-notes-margi-rebrand.md))
 - **2026-05-28 — Distress voice hardening** (`7370f90`): policy grace windows, two-stage classifier, Naari+journey mic mount, sensitivity setting, smoke rows 23–26 ([mobile README](novadrive-mobile/README.md#distress-voice-detection))
 - **2026-05-28 — Safety brief screens** (`f3f2222`): institutional Protocol Alpha / Regional Alert detail UX
 - **2026-05-28 — Activation splash** (`5008608`): minimum 10s dwell before trauma response auto-navigation
@@ -161,7 +165,7 @@ See **[CHANGELOG.md](CHANGELOG.md)**:
 - **2026-05-23 — Stabilization:** GovTech tab shell, Plan Corridor, calibration, SOS HUD (`d900ab5` map/quick menu)
 - [Device smoke matrix](novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) — Naari rows 13–15 · distress voice rows 23–26
 
-Release tag: **`v1.4.0-distress-voice`** (recommended for judges) → [VERSION_HISTORY](docs/VERSION_HISTORY.md)
+Release tag: **`v1.5.0-margi-rebrand`** (recommended for judges) · prior: `v1.4.0-distress-voice` → [VERSION_HISTORY](docs/VERSION_HISTORY.md)
 
 ---
 
@@ -174,8 +178,11 @@ cd novadrive-mobile
 npm install --legacy-peer-deps
 npm run typecheck
 npm test
+npm run verify:docs
+npm run verify:branding
 npx expo start
-# Android APK:
+# Android APK (after rebrand, clean native once):
+npx expo prebuild --clean
 npx expo run:android
 ```
 
@@ -217,7 +224,7 @@ Deployed via Vercel (`vercel.json` → `docs/site`).
 
 ## Contributing & security
 
-- [CONTRIBUTING.md](CONTRIBUTING.md) — TDD for `src/lib`, PR checklist
+- [CONTRIBUTING.md](CONTRIBUTING.md) — TDD for `src/lib`, `verify:branding`, PR checklist
 - [docs/AGENTS.md](docs/AGENTS.md) — Cursor subagent & skills
 - [SECURITY.md](SECURITY.md)
 

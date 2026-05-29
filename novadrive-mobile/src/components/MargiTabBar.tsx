@@ -19,12 +19,7 @@ const TABS: {
   { key: 'profile', href: '/(tabs)/profile' as Href, icon: 'person', label: 'Profile' },
 ];
 
-/**
- * GovTech bottom navigation — white surface, navy icon strokes, saffron pill capsule for the
- * active tab (Stitch `main_app_driving_sos_dashboard` footer). Order: Home / Trip / Community /
- * Profile.
- */
-export function NovaTabBar() {
+export function MargiTabBar() {
   const pathname = usePathname();
   const insets = useSafeAreaInsets();
 
@@ -55,11 +50,7 @@ export function NovaTabBar() {
                 color={active ? tokens.onSecondary : tokens.primary}
               />
             </View>
-            <HudText
-              variant="mono"
-              style={[styles.label, active && styles.labelActive]}
-              numberOfLines={1}
-            >
+            <HudText variant="mono" style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
               {tab.label}
             </HudText>
           </Pressable>
@@ -78,12 +69,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: tokens.outlineVariant,
   },
-  tab: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 4,
-    gap: 4,
-  },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 4, gap: 4 },
   pill: {
     paddingHorizontal: 16,
     paddingVertical: 4,
@@ -92,14 +78,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pillActive: {
-    backgroundColor: tokens.secondary,
-  },
+  pillActive: { backgroundColor: tokens.secondary },
   label: {
     fontSize: 10,
     color: tokens.onSurfaceVariant,
     letterSpacing: 0.4,
-    textTransform: 'none',
   },
   labelActive: { color: tokens.secondary, fontFamily: 'PublicSans_700Bold' },
 });

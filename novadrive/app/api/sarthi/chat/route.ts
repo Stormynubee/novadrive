@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   const name = context.displayName?.trim() || (lang === 'hi' ? 'अतिथि' : lang === 'ta' ? 'விருந்தினர்' : 'Guest driver');
 
   const system = [
-    'You are Sarthi, the NovaDrive road-safety AI assistant for Indian highway drivers.',
+    'You are Sarthi, the Margi road-safety AI assistant for Indian highway drivers.',
     LANG_INSTRUCTION[lang] ?? LANG_INSTRUCTION.en,
     'Be concise: max 3 short sentences unless listing emergency steps.',
     'Never invent live telemetry or vitals.',
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
       maxOutputTokens: 256,
     });
 
-    const reply = text.trim() || 'I am here to help with your NovaDrive corridor and safety plan.';
+    const reply = text.trim() || 'I am here to help with your Margi corridor and safety plan.';
     const actionCard =
       /corridor|route|nh/i.test(reply) || /corridor|route/i.test(messages.at(-1)?.content ?? '')
         ? {
