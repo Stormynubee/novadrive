@@ -16,7 +16,7 @@ https://github.com/Stormynubee/novadrive/compare/<older>...<newer>
 
 | Tag | Commit | Date | Summary |
 |-----|--------|------|---------|
-| [`v1.5.0-margi-rebrand`](https://github.com/Stormynubee/novadrive/releases/tag/v1.5.0-margi-rebrand) | _(pending tag)_ | 2026-05-28 | Margi Care Path rebrand, `com.margi.app`, MARGI GHP, docs/banner sweep |
+| [`v1.5.0-margi-rebrand`](https://github.com/Stormynubee/novadrive/releases/tag/v1.5.0-margi-rebrand) | `50205c7` | 2026-05-28 | Margi Care Path rebrand, `com.margi.app`, MARGI GHP, docs/banner sweep |
 | [`v0.1.0-p0`](https://github.com/Stormynubee/novadrive/releases/tag/v0.1.0-p0) | `7b5b25a` | 2026-05-22 | Expo P0 app, triage FSM, GHP/QR, monorepo CI |
 | [`v1.0.0-govtech-ui`](https://github.com/Stormynubee/novadrive/releases/tag/v1.0.0-govtech-ui) | `108e716` | 2026-05-25 | GovTech tabs, Plan Corridor, calibration, SOS HUD |
 | [`v1.1.0-stabilization`](https://github.com/Stormynubee/novadrive/releases/tag/v1.1.0-stabilization) | `bdd5a04` | 2026-05-25 | Journey lifecycle, voice/impact gating, 32 unit tests |
