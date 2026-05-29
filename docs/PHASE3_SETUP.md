@@ -56,7 +56,13 @@ The mobile app calls your **Next.js BFF** in `novadrive/` — not Google directl
 2. Import **Stormynubee/Margi** (or your fork).
 3. **Root Directory:** click Edit → set to **`novadrive`** (not repo root).
 4. Framework: **Next.js** (auto-detected).
-5. **Environment variables** (Production + Preview):
+5. **Important:** If build fails with *"No install required for static brief site"*, the repo root `vercel.json` was picked up. Either:
+   - Pull latest `master` (includes `novadrive/vercel.json`), **or**
+   - In Vercel → Project → **Settings → Build** override:
+     - Install Command: `npm install`
+     - Build Command: `npm run build`
+     - Output Directory: leave default (Next.js)
+6. **Environment variables** (Production + Preview):
 
    | Name | Value |
    |------|--------|
