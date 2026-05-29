@@ -63,9 +63,10 @@ No Gradle or JDK required if you use the release APK.
 ```bash
 cd novadrive-mobile
 npm install --legacy-peer-deps
-npm test
-npx expo run:android
+npm run android:apk
 ```
+
+Requires **JDK 17+** and Android SDK. Uses a clean prebuild without `expo-dev-client` (fixes `expo-dev-menu` Kotlin errors).
 
 Phase 3 (Supabase + Vercel Sarthi): [docs/PHASE3_SETUP.md](docs/PHASE3_SETUP.md)
 
