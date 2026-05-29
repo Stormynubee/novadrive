@@ -9,7 +9,7 @@
 </p>
 
 [![RoadSoS Hackathon 2026](https://img.shields.io/badge/IIT%20Madras-RoadSoS%202026-amber?style=flat-square)](https://roadsafetyhackathon-six.vercel.app)
-[![CI](https://img.shields.io/github/actions/workflow/status/Stormynubee/novadrive/ci.yml?branch=master&label=CI&style=flat-square)](https://github.com/Stormynubee/novadrive/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/Stormynubee/Margi/ci.yml?branch=master&label=CI&style=flat-square)](https://github.com/Stormynubee/Margi/actions/workflows/ci.yml)
 [![Expo](https://img.shields.io/badge/mobile-Expo%20SDK%2054-000020?style=flat-square&logo=expo)](novadrive-mobile/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
@@ -17,14 +17,15 @@ Government-aligned, **offline-first** Golden Hour co-pilot for Indian highway co
 
 | | |
 |---|---|
-| **GitHub** | [github.com/Stormynubee/novadrive](https://github.com/Stormynubee/novadrive) |
+| **GitHub** | [github.com/Stormynubee/Margi](https://github.com/Stormynubee/Margi) |
+| **Phase 3 setup (Supabase + Vercel)** | [docs/PHASE3_SETUP.md](docs/PHASE3_SETUP.md) |
 | **Live brief site** | [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app) |
 | **Complete UI brief (HTML)** | [margi-complete.html](https://roadsafetyhackathon-six.vercel.app/margi-complete.html) |
 | **Master encyclopedia** | [docs/MARGI_MASTER_ENCYCLOPEDIA.md](docs/MARGI_MASTER_ENCYCLOPEDIA.md) |
 | **Submission checklist** | [docs/SUBMISSION.md](docs/SUBMISSION.md) |
 | **Changelog (latest work)** | [CHANGELOG.md](CHANGELOG.md) |
 | **All versions & commits** | [docs/VERSION_HISTORY.md](docs/VERSION_HISTORY.md) |
-| **Fork this repo** | [github.com/Stormynubee/novadrive/fork](https://github.com/Stormynubee/novadrive/fork) |
+| **Fork this repo** | [github.com/Stormynubee/Margi/fork](https://github.com/Stormynubee/Margi/fork) |
 | **Deadline** | May 31, 2026, 11:59 PM IST |
 
 ---
