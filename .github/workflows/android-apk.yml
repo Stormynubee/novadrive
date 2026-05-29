@@ -28,13 +28,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install dependencies
+      - name: Install dependencies (judge APK — no dev client)
         working-directory: novadrive-mobile
-        run: npm install --legacy-peer-deps
-
-      - name: Strip dev client for judge APK
-        working-directory: novadrive-mobile
-        run: npm uninstall expo-dev-client --legacy-peer-deps
+        run: |
+          npm install --legacy-peer-deps
+          npm uninstall expo-dev-client --no-save
 
       - name: Prebuild Android
         working-directory: novadrive-mobile
