@@ -62,6 +62,6 @@ Repository: **[Stormynubee/Margi](https://github.com/Stormynubee/Margi)** — pr
 
 Latest release tag: **`v2.0.0-production`** — see [VERSION_HISTORY.md](VERSION_HISTORY.md).
 
-**Unit tests:** 177 (`cd novadrive-mobile && npm test`)
+**Unit tests:** 179 (`cd novadrive-mobile && npm test`)
 
 **Honest limits:** START triage is decision support only (not physician-certified). Crash/voice detection experimental. POI data is demo seed — verify facilities by phone.

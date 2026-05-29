@@ -54,8 +54,8 @@ export default function NaariShaktiScreen() {
   }, [getCurrentCoords]);
 
   const station = useMemo(() => {
-    const lat = coords?.lat ?? 28.6139;
-    const lng = coords?.lng ?? 77.209;
+    const lat = coords?.lat ?? 12.9716;
+    const lng = coords?.lng ?? 80.2206;
     return findNearestPoliceStation(lat, lng);
   }, [coords]);
 

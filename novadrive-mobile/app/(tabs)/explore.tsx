@@ -20,7 +20,7 @@ import {
 } from '../../src/lib/naariShakti/eligibility';
 import { tokens } from '../../src/theme/tokens';
 
-const APP_VERSION = Constants.expoConfig?.version ?? '2.1.4';
+const APP_VERSION = Constants.expoConfig?.version ?? '2.0.0';
 
 /**
  * Home tab — Stitch dashboard: Drive Mode, Naari Shakti, Bystander QR, Quick SOS,

@@ -6,9 +6,36 @@ export interface NaariPoliceStation {
   lng: number;
 }
 
+/** Demo seed aligned with Chennai / NH48 corridor POIs — not live dispatch data. */
 export const NAARI_POLICE_STATIONS: NaariPoliceStation[] = [
-  { id: 'cl-phq', name: 'Civil Lines Police HQ', phone: '100', lat: 28.6315, lng: 77.2167 },
-  { id: 'city-control', name: 'City Control Room', phone: '112', lat: 28.6139, lng: 77.209 },
+  {
+    id: 'egmore-ps',
+    name: 'Egmore Police Station (demo)',
+    phone: '100',
+    lat: 13.0731,
+    lng: 80.2609,
+  },
+  {
+    id: 't-nagar-ps',
+    name: 'T Nagar Police Station (demo)',
+    phone: '100',
+    lat: 13.0418,
+    lng: 80.2341,
+  },
+  {
+    id: 'tambaram-ps',
+    name: 'Tambaram Police Station (NH48 demo)',
+    phone: '100',
+    lat: 12.9249,
+    lng: 80.12,
+  },
+  {
+    id: 'chennai-control',
+    name: 'Chennai City Control Room (demo)',
+    phone: '112',
+    lat: 13.0569,
+    lng: 80.2598,
+  },
 ];
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {

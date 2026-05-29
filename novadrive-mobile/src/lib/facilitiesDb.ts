@@ -28,7 +28,7 @@ const POI_COORDS: Record<string, { lat: number; lng: number }> = {
   h3: { lat: 12.97, lng: 79.94 },
   h4: { lat: 12.92, lng: 79.13 },
   h5: { lat: 12.83, lng: 79.7 },
-  c1: { lat: 13.08, lng: 80.27 },
+  c1: { lat: 13.06, lng: 80.24 },
   c2: { lat: 12.92, lng: 80.12 },
 };
 

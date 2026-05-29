@@ -14,7 +14,7 @@ describe('activateNaariDistress', () => {
           gender: 'female',
           settings: { notifyEmergencyContacts: false } as never,
         },
-        coords: { lat: 28.61, lng: 77.21 },
+        coords: { lat: 12.97, lng: 80.21 },
       },
       { speak, openSms, startRecording }
     );
@@ -37,7 +37,7 @@ describe('activateNaariDistress', () => {
             primaryContact: { fullName: 'Mom', relationship: 'Parent', phone: '9999999999' },
           },
         },
-        coords: { lat: 28.61, lng: 77.21 },
+        coords: { lat: 12.97, lng: 80.21 },
       },
       { speak: jest.fn(), openSms, startRecording: jest.fn() }
     );

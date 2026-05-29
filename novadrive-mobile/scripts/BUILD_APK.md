@@ -6,6 +6,15 @@
 - Android SDK (Android Studio or command-line tools)
 - `ANDROID_HOME` set
 
+## CI / judge builds (no dev client)
+
+GitHub Actions sets `CI=true` and `MARGI_JUDGE_APK=1` so `app.config.js` omits `expo-dev-client` and avoids `expo-dev-menu` compile failures. Locally:
+
+```bash
+set MARGI_JUDGE_APK=1
+npx expo prebuild --platform android --clean
+```
+
 ## Build
 
 ```bash
