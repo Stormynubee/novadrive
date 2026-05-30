@@ -1,0 +1,7 @@
+osm_id,canonical_name,phone,trauma_tier,verified,verifier,verified_date,notes
+t1,Apollo Hospitals Greams Road (Trauma),044-28290200,1,1,,2026-05-28,Pre-curated demo
+t2,SRMC Emergency & Trauma (Chennai),044-27440000,1,1,,2026-05-28,Pre-curated demo
+t3,Kauvery Hospital Alwarpet ER,044-40004000,1,1,,2026-05-28,Pre-curated demo
+t4,MIOT International Trauma Bay,044-42002288,1,1,,2026-05-28,Pre-curated demo
+h1,Rajiv Gandhi Govt General Hospital ER,044-28194600,2,1,,2026-05-28,Pre-curated demo
+h4,Vellore CMC Casualty (NH referral),0416-2282010,1,1,,2026-05-28,Pre-curated demo

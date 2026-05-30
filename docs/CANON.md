@@ -50,6 +50,7 @@ This document is the **single source of truth** for what the repo actually ships
 | **Phase 3 env setup** | [PHASE3_SETUP.md](PHASE3_SETUP.md) |
 | **Device smoke (manual)** | [novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md](../novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md) |
 | **Maestro flows (optional)** | [MAESTRO_SMOKE.md](MAESTRO_SMOKE.md) |
+| **POI verification (Phase C)** | [POI_VERIFICATION_RUNBOOK.md](POI_VERIFICATION_RUNBOOK.md) |
 | **Historical / aspirational docs** | [archive/README.md](archive/README.md) |
 
 ---

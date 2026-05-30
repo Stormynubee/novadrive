@@ -2,6 +2,7 @@
 
 **Date:** 2026-05-29  
 **Status:** Approved for planning (post Phase A Judge bullet + Phase B honest research prototype)  
+**Approved:** 2026-05-30 — Approach A (foundation-first); **no EMS sandbox/LOI** (SMS + fail-closed HTTP stubs through month 6)  
 **Horizon:** 6–10 months after hackathon submission  
 **Canonical baseline:** [docs/CANON.md](../../CANON.md)
 

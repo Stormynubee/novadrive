@@ -1,0 +1,31 @@
+name: POI ingest validate
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'data/corridors/**'
+      - 'data/emergency_seed.db'
+  push:
+    branches: [master]
+    paths:
+      - 'scripts/**'
+      - 'data/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install pytest
+      - run: python -m pytest scripts/tests -v
+      - name: Validate committed POI pack (when present)
+        run: |
+          if [ -f data/emergency_seed.db ]; then
+            python scripts/verify_pois.py --db data/emergency_seed.db --csv data/corridors/nh48_verification.csv --check-only
+          else
+            echo "Skipping pack validation until data/emergency_seed.db is committed (C1 week 8+)."
+          fi
