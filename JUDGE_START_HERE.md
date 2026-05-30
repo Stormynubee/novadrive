@@ -26,7 +26,7 @@ No Gradle or JDK required if you use the release APK.
 ### A — Golden Hour (2 min)
 
 1. Home → **ENTER DRIVE MODE** → Trip → **Start Driving** → finish calibration.
-2. On the drive HUD → **hold SOS 3s** → activation splash → trauma response.
+2. On the drive HUD → **hold SOS 3s** (top strip) → **Incident Tracker** → pick type → activation → trauma response (ICE/108 SMS intents, Maps to nearest hospital).
 3. Optional: **Manual** mode on activation → START triage → facility → GHP + QR.
 4. **Airplane mode** on GHP screen — packet text and QR still visible.
 
@@ -52,7 +52,7 @@ No Gradle or JDK required if you use the release APK.
 
 **Not production medical software:** START triage is a deterministic demo tree — not physician-certified. Crash/voice detection are **experimental**; no auto-dial to 108 without user confirming SMS. **NH48 corridor** has verified hospital phones; **other states** (e.g. Odisha) use **baseline mode** — call 108, share GPS + triage, no verified ER list.
 
-**Unit tests:** `cd novadrive-mobile && npm test` — **194** tests.
+**Unit tests:** `cd novadrive-mobile && npm test` — **220** tests.
 
 **APK CI:** [Android debug APK workflow](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml) — download artifact **`margi-debug.apk`** if the release asset is not yet attached.
 

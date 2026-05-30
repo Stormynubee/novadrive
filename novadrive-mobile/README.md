@@ -6,17 +6,19 @@
 
 | | |
 |---|---|
-| **Stack** | Expo SDK 54 · React Native · offline-first SQLite POI pack |
-| **Design** | Deep navy + emergency saffron · [DESIGN.md](DESIGN.md) |
+| **Version** | 2.0.0 (`com.margi.app` · scheme `margi://`) |
+| **Stack** | Expo SDK 54 · React Native 0.81 · offline-first SQLite trauma POI |
+| **Design** | Deep navy `#000a1e` + emergency saffron `#fe6b00` · [DESIGN.md](DESIGN.md) |
 | **Monorepo** | [../README.md](../README.md) · [../CHANGELOG.md](../CHANGELOG.md) · [../docs/SUBMISSION.md](../docs/SUBMISSION.md) |
+| **Judges** | [../JUDGE_START_HERE.md](../JUDGE_START_HERE.md) |
 
-> **Expo Go:** SDK 54 matches the current Play Store Expo Go app. SDK 56 needs a newer Expo Go not on Play Store yet.
+> **Expo Go:** SDK 54 matches current Play Store Expo Go. For **torch**, native crash hooks, and judge APK flows, use **`npm run android`** (development build) instead of Expo Go alone.
 
 ---
 
 ## What Margi does
 
-Margi is a **golden-hour roadside safety companion**: live drive HUD with hold-SOS, offline trauma routing, Golden Hour Packet + bystander QR, community hazard reports, and **Sarthi** (on-device + cloud guidance). **Naari Shakti** adds a women’s safety portal with hold-to-activate distress. Everything critical works **without signal** after location and POI data are cached.
+Margi is a **golden-hour roadside safety companion**: live drive HUD with hold-SOS, **automated emergency orchestration**, offline trauma routing, Golden Hour Packet + bystander QR, geo-filtered community alerts, **Sarthi** (on-device + cloud guidance), and **Naari Shakti** (women's safety portal). Critical flows work **offline** after location and POI data are cached.
 
 ---
 
@@ -28,40 +30,54 @@ npm install --legacy-peer-deps
 npx expo install react-native-worklets babel-preset-expo
 npm run typecheck
 npm test
-npm run start:lan          # phone + laptop on same Wi‑Fi → exp://YOUR_IP:8081
-# or
-npm run android            # USB debug APK (no Expo Go)
+npm run verify:docs
+npm run verify:branding
+npm run start:lan          # phone + laptop same Wi‑Fi → exp://YOUR_IP:8081
+# recommended for full native features:
+npm run android            # USB debug APK + Metro (JDK 21 via Android Studio JBR)
 ```
 
-Copy env: `cp .env.example .env` — set `EXPO_PUBLIC_SARTHI_API_URL` for cloud Sarthi (see [Sarthi](#sarthi-assistant)).
+**Environment:** copy `.env.example` → `.env`
+
+| Variable | Purpose |
+|----------|---------|
+| `EXPO_PUBLIC_SUPABASE_URL` | Supabase project URL (auth + NGO + dispatch audit) |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Publishable anon key |
+| `EXPO_PUBLIC_SARTHI_API_URL` | Sarthi BFF base (e.g. deployed `novadrive` on Vercel) |
+| `EXPO_PUBLIC_TRAUMA_DISPATCH_URL` | Optional HTTP trauma dispatch endpoint |
+| `EXPO_PUBLIC_POLICE_DISPATCH_URL` | Optional HTTP police dispatch endpoint |
+
+Setup guide: [../docs/PHASE3_SETUP.md](../docs/PHASE3_SETUP.md)
 
 ---
 
 ## App map
 
-| Tab / area | What you get |
-|------------|----------------|
-| **Home** | Drive mode, Quick SOS, Bystander QR, Naari Shakti (female), daily safety brief, Sarthi FAB |
-| **Trip** | Plan corridor, route cards, calibration → live HUD |
-| **Community** | Geo-filtered local alerts (~5 km), hazard reports, pioneers leaderboard |
-| **Profile** | Medical ICE, settings, voice detection toggle |
-| **Emergency** | Incident tracker → activation → trauma response → facility routing |
-| **Naari Shakti** | `/naari-shakti` — safety mode, 2s hold distress, SMS station / share location |
+Expo Router tabs use internal names; labels match the bottom bar:
 
-**Home flow:** ENTER DRIVE MODE → Trip → Start Driving → calibration → **Live SOS HUD** (hold 3s) → journey summary.
+| Tab label | Route | Features |
+|-----------|-------|----------|
+| **Home** | `app/(tabs)/explore.tsx` | `HomePrimaryStack` (drive + Naari), Quick SOS, Bystander QR, Daily Safety Brief, Sarthi FAB, `DashboardHeader` with **BY TEAM NOVADRIVE** |
+| **Trip** | `app/(tabs)/drive.tsx` | Plan corridor, OSRM polyline when online, calibration → live HUD |
+| **Community** | `app/(tabs)/history.tsx` | Hazards filtered to **~5 km** (`communityAlerts.ts`), leaderboard |
+| **Profile** | `app/(tabs)/profile.tsx` | Medical ICE, voice crash toggle, accessibility link |
+
+**Other routes:** `/emergency/*`, `/naari-shakti`, `/sarthi`, `/scan`, `/rahveer`, `/ngo`, `/auth`, `/settings`, `/medical`, `/brief/[slug]`
+
+**Drive flow:** ENTER DRIVE MODE → Trip → **Start Driving** → calibration → **Live SOS HUD** (hold 3s on top strip) → journey summary.
 
 ---
 
 ## Emergency SOS (automated golden hour)
 
-Hold SOS and Quick SOS now follow the **same intentional path** — no premature SMS before you pick the incident type.
+No premature SMS before incident type is selected.
 
 ```mermaid
 flowchart LR
   hold[Hold SOS 3s] --> pick[Incident Tracker]
   quick[Quick SOS / header] --> pick
-  pick --> act[Activation 6s]
-  act --> orch[Emergency orchestrator]
+  pick --> act[Activation ~6s]
+  act --> orch[runEmergencyOrchestrator]
   orch --> ice[ICE SMS intent]
   orch --> sms108[108 SMS intent]
   orch --> maps[Maps → nearest trauma POI]
@@ -72,18 +88,22 @@ flowchart LR
 
 | Step | Behavior |
 |------|----------|
-| **Hold SOS (3s)** | Opens **Incident Tracker** (road accident / natural calamity) — not a skipped activation screen |
-| **Activation (6s)** | Countdown, then `runEmergencyOrchestrator` |
-| **Orchestrator** | GPS → ICE SMS (if contact + setting on) → 108 SMS → rank nearest hospital → open Maps |
-| **Trauma Response** | **Incident timer** (live since SOS), **torch** (rear flash), Call ICE + Call Center FABs, navigate to **hospital coords** (not your GPS pin) |
-| **False alerts** | Voice crash detection **off by default**; crash countdown **does not** auto-open 108 SMS — user confirms via modal |
+| **Hold SOS (3s)** | `/emergency/selection` — road accident / natural calamity (`holdSosReleaseGrace.ts`) |
+| **Activation** | Countdown splash → `runEmergencyOrchestrator` |
+| **Orchestrator** | GPS → ICE SMS (if contact + setting) → 108 SMS → rank hospital → Maps to **facility coordinates** |
+| **Trauma Response** | `TraumaResponseActionBar` — live **incident timer** (`incidentElapsed.ts`), **torch** via hidden `TorchCameraLayer` + `useTorch`, Call ICE / Call Center FABs |
+| **False alerts** | Voice crash **off by default**; crash countdown **does not** auto-open 108 SMS |
 
-**Code:** `src/lib/emergency/emergencyOrchestrator*.ts`, `TraumaResponseActionBar.tsx`, `incidentElapsed.ts`, `hospitalNavTarget.ts`  
-**Spec:** [docs/superpowers/specs/2026-05-28-margi-emergency-automation-design.md](docs/superpowers/specs/2026-05-28-margi-emergency-automation-design.md)
+| Module | Path |
+|--------|------|
+| Orchestrator | `src/lib/emergency/emergencyOrchestrator.ts`, `emergencyOrchestratorPlan.ts` |
+| Hospital Maps target | `src/lib/emergency/hospitalNavTarget.ts` |
+| Trauma UI | `src/components/emergency/TraumaResponseActionBar.tsx`, `TorchCameraLayer.tsx` |
+| Spec | [docs/superpowers/specs/2026-05-28-margi-emergency-automation-design.md](docs/superpowers/specs/2026-05-28-margi-emergency-automation-design.md) |
 
-**Device smoke:** [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md) — hold SOS → ICE → hospital Maps.
+**Device smoke:** [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md) — rows 11, 19–20, 33+.
 
-> SMS and dial use OS intents — the user taps **Send** / **Call** (iOS/Android policy).
+SMS/dial use OS intents — user taps **Send** / **Call**.
 
 ---
 
@@ -91,27 +111,27 @@ flowchart LR
 
 | Feature | Detail |
 |---------|--------|
-| **Community alerts** | Seed hazards tagged with lat/lng; list filtered to **5 km** around you |
+| **Community alerts** | Seed hazards with lat/lng; `history` tab filters to **5 km** (`localSafetyAlerts.ts`) |
 | **Daily Safety Brief** | Regional vs baseline copy from NH48 verified pack bbox |
-| **Sarthi context** | Corridor label from GPS (e.g. Tamil Nadu · NH-48 corridor) in chat + mini window |
-| **Offline POI** | 50+ Chennai NH nodes in `emergency_seed.db`; baseline mode outside pack |
+| **Sarthi context** | `buildSarthiContext.ts` — corridor label from GPS in chat + mini window |
+| **Offline POI** | 50+ Chennai NH nodes in bundled `emergency_seed.db`; baseline mode outside pack |
 
 ---
 
 ## Naari Shakti (women's safety portal)
 
-High-contrast **saffron + navy** portal for users who select **Female** in medical onboarding — separate from Margi SOS triage.
+High-contrast **saffron + navy** portal for users who select **Female** in medical onboarding — separate from Margi SOS triage. UI uses solid saffron surfaces (not pale `secondaryContainer` washes).
 
 | Piece | Location |
 |-------|----------|
 | Logic | `src/lib/naariShakti/*` |
 | State | `src/context/NaariShaktiContext.tsx` |
 | UI | `src/components/naari/*`, `app/naari-shakti.tsx` |
-| Home card | `NaariShaktiPortalButton` in `HomePrimaryStack` |
+| Home entry | `NaariShaktiPortalButton` in `HomePrimaryStack` |
 
-**Flow:** Medical → Female → Home **NAARI SHAKTI** card → protocol modal → portal → Safety Mode ON → hold **Emergency Help** 2s → distress HUD + SMS + recording.
+**Flow:** Medical → Female → Home **NAARI SHAKTI** → protocol modal → portal → Safety Mode ON → hold **Emergency Help** 2s → distress HUD + SMS + recording.
 
-**Design:** [docs/superpowers/specs/2026-05-23-naari-shakti-design.md](docs/superpowers/specs/2026-05-23-naari-shakti-design.md)
+Design: [../docs/superpowers/specs/2026-05-23-naari-shakti-design.md](../docs/superpowers/specs/2026-05-23-naari-shakti-design.md)
 
 ---
 
@@ -122,32 +142,45 @@ Floating AI on main tabs + full screen `/sarthi`. **Offline KB** by default; **G
 | Piece | Location |
 |-------|----------|
 | UI | `src/components/sarthi/*` |
+| Chat hook | `src/hooks/useSarthiChat.ts` |
 | Engine | `src/lib/sarthiEngine.ts`, `sarthiKnowledgeBase.ts` |
-| BFF | [`../novadrive/app/api/sarthi/chat`](../novadrive/app/api/sarthi/chat/route.ts) |
+| BFF route | [`../novadrive/app/api/sarthi/chat`](../novadrive/app/api/sarthi/chat/route.ts) |
 
-1. `novadrive/.env` — `GOOGLE_GENERATIVE_AI_API_KEY`
-2. `cd ../novadrive && npm run dev`
-3. Mobile `.env` — `EXPO_PUBLIC_SARTHI_API_URL=http://192.168.x.x:3000`
-4. `npm run start:lan`
+1. Deploy or run `novadrive` with `GOOGLE_GENERATIVE_AI_API_KEY`
+2. Mobile `.env` — `EXPO_PUBLIC_SARTHI_API_URL=https://your-bff.example.com`
+3. `npm run start:lan` or `npm run android`
 
-Shows explicit banner when cloud is unavailable — no fake “online” state.
+Connection status chip shows when cloud is unavailable — no fake “online” state.
+
+---
+
+## Phase 2 & 3 integrations (v2.0.0)
+
+| Feature | Screens / modules |
+|---------|-------------------|
+| **Supabase auth** | `app/auth.tsx`, `src/lib/supabase/*` |
+| **NGO volunteers** | `app/ngo/*`, `src/lib/ngo/volunteerProviders.ts` |
+| **OSRM trip** | Trip tab — Nominatim + driving route polyline |
+| **HTTP dispatch** | `dispatchOrchestrator.ts` + Supabase `dispatch_events` audit |
+| **Rah-Veer** | `app/rahveer/*`, `src/lib/rahveerDb.ts` — Good Samaritan claim log |
+| **Native crash (dev)** | `nativeCrashAdapter` — source badge on calm dialog; requires dev client / APK |
 
 ---
 
 ## Distress voice & crash detection
 
-Reduces false modals during navigation/TTS while still catching real distress on an active journey.
+Reduces false modals during navigation/TTS while catching real distress on an active journey (or Naari safety mode).
 
 | Layer | Module |
 |-------|--------|
 | Policy | `distressVoicePolicy.ts` |
-| Spectral + classifier | `distressAudioFeatures.ts`, `distressVoiceClassifier.ts` |
+| Classifier | `distressAudioFeatures.ts`, `distressVoiceClassifier.ts` |
 | Optional YAMNet | `yamnetDistressInference.ts` (dev client / APK) |
 | Impact | `crashEngine.ts` |
 
-**Settings:** Profile → Voice Crash Detection (**experimental**, default **off**) · sensitivity low/med/high.
+**Settings:** Profile → Voice Crash Detection (**experimental**, default **off**).
 
-**Calm dialog:** 15s countdown — dismiss with “I’m okay”; **no auto-SMS at 0** for Margi crash path.
+**Calm dialog:** 15s countdown — dismiss with “I’m okay”; **no auto-SMS at 0**.
 
 Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md)
 
@@ -155,8 +188,9 @@ Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](d
 
 ## Golden Hour Packet & bystander relay
 
-- Offline triage FSM → facility rank → GHP build → lz-string QR + checksum
-- **Scan** (`/scan`) — camera relay into SecureStore; SMS 108 intent
+- Offline triage FSM → facility rank → GHP build → lz-string QR + checksum (`MARGI GHP` header, `mg-` hash prefix)
+- **`/scan`** — camera relay into SecureStore; SMS 108 intent
+- **`/emergency/relay`** — web-style relay for judges
 - Airplane-mode test: build packet online → airplane mode → QR still readable
 
 ---
@@ -165,8 +199,8 @@ Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](d
 
 ```bash
 npm run typecheck
-npm test                 # 220 unit tests
-npm run verify:docs      # README test count matches sources
+npm test                 # 220 unit tests (72 suites)
+npm run verify:docs      # README test count matches src/**/*.test.ts
 npm run verify:branding
 npm run test:coverage
 ```
@@ -196,15 +230,17 @@ adb reverse tcp:8081 tcp:8081
 npm run start:tunnel
 ```
 
-If tunnel fails: delete `%USERPROFILE%\.expo\ngrok.yml`, retry; disable VPN; see [ngrok dashboard](https://dashboard.ngrok.com/get-started/your-authtoken).
+If tunnel fails: delete `%USERPROFILE%\.expo\ngrok.yml`, retry; disable VPN.
 
 ### Judge demo (no Metro)
 
 ```bash
 npm run android
+# or prebuilt APK:
+npm run android:apk
 ```
 
-Uses Android Studio JBR (JDK 17+) on Windows automatically.
+See [scripts/BUILD_APK.md](scripts/BUILD_APK.md). Windows uses Android Studio **JBR** (JDK 17+) automatically via `scripts/run-android.cjs`.
 
 ---
 
@@ -218,17 +254,36 @@ Uses Android Studio JBR (JDK 17+) on Windows automatically.
 | `babel-preset-expo` missing | `npx expo install babel-preset-expo` |
 | Port 8081 busy | `netstat -ano \| findstr :8081` then `taskkill /PID <pid> /F` |
 | Reanimated CMake lock | `npm run android:clean-native` — one build at a time |
-| foojay / IBM_SEMERU | `node scripts/patch-foojay-gradle.js` after install |
+| JSX in `.ts` hook | Keep JSX in `.tsx` (e.g. `TorchCameraLayer.tsx`, not `useTorch.ts`) |
+| foojay / IBM_SEMERU | `node scripts/patch-foojay-gradle.js` runs on `postinstall` |
+| `[CXX5304] SDK XML version 4` | Harmless warning when Studio CLI versions differ; build can still succeed |
 
 ---
 
 ## POI refresh
 
 ```bash
-python scripts/ingestCorridors.py --corridor NH48 --min-pois 50 --out data/emergency_seed.db
+python ../scripts/ingestCorridors.py --corridor NH48 --min-pois 50 --out data/emergency_seed.db
 ```
 
-Runbook: [docs/POI_VERIFICATION_RUNBOOK.md](docs/POI_VERIFICATION_RUNBOOK.md)
+Runbook: [../docs/POI_VERIFICATION_RUNBOOK.md](../docs/POI_VERIFICATION_RUNBOOK.md)
+
+---
+
+## Project structure (key paths)
+
+```
+app/
+  (tabs)/explore.tsx      # Home tab
+  (tabs)/drive.tsx        # Trip / HUD
+  emergency/              # selection, activation, response, route, triage, packet
+  naari-shakti.tsx
+src/lib/emergency/        # orchestrator, navigation, activation
+src/lib/naariShakti/
+src/lib/voice/
+src/components/emergency/ # TraumaResponseActionBar, TorchCameraLayer
+src/lib/brand.ts          # TEAM_ATTRIBUTION_LINE, GHP headers
+```
 
 ---
 
@@ -236,8 +291,9 @@ Runbook: [docs/POI_VERIFICATION_RUNBOOK.md](docs/POI_VERIFICATION_RUNBOOK.md)
 
 | Doc | Topic |
 |-----|--------|
-| [docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md](../docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md) | Full implementation plan |
-| [docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md](docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md) | Stabilization |
+| [../docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md](../docs/MARGI_FINAL_IMPLEMENTATION_PLAN.md) | Full implementation plan |
+| [docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md](docs/superpowers/specs/2026-05-23-novadrive-stabilization-design.md) | Tab shell & stabilization |
+| [docs/superpowers/specs/2026-05-30-margi-ui-theme-restoration-design.md](docs/superpowers/specs/2026-05-30-margi-ui-theme-restoration-design.md) | Navy theme restoration |
 | [scripts/export-yamnet-distress-onnx.md](scripts/export-yamnet-distress-onnx.md) | Optional YAMNet model |
 
 ---
