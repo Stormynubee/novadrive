@@ -189,6 +189,56 @@ export default function AuthScreen() {
           </View>
         </View>
 
+        <HudText variant="bodyMd" style={styles.body}>
+          {tab === 'guest'
+            ? getAuthString('guestOfflineDesc', settings.language)
+            : getAuthString('profileSyncDesc', settings.language)}
+        </HudText>
+
+        <View style={styles.tabBlock}>
+          <View style={styles.tabRow}>
+            {(['signin', 'signup'] as AuthTab[]).map((key) => (
+              <Pressable
+                key={key}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+                  setTab(key);
+                }}
+                style={({ pressed }) => [
+                  styles.tab,
+                  styles.tabHalf,
+                  tab === key && styles.tabActive,
+                  pressed && tab === key && styles.tabActivePressed,
+                  pressed && tab !== key && styles.tabPressed,
+                ]}
+              >
+                <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
+                  {key === 'signin'
+                    ? getAuthString('signIn', settings.language)
+                    : getAuthString('createAccount', settings.language)}
+                </HudText>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+              setTab('guest');
+            }}
+            style={({ pressed }) => [
+              styles.tab,
+              styles.tabFull,
+              tab === 'guest' && styles.tabActive,
+              pressed && tab === 'guest' && styles.tabActivePressed,
+              pressed && tab !== 'guest' && styles.tabPressed,
+            ]}
+          >
+            <HudText variant="mono" style={[styles.tabText, tab === 'guest' && styles.tabTextActive]}>
+              {getAuthString('guestDemo', settings.language)}
+            </HudText>
+          </Pressable>
+        </View>
+
         {/* Prominent Tactile Expandable Language Selector */}
         <View style={styles.promoSelectorCard}>
           <Pressable
@@ -291,55 +341,6 @@ export default function AuthScreen() {
           )}
         </View>
 
-        <HudText variant="headlineLg" style={styles.title}>
-          {tab === 'guest'
-            ? getAuthString('demoMode', settings.language)
-            : tab === 'signup'
-            ? getAuthString('createAccount', settings.language)
-            : getAuthString('signIn', settings.language)}
-        </HudText>
-        <HudText variant="bodyMd" style={styles.body}>
-          {supabaseReady
-            ? getAuthString('profileSyncDesc', settings.language)
-            : getAuthString('supabaseMissingDesc', settings.language)}
-        </HudText>
-
-        <View style={styles.tabBlock}>
-          <View style={styles.tabRow}>
-            {(['signin', 'signup'] as AuthTab[]).map((key) => (
-              <Pressable
-                key={key}
-                onPress={() => setTab(key)}
-                style={({ pressed }) => [
-                  styles.tab,
-                  styles.tabHalf,
-                  tab === key && styles.tabActive,
-                  pressed && tab !== key && styles.tabPressed,
-                ]}
-              >
-                <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
-                  {key === 'signin'
-                    ? getAuthString('signIn', settings.language)
-                    : getAuthString('createAccount', settings.language)}
-                </HudText>
-              </Pressable>
-            ))}
-          </View>
-          <Pressable
-            onPress={() => setTab('guest')}
-            style={({ pressed }) => [
-              styles.tab,
-              styles.tabFull,
-              tab === 'guest' && styles.tabActive,
-              pressed && tab !== 'guest' && styles.tabPressed,
-            ]}
-          >
-            <HudText variant="mono" style={[styles.tabText, tab === 'guest' && styles.tabTextActive]}>
-              {getAuthString('guestDemo', settings.language)}
-            </HudText>
-          </Pressable>
-        </View>
-
         {tab !== 'guest' ? (
           <HudCard>
             {tab === 'signup' ? (
@@ -410,9 +411,7 @@ export default function AuthScreen() {
           </HudCard>
         )}
 
-        <HudText variant="mono" style={styles.footer}>
-          {TEAM_DISPLAY_NAME} · {getAuthString('teamDisplay', settings.language)}
-        </HudText>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -424,7 +423,7 @@ const styles = StyleSheet.create({
   brandRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 16,
   },
   brandTitle: {
     color: tokens.primary,
@@ -531,7 +530,14 @@ const styles = StyleSheet.create({
     opacity: 0.8,
   },
   title: { color: tokens.primary },
-  body: { color: tokens.onSurfaceVariant, marginTop: 8, marginBottom: 24, lineHeight: 24 },
+  body: {
+    color: tokens.onSurfaceVariant,
+    marginTop: 0,
+    marginBottom: 20,
+    fontSize: 12,
+    letterSpacing: 0.3,
+    fontWeight: '500',
+  },
   tabBlock: { gap: 8, marginBottom: 16 },
   tabRow: { flexDirection: 'row', gap: 8 },
   tab: {
@@ -545,8 +551,11 @@ const styles = StyleSheet.create({
   tabHalf: { flex: 1 },
   tabFull: { width: '100%' },
   tabActive: { backgroundColor: tokens.primary, borderColor: tokens.primary },
-  tabPressed: { backgroundColor: tokens.primaryContainer, borderColor: tokens.primaryDeep },
-  tabText: { color: tokens.onSurfaceVariant, fontSize: 11, letterSpacing: 0.8 },
+  // Pressing an already-active tab → darken to primaryDeep (feels responsive, not faded)
+  tabActivePressed: { backgroundColor: tokens.primaryDeep, borderColor: tokens.primaryDeep },
+  // Pressing an inactive tab → clear mid-tone surface darkening (never a pale wash)
+  tabPressed: { backgroundColor: tokens.surfaceContainerHigh, borderColor: tokens.outline },
+  tabText: { color: tokens.onSurfaceVariant, fontSize: 11, letterSpacing: 0.8, fontWeight: '600' },
   tabTextActive: { color: tokens.onPrimary },
   label: { color: tokens.primary, fontSize: 12, marginBottom: 8 },
   hint: { color: tokens.onSurfaceVariant, lineHeight: 20 },

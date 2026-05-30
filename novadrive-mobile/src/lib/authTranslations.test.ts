@@ -31,4 +31,15 @@ describe('authTranslations', () => {
   it('returns fallback value if key does not exist', () => {
     expect(getAuthString('invalid_key' as any, 'en')).toBe('');
   });
+
+  it('has exactly 4 words for guestOfflineDesc and profileSyncDesc in English', () => {
+    const guestOffline = getAuthString('guestOfflineDesc' as any, 'en');
+    const profileSync = getAuthString('profileSyncDesc', 'en');
+
+    expect(guestOffline).toBe('Fuly offline on device');
+    expect(profileSync).toBe('Secure sync to cloud.');
+
+    expect(guestOffline.split(/\s+/).filter(Boolean).length).toBe(4);
+    expect(profileSync.split(/\s+/).filter(Boolean).length).toBe(4);
+  });
 });

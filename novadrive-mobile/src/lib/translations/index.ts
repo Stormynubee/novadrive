@@ -10,6 +10,7 @@ export type AuthStringKey =
   | 'createAccount'
   | 'guestDemo'
   | 'profileSyncDesc'
+  | 'guestOfflineDesc'
   | 'supabaseMissingDesc'
   | 'displayName'
   | 'emailAddress'
