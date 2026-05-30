@@ -89,6 +89,8 @@ export interface MedicalProfile {
   /** @deprecated migrated to primaryContact — kept for SMS back-compat */
   emergencyContact?: string;
   primaryContact?: EmergencyContact;
+  /** ICE 2 – ICE 5: additional emergency contacts (max 4 extra) */
+  iceContacts?: EmergencyContact[];
 }
 
 export interface AccessibilityPrefs {

@@ -113,6 +113,7 @@ export function defaultMedical(): MedicalProfile {
     medications: '',
     primaryContact: defaultEmergencyContact(),
     emergencyContact: '',
+    iceContacts: [],
   };
 }
 
@@ -134,6 +135,15 @@ export function normalizeMedical(m?: MedicalProfile): MedicalProfile {
     };
   }
   base.emergencyContact = formatIceLine(base.primaryContact);
+  // Normalize iceContacts: ensure array, cap at 4, ensure each has required fields
+  const rawIce = Array.isArray(m?.iceContacts) ? m.iceContacts : [];
+  base.iceContacts = rawIce
+    .slice(0, 4)
+    .map((c) => ({
+      fullName: c?.fullName ?? '',
+      relationship: c?.relationship ?? '',
+      phone: c?.phone ?? '',
+    }));
   return base;
 }
 

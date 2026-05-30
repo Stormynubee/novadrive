@@ -216,6 +216,17 @@ export default function MedicalScreen() {
           onChange={(c) => updateField('primaryContact', c)}
           onClear={() => updateField('primaryContact', defaultEmergencyContact())}
         />
+        {/* Link to full ICE 1-5 management screen */}
+        <Pressable
+          onPress={() => router.push('/emergency-contacts' as Href)}
+          style={styles.iceManageBtn}
+        >
+          <MaterialIcons name="group-add" size={18} color={tokens.secondary} />
+          <HudText variant="mono" style={styles.iceManageLabel}>
+            Manage ICE 2 – 5 contacts
+          </HudText>
+          <MaterialIcons name="chevron-right" size={18} color={tokens.secondary} />
+        </Pressable>
       </HudCard>
 
       <View style={styles.actions}>
@@ -282,6 +293,21 @@ const styles = StyleSheet.create({
   bloodLabel: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
   bloodLabelActive: { color: tokens.onPrimary },
   iceHeader: { marginBottom: 8 },
+  iceManageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: tokens.outlineVariant,
+  },
+  iceManageLabel: {
+    flex: 1,
+    color: tokens.secondary,
+    fontSize: 12,
+    fontFamily: 'PublicSans_700Bold',
+  },
   actions: { flexDirection: 'row', gap: 12, marginTop: 8 },
 });
 
