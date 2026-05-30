@@ -1,7 +1,51 @@
 osm_id,canonical_name,phone,trauma_tier,verified,verifier,verified_date,notes
-t1,Apollo Hospitals Greams Road (Trauma),044-28290200,1,1,,2026-05-28,Pre-curated demo
-t2,SRMC Emergency & Trauma (Chennai),044-27440000,1,1,,2026-05-28,Pre-curated demo
-t3,Kauvery Hospital Alwarpet ER,044-40004000,1,1,,2026-05-28,Pre-curated demo
-t4,MIOT International Trauma Bay,044-42002288,1,1,,2026-05-28,Pre-curated demo
-h1,Rajiv Gandhi Govt General Hospital ER,044-28194600,2,1,,2026-05-28,Pre-curated demo
-h4,Vellore CMC Casualty (NH referral),0416-2282010,1,1,,2026-05-28,Pre-curated demo
+1127285905,Aakash Fertility Centre & Hospital,,2,0,,,OSM ingest — pending phone verification
+1472969165,Amma Hospital,,2,0,,,OSM ingest — pending phone verification
+258978416,Amrit Hospital,,2,0,,,OSM ingest — pending phone verification
+459635161,Apollo Hospitals Greams Road (Trauma),044-28290200,1,1,,2026-05-28,Pre-curated demo
+289486820,"Apollo Hospitals, Tondiarpet",,2,0,,,OSM ingest — pending phone verification
+941471945,Appasamy Hospital,,2,0,,,OSM ingest — pending phone verification
+941611681,Appasamy Hospital,,2,0,,,OSM ingest — pending phone verification
+941621037,Appolo Clinic,,2,0,,,OSM ingest — pending phone verification
+1621246558,Ashwini Eye Care,,2,0,,,OSM ingest — pending phone verification
+1185699253,Avadi Hospital,,2,0,,,OSM ingest — pending phone verification
+540658116,B.M.Orthopaedic Hospital,,2,0,,,OSM ingest — pending phone verification
+1446415367,Bhadra Homeo,,2,0,,,OSM ingest — pending phone verification
+310910945,BM Hospital,044-22670277,2,1,,,OSM ingest — pending phone verification
+312000326,Cancer Institute,,2,0,,,OSM ingest — pending phone verification
+262452334,City Tower Hospitals,,2,0,,,OSM ingest — pending phone verification
+303590777,Corporation Hospital,,2,0,,,OSM ingest — pending phone verification
+1129195836,Facility 1129195836,,2,0,,,OSM ingest — pending phone verification
+1597151538,Facility 1597151538,,2,0,,,OSM ingest — pending phone verification
+370967673,Facility 370967673,,2,0,,,OSM ingest — pending phone verification
+310504820,Goverment dental hospital & collage,,2,0,,,OSM ingest — pending phone verification
+320275820,Govt Maternity Hospital,,2,0,,,OSM ingest — pending phone verification
+308811614,"Hindu Mission Health Services, Kanchipuram",,2,0,,,OSM ingest — pending phone verification
+320275824,Institute of Child Health,,2,0,,,OSM ingest — pending phone verification
+320275839,Institute of Obstetrics and Gynaecology dd,,2,0,,,OSM ingest — pending phone verification
+597590621,JJ Hospital,,2,0,,,OSM ingest — pending phone verification
+311429396,K.F. Hospital,,2,0,,,OSM ingest — pending phone verification
+295544111,K.H.M.Hospital,,2,0,,,OSM ingest — pending phone verification
+248420920,Kalaignar Karunanidhi Nagar,,2,0,,,OSM ingest — pending phone verification
+248560797,Kasimedu,,2,0,,,OSM ingest — pending phone verification
+310732936,Kilpauk Medical College,,2,0,,,OSM ingest — pending phone verification
+310015097,Military Hospital,,2,0,,,OSM ingest — pending phone verification
+364650995,MIOT International Trauma Bay,044-42002288,1,1,,2026-05-28,Pre-curated demo
+1152858038,Rajan Eye Care Hospital,2834 0500/0300,2,1,,,OSM ingest — pending phone verification
+375668400,Rajiv Gandhi Govt General Hospital ER,044-28194600,2,1,,2026-05-28,Pre-curated demo
+1474055555,Right Hospitals,,2,0,,,OSM ingest — pending phone verification
+983957837,"Sankara Eye Hospital, Kanchipuram",,2,0,,,OSM ingest — pending phone verification
+442508332,Sarswathi Hospital,,2,0,,,OSM ingest — pending phone verification
+591555028,skandan nursing home,,2,0,,,OSM ingest — pending phone verification
+1315895438,sree dhanalakshmi family clinic,,2,0,,,OSM ingest — pending phone verification
+295552092,Sri Devi Speciality Hospial,,2,0,,,OSM ingest — pending phone verification
+313027868,Sri Ramachandra Medical Centre and Hospital,,2,0,,,OSM ingest — pending phone verification
+1015571498,Srm Speciality Hospital,,2,0,,,OSM ingest — pending phone verification
+1015571601,SRMC Emergency & Trauma (Chennai),044-27440000,1,1,,2026-05-28,Pre-curated demo
+367795605,St. Thomas Hospital,,2,0,,,OSM ingest — pending phone verification
+295552091,Sundaram Medical Foundation,,2,0,,,OSM ingest — pending phone verification
+1560720462,Vasan Eye Care Hospital,,2,0,,,OSM ingest — pending phone verification
+595706154,"Vasan Eye Care Hospital, Vadapalani",,2,0,,,OSM ingest — pending phone verification
+310909754,Vellore CMC Casualty (NH referral),0416-2282010,1,1,,2026-05-28,Pre-curated demo
+459648701,Vijaya Heart Centre,,2,0,,,OSM ingest — pending phone verification
+258978417,Vikram Hospital,,2,0,,,OSM ingest — pending phone verification

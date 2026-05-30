@@ -51,11 +51,20 @@ jest.mock('expo-sqlite', () => {
   };
 });
 
-import { POI_DATA_VERIFIED, rankFacilities } from './facilitiesDb';
+import { POI_DATA_VERIFIED, countVerifiedFacilities, rankFacilities } from './facilitiesDb';
 
 describe('facilitiesDb', () => {
   it('exports demo seed verification date', () => {
     expect(POI_DATA_VERIFIED).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it('counts verified facilities from SEED pack', () => {
+    expect(countVerifiedFacilities()).toBeGreaterThanOrEqual(1);
+  });
+
+  // C1 production gate — un-skip after CSV has ≥40 phone-verified rows (Task 6)
+  it.skip('reports at least 40 verified facilities in production pack', () => {
+    expect(countVerifiedFacilities()).toBeGreaterThanOrEqual(40);
   });
 
   it('ranks nearest trauma first for RED triage and excludes clinics', async () => {

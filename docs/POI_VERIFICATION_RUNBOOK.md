@@ -56,6 +56,21 @@ Follow [POI_TRAUMA_TIER_RUBRIC.md](POI_TRAUMA_TIER_RUBRIC.md). Never assign tier
 
 ---
 
+## Bulk OSM → CSV (first ingest)
+
+After `ingestCorridors.py` writes `data/emergency_seed_raw.db`, expand the verification sheet with real OSM ids:
+
+```powershell
+python scripts/bulk_map_osm_csv.py --db data/emergency_seed_raw.db --csv data/corridors/nh48_verification.csv
+Copy-Item data/emergency_seed_raw.db data/emergency_seed.db -Force
+python scripts/verify_pois.py --db data/emergency_seed.db --csv data/corridors/nh48_verification.csv --min-verified-phones 0
+node novadrive-mobile/scripts/generate-facilities-seed.mjs --db data/emergency_seed.db
+```
+
+Legacy demo ids (`t1`, `h1`, …) are fuzzy-matched to OSM names on the **first** run; re-runs preserve rows already keyed by numeric OSM id. Use `--min-verified-phones 0` until Task 6 reaches ≥40 verified phones.
+
+---
+
 ## Weekly merge cadence
 
 Each week (or after a verification session):
