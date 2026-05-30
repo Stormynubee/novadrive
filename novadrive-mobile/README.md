@@ -160,7 +160,7 @@ Connection status chip shows when cloud is unavailable — no fake “online” 
 |---------|-------------------|
 | **Supabase auth** | `app/auth.tsx`, `src/lib/supabase/*` |
 | **NGO volunteers** | `app/ngo/*`, `src/lib/ngo/volunteerProviders.ts` |
-| **OSRM trip & AI Safety** | Trip tab — Nominatim geocoding autocomplete (India-constrained, real locations only), driving route polyline along actual roads, dynamic route proximity scanner to high-risk accident-prone hotspots (e.g., Pune's Shivajinagar & Katraj, Bangalore's Silk Board, Chennai's Kathipara, Delhi's Chanakyapuri), and real-time safe-driving advice cards. |
+| **OSRM trip & AI Safety** | Trip tab — Nominatim geocoding autocomplete (India-constrained, real locations only), driving route polyline along actual roads, dynamic route proximity scanner to 20+ high-risk accident-prone hotspots (e.g., Odisha's Khandagiri & Palasuni, Chennai's Kathipara & Koyambedu, Pune's Shivajinagar & Katraj, Bangalore's Silk Board, Delhi's Chanakyapuri), and real-time safe-driving advice cards. |
 | **HTTP dispatch** | `dispatchOrchestrator.ts` + Supabase `dispatch_events` audit |
 | **Rah-Veer** | `app/rahveer/*`, `src/lib/rahveerDb.ts` — Good Samaritan claim log |
 | **Native crash (dev)** | `nativeCrashAdapter` — source badge on calm dialog; requires dev client / APK |

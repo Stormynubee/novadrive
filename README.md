@@ -188,7 +188,7 @@ See **[CHANGELOG.md](CHANGELOG.md)**. Highlights:
 |------|-----------|
 | **2026-05-28** | **Emergency automation** (`7bf530a`) — incident tracker, `runEmergencyOrchestrator`, ICE/108 SMS intents, hospital Maps target, Call ICE FAB, geo alerts, Sarthi GPS context |
 | **2026-05-28** | **Trauma HUD + Naari UI** (`e1a55b4`) — incident timer, torch, BY TEAM NOVADRIVE header, saturated Naari Shakti styling, mobile README refresh |
-| **2026-05-28** | **Phase 3 (v2.0.0)** — Supabase auth, NGO registry, OSRM trip, Sarthi health, HTTP dispatch, native crash adapter (dev build) |
+| **2026-05-28** | **Phase 3 (v2.0.0)** — Supabase auth, NGO registry, OSRM trip (geocoding suggestions & 20+ multi-state safety hotspots), Sarthi health, HTTP dispatch, native crash adapter (dev build) |
 | **2026-05-28** | **Phase 2 P1** — Drive HUD v1.6, Rah-Veer claims, journey history, START triage TTS |
 | **2026-05-28** | **Margi rebrand** — `com.margi.app`, `margi://`, Care Path tokens ([release notes](release-notes-margi-rebrand.md)) |
 | **2026-05-28** | **Distress voice** — policy grace, classifier, sensitivity setting ([release notes](release-notes-distress-voice.md)) |
