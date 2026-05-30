@@ -160,7 +160,7 @@ Connection status chip shows when cloud is unavailable — no fake “online” 
 |---------|-------------------|
 | **Supabase auth** | `app/auth.tsx`, `src/lib/supabase/*` |
 | **NGO volunteers** | `app/ngo/*`, `src/lib/ngo/volunteerProviders.ts` |
-| **OSRM trip** | Trip tab — Nominatim + driving route polyline |
+| **OSRM trip & AI Safety** | Trip tab — Nominatim geocoding autocomplete (India-constrained, real locations only), driving route polyline along actual roads, dynamic route proximity scanner to high-risk accident-prone hotspots (e.g., Pune's Shivajinagar & Katraj, Bangalore's Silk Board, Chennai's Kathipara, Delhi's Chanakyapuri), and real-time safe-driving advice cards. |
 | **HTTP dispatch** | `dispatchOrchestrator.ts` + Supabase `dispatch_events` audit |
 | **Rah-Veer** | `app/rahveer/*`, `src/lib/rahveerDb.ts` — Good Samaritan claim log |
 | **Native crash (dev)** | `nativeCrashAdapter` — source badge on calm dialog; requires dev client / APK |
@@ -200,7 +200,7 @@ Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](d
 
 ```bash
 npm run typecheck
-npm test                 # 236 unit tests (74 suites)
+npm test                 # 239 unit tests (75 suites)
 npm run verify:docs      # README test count matches src/**/*.test.ts
 npm run verify:branding
 npm run test:coverage

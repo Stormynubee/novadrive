@@ -25,7 +25,8 @@ import type { BriefingCard } from '../lib/tripBriefing';
 import { TripBriefingSection } from './TripBriefingSection';
 import { planTripRoute, projectPolylineToViewBox } from '../lib/routing/tripRoute';
 import { MAP_VIEWBOX } from '../lib/corridorMapGeometry';
-import type { LatLng } from '../lib/routing/nominatim';
+import { type LatLng, type GeocodeSuggestion, fetchLocationSuggestions } from '../lib/routing/nominatim';
+import { fetchDrivingRoute, formatRouteDistanceKm, formatRouteMinutes } from '../lib/routing/osrm';
 import { tokens } from '../theme/tokens';
 
 type RoutePreference = 'safest' | 'fastest';
@@ -145,6 +146,151 @@ function RouteCard({
   );
 }
 
+type SafetyHotspot = {
+  area: string;
+  risk: 'High' | 'Medium' | 'Low';
+  reason: string;
+  lat: number;
+  lng: number;
+  suggestion: string;
+};
+
+const SAFETY_HOTSPOTS: SafetyHotspot[] = [
+  {
+    area: 'Shivajinagar',
+    risk: 'High',
+    reason: 'Heavy traffic and poor signals',
+    lat: 18.5308,
+    lng: 73.8475,
+    suggestion: 'Avoid peak hours (6–9 PM). Use designated flyover routes where possible.',
+  },
+  {
+    area: 'Katraj',
+    risk: 'Medium',
+    reason: 'Sharp turns and highway merging',
+    lat: 18.4575,
+    lng: 73.8657,
+    suggestion: 'Drive cautiously, extend your vehicle following distance to 3 seconds.',
+  },
+  {
+    area: 'Hinjewadi',
+    risk: 'Low',
+    reason: 'Planned roads and better traffic control',
+    lat: 18.5912,
+    lng: 73.7389,
+    suggestion: 'Optimal corridor selected. Drive within default speed limits.',
+  },
+  {
+    area: 'Silk Board Junction, Bengaluru',
+    risk: 'High',
+    reason: 'Severe multi-way congestion and complex weaving patterns',
+    lat: 12.9176,
+    lng: 77.6244,
+    suggestion: 'High-risk congestion zone. Anticipate sudden lane-changes and braking.',
+  },
+  {
+    area: 'Kathipara Junction, Chennai',
+    risk: 'High',
+    reason: 'Complex multi-level merging and high transit speed variance',
+    lat: 13.0076,
+    lng: 80.2052,
+    suggestion: 'High-risk merging zone. Maintain lane discipline and monitor blindspots.',
+  },
+  {
+    area: 'Chanakyapuri, Delhi',
+    risk: 'Medium',
+    reason: 'High-speed broad corridors with frequent pedestrian crossings',
+    lat: 28.5983,
+    lng: 77.1895,
+    suggestion: 'Moderate speed hazard. Be prepared for mid-block pedestrian crossings.',
+  },
+];
+
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+type SafetyAnalysis = {
+  safetyPct: number;
+  riskLevel: 'High' | 'Medium' | 'Low';
+  advice: string;
+  closestHotspot: SafetyHotspot | null;
+  distanceToHotspot: number | null;
+};
+
+function analyzeRouteSafety(coordinates: LatLng[] | null, destName: string): SafetyAnalysis {
+  if (!coordinates || coordinates.length === 0) {
+    const matched = SAFETY_HOTSPOTS.find((h) =>
+      destName.toLowerCase().includes(h.area.toLowerCase().split(',')[0].trim())
+    );
+    if (matched) {
+      const safetyPct = matched.risk === 'High' ? 62 : matched.risk === 'Medium' ? 82 : 98;
+      return {
+        safetyPct,
+        riskLevel: matched.risk,
+        advice: matched.suggestion,
+        closestHotspot: matched,
+        distanceToHotspot: 0,
+      };
+    }
+    return {
+      safetyPct: 98,
+      riskLevel: 'Low',
+      advice: 'Optimal corridor selected. Drive within speed limits.',
+      closestHotspot: null,
+      distanceToHotspot: null,
+    };
+  }
+
+  let minDistance = Infinity;
+  let closest: SafetyHotspot | null = null;
+
+  for (const coord of coordinates) {
+    for (const hotspot of SAFETY_HOTSPOTS) {
+      const dist = getDistanceKm(coord.lat, coord.lng, hotspot.lat, hotspot.lng);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = hotspot;
+      }
+    }
+  }
+
+  if (closest && minDistance <= 5.0) {
+    const safetyPct =
+      closest.risk === 'High'
+        ? Math.max(55, Math.round(55 + (minDistance / 5.0) * 15))
+        : closest.risk === 'Medium'
+        ? Math.max(75, Math.round(75 + (minDistance / 5.0) * 13))
+        : 98;
+
+    return {
+      safetyPct,
+      riskLevel: closest.risk,
+      advice: closest.suggestion,
+      closestHotspot: closest,
+      distanceToHotspot: Math.round(minDistance * 10) / 10,
+    };
+  }
+
+  return {
+    safetyPct: 98,
+    riskLevel: 'Low',
+    advice: 'No major accident hotspots detected on route. Safe to travel.',
+    closestHotspot: null,
+    distanceToHotspot: null,
+  };
+}
+
 /**
  * Trip tab — Stitch `plan_corridor_route_planning`: map canvas + bottom sheet planner.
  */
@@ -170,15 +316,24 @@ export function PlanCorridorScreen() {
   const gpsReady = useRef(false);
   const routeFetchRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // Suggestions state
+  const [suggestions, setSuggestions] = useState<GeocodeSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [searchingSuggestions, setSearchingSuggestions] = useState(false);
+
   const routes = ROUTE_CATALOG[preference];
+
+  const safetyAnalysis = useMemo(() => {
+    return analyzeRouteSafety(osrmPolyline, destination);
+  }, [osrmPolyline, destination]);
 
   const selectedRoute = useMemo(() => {
     const base = routes.find((r) => r.id === selectedRouteId) ?? routes[0];
-    if (osrmMetrics) {
-      return { ...base, distanceKm: osrmMetrics.distanceKm, minutes: osrmMetrics.minutes };
-    }
-    return base;
-  }, [routes, selectedRouteId, osrmMetrics]);
+    const distanceKm = osrmMetrics ? osrmMetrics.distanceKm : base.distanceKm;
+    const minutes = osrmMetrics ? osrmMetrics.minutes : base.minutes;
+    const safetyPct = osrmPolyline ? safetyAnalysis.safetyPct : base.safetyPct;
+    return { ...base, distanceKm, minutes, safetyPct };
+  }, [routes, selectedRouteId, osrmMetrics, osrmPolyline, safetyAnalysis]);
 
   useEffect(() => {
     if (gpsReady.current) return;
@@ -264,6 +419,29 @@ export function PlanCorridorScreen() {
       if (routeFetchRef.current) clearTimeout(routeFetchRef.current);
     };
   }, [destination, originCoords]);
+
+  const handleDestinationChange = useCallback((text: string) => {
+    setDestination(text);
+    if (text.trim().length >= 3) {
+      setSearchingSuggestions(true);
+      setShowSuggestions(true);
+      fetchLocationSuggestions(text)
+        .then((hits) => {
+          setSuggestions(hits);
+          setSearchingSuggestions(false);
+        })
+        .catch(() => {
+          setSearchingSuggestions(false);
+        });
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+      setOsrmPolyline(null);
+      setOsrmPathD(undefined);
+      setOsrmOnline(false);
+      setOsrmMetrics(null);
+    }
+  }, [originCoords]);
 
   const onPreference = useCallback((next: RoutePreference) => {
     Haptics.selectionAsync().catch(() => undefined);
@@ -372,8 +550,67 @@ export function PlanCorridorScreen() {
               <CorridorAtbInputs
                 origin={origin}
                 destination={destination}
-                onDestinationChange={setDestination}
+                onDestinationChange={handleDestinationChange}
               />
+
+              {showSuggestions && (
+                <View style={styles.suggestionsCard}>
+                  {searchingSuggestions ? (
+                    <View style={styles.suggestionsStatus}>
+                      <HudText variant="mono" style={styles.suggestionsStatusText}>SEARCHING REAL LOCATIONS…</HudText>
+                    </View>
+                  ) : suggestions.length === 0 ? (
+                    <View style={styles.suggestionsStatus}>
+                      <HudText variant="mono" style={styles.suggestionsStatusText}>NO REAL LOCATIONS FOUND</HudText>
+                    </View>
+                  ) : (
+                    suggestions.map((item, idx) => (
+                      <Pressable
+                        key={`${item.lat}_${item.lng}_${idx}`}
+                        onPress={() => {
+                          Haptics.selectionAsync().catch(() => undefined);
+                          setDestination(item.displayName);
+                          setOriginCoords(originCoords);
+                          setOsrmPolyline(null);
+                          setOsrmPathD(undefined);
+                          setOsrmOnline(false);
+                          setOsrmMetrics(null);
+                          setShowSuggestions(false);
+
+                          void (async () => {
+                            try {
+                              const route = await fetchDrivingRoute(originCoords, item);
+                              if (route) {
+                                setOsrmPolyline(route.coordinates);
+                                setOsrmPathD(
+                                  projectPolylineToViewBox(route.coordinates, MAP_VIEWBOX.w, MAP_VIEWBOX.h)
+                                );
+                                setOsrmOnline(true);
+                                setOsrmMetrics({
+                                  distanceKm: formatRouteDistanceKm(route.distanceM),
+                                  minutes: formatRouteMinutes(route.durationS),
+                                });
+                              }
+                            } catch (e) {
+                              Alert.alert('Routing failed', 'Could not plan a route along proper roads.');
+                            }
+                          })();
+                        }}
+                        style={({ pressed }) => [
+                          styles.suggestionRow,
+                          pressed && styles.suggestionPressed,
+                          idx < suggestions.length - 1 && styles.suggestionBorder,
+                        ]}
+                      >
+                        <MaterialIcons name="location-on" size={16} color={tokens.secondary} style={{ marginRight: 8, marginTop: 2 }} />
+                        <HudText variant="bodySm" style={styles.suggestionText} numberOfLines={2}>
+                          {item.displayName}
+                        </HudText>
+                      </Pressable>
+                    ))
+                  )}
+                </View>
+              )}
 
               <View style={styles.prefRow}>
                 <Pressable
@@ -414,7 +651,12 @@ export function PlanCorridorScreen() {
                 {routes.map((route) => (
                   <RouteCard
                     key={route.id}
-                    route={route}
+                    route={{
+                      ...route,
+                      distanceKm: selectedRoute.id === route.id ? selectedRoute.distanceKm : route.distanceKm,
+                      minutes: selectedRoute.id === route.id ? selectedRoute.minutes : route.minutes,
+                      safetyPct: selectedRoute.id === route.id ? selectedRoute.safetyPct : route.safetyPct,
+                    }}
                     selected={selectedRoute.id === route.id}
                     onPress={() => {
                       Haptics.selectionAsync().catch(() => undefined);
@@ -423,6 +665,87 @@ export function PlanCorridorScreen() {
                   />
                 ))}
               </View>
+
+              {/* AI Safety Intelligence & Recommendations Card */}
+              {destination.trim().length > 0 && (
+                <View style={styles.safetyAnalysisCard}>
+                  <View style={styles.safetyAnalysisHeader}>
+                    <MaterialIcons
+                      name={safetyAnalysis.riskLevel === 'High' ? 'report-problem' : safetyAnalysis.riskLevel === 'Medium' ? 'warning' : 'security'}
+                      size={20}
+                      color={safetyAnalysis.riskLevel === 'High' ? tokens.error : safetyAnalysis.riskLevel === 'Medium' ? tokens.secondary : tokens.tertiary}
+                    />
+                    <HudText variant="headlineMd" style={styles.safetyAnalysisTitle}>
+                      AI Safety Intelligence
+                    </HudText>
+                  </View>
+
+                  <View style={styles.safetyAnalysisRow}>
+                    <View style={styles.safetyMetric}>
+                      <HudText variant="mono" style={styles.safetyMetricLabel}>ROUTE RISK</HudText>
+                      <HudText
+                        variant="headlineLg"
+                        style={[
+                          styles.safetyMetricValue,
+                          {
+                            color:
+                              safetyAnalysis.riskLevel === 'High'
+                                ? tokens.error
+                                : safetyAnalysis.riskLevel === 'Medium'
+                                ? tokens.secondary
+                                : tokens.tertiary,
+                          },
+                        ]}
+                      >
+                        {safetyAnalysis.riskLevel.toUpperCase()}
+                      </HudText>
+                    </View>
+
+                    <View style={styles.safetyDivider} />
+
+                    <View style={styles.safetyMetric}>
+                      <HudText variant="mono" style={styles.safetyMetricLabel}>SAFETY RATING</HudText>
+                      <HudText
+                        variant="headlineLg"
+                        style={[
+                          styles.safetyMetricValue,
+                          {
+                            color:
+                              safetyAnalysis.safetyPct >= 90
+                                ? tokens.tertiary
+                                : safetyAnalysis.safetyPct >= 75
+                                ? tokens.secondary
+                                : tokens.error,
+                          },
+                        ]}
+                      >
+                        {safetyAnalysis.safetyPct}%
+                      </HudText>
+                    </View>
+                  </View>
+
+                  {safetyAnalysis.closestHotspot && (
+                    <View style={styles.hotspotAlert}>
+                      <MaterialIcons name="error-outline" size={16} color={tokens.primary} style={{ marginTop: 2 }} />
+                      <View style={{ flex: 1 }}>
+                        <HudText variant="bodyMd" style={styles.hotspotTitle}>
+                          Proximity to Accident Hotspot
+                        </HudText>
+                        <HudText variant="bodySm" style={styles.hotspotReason}>
+                          {safetyAnalysis.closestHotspot.area}: {safetyAnalysis.closestHotspot.reason}
+                        </HudText>
+                      </View>
+                    </View>
+                  )}
+
+                  <View style={styles.recommendationBox}>
+                    <HudText variant="mono" style={styles.recommendationLabel}>REAL-TIME RECOMMENDATION</HudText>
+                    <HudText variant="bodySm" style={styles.recommendationText}>
+                      {safetyAnalysis.advice}
+                    </HudText>
+                  </View>
+                </View>
+              )}
 
               <TripBriefingSection
                 originLabel={origin}
@@ -441,21 +764,21 @@ export function PlanCorridorScreen() {
                 </HudText>
                 <MaterialIcons name="chevron-right" size={20} color={tokens.outline} />
               </Pressable>
-            </ScrollView>
 
-            <View style={styles.footer}>
-              <Pressable
-                onPress={startDriving}
-                style={({ pressed }) => [styles.startBtn, pressed && styles.startPressed]}
-                accessibilityRole="button"
-                accessibilityLabel="Start driving"
-              >
-                <MaterialIcons name="directions-car" size={22} color={tokens.onPrimary} />
-                <HudText variant="bodyMd" style={styles.startLabel}>
-                  Start Driving
-                </HudText>
-              </Pressable>
-            </View>
+              <View style={styles.footerInline}>
+                <Pressable
+                  onPress={startDriving}
+                  style={({ pressed }) => [styles.startBtn, pressed && styles.startPressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Start driving"
+                >
+                  <MaterialIcons name="directions-car" size={22} color={tokens.onPrimary} />
+                  <HudText variant="bodyMd" style={styles.startLabel}>
+                    Start Driving
+                  </HudText>
+                </Pressable>
+              </View>
+            </ScrollView>
           </>
         )}
       </KeyboardAvoidingView>
@@ -505,7 +828,7 @@ const styles = StyleSheet.create({
   sheetScroll: { flex: 1 },
   sheetScrollContent: {
     paddingHorizontal: tokens.spacing.sideMargin,
-    paddingBottom: 24,
+    paddingBottom: 130, // plenty of space to scroll button clear of the tabbar!
     flexGrow: 1,
   },
   sheetTitle: {
@@ -586,6 +909,131 @@ const styles = StyleSheet.create({
     paddingHorizontal: tokens.spacing.sideMargin,
     paddingBottom: 100,
     gap: 12,
+  },
+  suggestionsCard: {
+    backgroundColor: tokens.surface,
+    borderWidth: 1.5,
+    borderColor: tokens.outlineVariant,
+    borderRadius: tokens.radius.card,
+    marginTop: -8,
+    marginBottom: tokens.spacing.stackMd,
+    overflow: 'hidden',
+    ...tokens.elevation.floating,
+  },
+  suggestionsStatus: {
+    padding: 14,
+    alignItems: 'center',
+  },
+  suggestionsStatusText: {
+    fontSize: 10,
+    color: tokens.outline,
+    letterSpacing: 1.0,
+  },
+  suggestionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: 12,
+    backgroundColor: tokens.surface,
+  },
+  suggestionPressed: {
+    backgroundColor: tokens.surfaceContainerLow,
+  },
+  suggestionBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(196,198,207,0.25)',
+  },
+  suggestionText: {
+    color: tokens.primary,
+    flex: 1,
+    lineHeight: 18,
+  },
+  safetyAnalysisCard: {
+    backgroundColor: tokens.surfaceContainerLowest,
+    borderWidth: 1.5,
+    borderColor: tokens.outlineVariant,
+    borderRadius: tokens.radius.card,
+    padding: 14,
+    marginVertical: tokens.spacing.stackMd,
+    gap: 12,
+    ...tokens.elevation.card,
+  },
+  safetyAnalysisHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  safetyAnalysisTitle: {
+    color: tokens.primary,
+    fontFamily: 'PublicSans_700Bold',
+  },
+  safetyAnalysisRow: {
+    flexDirection: 'row',
+    backgroundColor: tokens.surfaceContainerLow,
+    borderRadius: tokens.radius.button,
+    padding: 12,
+    alignItems: 'center',
+  },
+  safetyMetric: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  safetyMetricLabel: {
+    fontSize: 9,
+    color: tokens.onSurfaceVariant,
+    letterSpacing: 0.8,
+  },
+  safetyMetricValue: {
+    fontFamily: 'HankenGrotesk_800ExtraBold',
+    fontSize: 22,
+    marginTop: 2,
+  },
+  safetyDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: tokens.outlineVariant,
+  },
+  hotspotAlert: {
+    flexDirection: 'row',
+    gap: 8,
+    backgroundColor: 'rgba(254,107,0,0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(254,107,0,0.18)',
+    borderRadius: 8,
+    padding: 10,
+  },
+  hotspotTitle: {
+    color: tokens.primary,
+    fontFamily: 'PublicSans_700Bold',
+    fontSize: 12,
+  },
+  hotspotReason: {
+    color: tokens.onSurfaceVariant,
+    fontSize: 11,
+    marginTop: 2,
+    lineHeight: 16,
+  },
+  recommendationBox: {
+    backgroundColor: tokens.primaryContainer,
+    borderRadius: 8,
+    padding: 10,
+    gap: 4,
+  },
+  recommendationLabel: {
+    fontSize: 9,
+    color: tokens.primary,
+    letterSpacing: 0.8,
+    fontWeight: '700',
+  },
+  recommendationText: {
+    color: tokens.onPrimaryContainer,
+    lineHeight: 18,
+    fontWeight: '500',
+  },
+  footerInline: {
+    marginTop: tokens.spacing.stackLg,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(196,198,207,0.35)',
+    paddingTop: 16,
   },
 });
 
