@@ -255,6 +255,14 @@ const SAFETY_HOTSPOTS: SafetyHotspot[] = [
     lng: 83.8214,
     suggestion: 'Watch for slower-moving local transit merging from arterial rural links.',
   },
+  {
+    area: 'Jamjhadi Chowk, Balasore (NH-16)',
+    risk: 'High',
+    reason: 'Narrow bridge highway transit bottleneck and high truck traffic density',
+    lat: 21.3325,
+    lng: 86.6710,
+    suggestion: 'Slow down and maintain clear lane discipline on bridges.',
+  },
 
   // Chennai Hotspots
   {
@@ -305,8 +313,24 @@ const SAFETY_HOTSPOTS: SafetyHotspot[] = [
     lng: 80.2199,
     suggestion: 'Be prepared for high-volume commuter rush. Keep speed moderate.',
   },
+  {
+    area: 'Vandalur Flyover Merging, Chennai (GST Road)',
+    risk: 'High',
+    reason: 'Highway junction with heavy commercial freight merging at speed',
+    lat: 12.8906,
+    lng: 80.0812,
+    suggestion: 'Highway junction. Exercise caution when joining high-speed traffic lanes.',
+  },
+  {
+    area: 'Kelambakkam Junction, Chennai',
+    risk: 'Medium',
+    reason: 'Multi-way junction with high-density rural-to-urban transit flow',
+    lat: 12.7885,
+    lng: 80.2215,
+    suggestion: 'Slow down. Be aware of non-motorized transport vehicles crossing junctions.',
+  },
 
-  // Bengaluru & Delhi Hotspots
+  // Bengaluru Hotspots
   {
     area: 'Silk Board Junction, Bengaluru',
     risk: 'High',
@@ -316,12 +340,126 @@ const SAFETY_HOTSPOTS: SafetyHotspot[] = [
     suggestion: 'Maintain extreme patience. Anticipate frequent close-proximity lane cuts.',
   },
   {
+    area: 'Tin Factory Flyover, Bengaluru',
+    risk: 'High',
+    reason: 'Severe bottlenecks and heavy lane-narrowing under metro construction',
+    lat: 12.9934,
+    lng: 77.6811,
+    suggestion: 'Expect sudden narrowing of lanes. Watch out for temporary road barriers.',
+  },
+  {
+    area: 'Hebbal Flyover Merging, Bengaluru',
+    risk: 'High',
+    reason: 'Steep curved flyover ramps with extreme speed differences',
+    lat: 13.0359,
+    lng: 77.5978,
+    suggestion: 'Maintain lane discipline. Avoid overtaking on tight interchange ramps.',
+  },
+
+  // Delhi Hotspots
+  {
     area: 'Chanakyapuri Roundabouts, Delhi',
     risk: 'Medium',
     reason: 'Broad high-speed diplomatic corridors with frequent active pedestrian crossings',
     lat: 28.5983,
     lng: 77.1895,
     suggestion: 'Maintain absolute speed limits. Yield to all pedestrian crosswalk zones.',
+  },
+  {
+    area: 'Mukarba Chowk, Delhi',
+    risk: 'High',
+    reason: 'Multi-highway flyover merging with severe commercial truck weaving patterns',
+    lat: 28.7372,
+    lng: 77.1601,
+    suggestion: 'Merging bottleneck. Anticipate heavy truck movements and broad turns.',
+  },
+  {
+    area: 'Dhaula Kuan Interchange, Delhi',
+    risk: 'High',
+    reason: 'Complex multi-directional transit tunnels and rapid speed changes',
+    lat: 28.5919,
+    lng: 77.1616,
+    suggestion: 'Complex highway junction. Ensure correct lane selection well in advance.',
+  },
+
+  // Mumbai Hotspots
+  {
+    area: 'Mulund Toll Naka, Mumbai (EEH)',
+    risk: 'High',
+    reason: 'Heavy commercial truck queue mergers and severe peak congestion',
+    lat: 19.1678,
+    lng: 72.9622,
+    suggestion: 'Expect long vehicular queues. Approach toll merging lines slowly.',
+  },
+  {
+    area: 'Bandra Reclamation Curve, Mumbai (WEH)',
+    risk: 'High',
+    reason: 'High-speed wet-weather skidding zone approaching Sea Link toll',
+    lat: 19.0435,
+    lng: 72.8396,
+    suggestion: 'High-speed curve. Reduce speed significantly during wet weather conditions.',
+  },
+  {
+    area: 'Sion Circle Bypass, Mumbai',
+    risk: 'Medium',
+    reason: 'Heavy urban traffic junctions and multi-lane commercial merging lanes',
+    lat: 19.0384,
+    lng: 72.8643,
+    suggestion: 'Urban junction. Keep a sharp watch for local buses and two-wheelers.',
+  },
+
+  // Kolkata Hotspots
+  {
+    area: 'Maa Flyover Curve, Kolkata',
+    risk: 'High',
+    reason: 'Sharp high-speed elevated curves with low friction under wet weather',
+    lat: 22.5442,
+    lng: 88.3914,
+    suggestion: 'Elevated sharp curve. Strictly maintain the 50 km/h speed limit.',
+  },
+  {
+    area: 'Howrah Bridge Merging, Kolkata',
+    risk: 'High',
+    reason: 'Extremely high pedestrian densities and slow moving cargo handcarts',
+    lat: 22.5851,
+    lng: 88.3478,
+    suggestion: 'High-density transit lane. Watch for pedestrians and manual handcarts.',
+  },
+
+  // Hyderabad Hotspots
+  {
+    area: 'Gachibowli X Roads, Hyderabad',
+    risk: 'High',
+    reason: 'IT gateway crossroads with rapid speed changes and heavy vehicle weaving',
+    lat: 17.4475,
+    lng: 78.3562,
+    suggestion: 'Expect heavy weaving traffic. Signal lane changes early and clearly.',
+  },
+  {
+    area: 'Panjagutta Junction, Hyderabad',
+    risk: 'Medium',
+    reason: 'Heavy commercial urban transit and severe multi-level queuing delays',
+    lat: 17.4264,
+    lng: 78.4531,
+    suggestion: 'Busy urban intersection. Yield to crossing public transit vehicles.',
+  },
+
+  // Ahmedabad Hotspots
+  {
+    area: 'Iscon Crossroad, Ahmedabad (SG Highway)',
+    risk: 'High',
+    reason: 'Broad high-speed expressway lanes with frequent cross-overs',
+    lat: 23.0247,
+    lng: 72.5074,
+    suggestion: 'High-speed highway stretch. Yield to vehicles entering the main highway.',
+  },
+  {
+    area: 'CTM Double Road, Ahmedabad',
+    risk: 'Medium',
+    reason: 'Heavy highway merging transit and commercial trucking terminals',
+    lat: 22.9938,
+    lng: 72.6289,
+    suggestion: 'Trucking corridor. Keep a safe following distance from loaded trucks.',
   },
 ];
 
