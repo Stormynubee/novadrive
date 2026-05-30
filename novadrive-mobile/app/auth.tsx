@@ -542,8 +542,8 @@ const styles = StyleSheet.create({
   tabRow: { flexDirection: 'row', gap: 8 },
   tab: {
     paddingVertical: 12,
-    borderRadius: tokens.radius.button,
-    borderWidth: 1,
+    borderRadius: 24, // curved pill shape instead of square box
+    borderWidth: 1.5,
     borderColor: tokens.outlineVariant,
     alignItems: 'center',
     backgroundColor: tokens.surface,

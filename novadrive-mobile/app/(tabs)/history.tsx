@@ -152,28 +152,28 @@ export default function CommunityTabScreen() {
           <View style={styles.geoBadge}>
             <View style={styles.geoDot} />
             <HudText variant="mono" style={styles.geoBadgeText}>
-              Active within 5 km
+              Active strictly within 5 km
             </HudText>
           </View>
         </View>
 
         {locationLoading ? (
           <View style={styles.statusRow}>
-            <MaterialIcons name="my-location" size={14} color={tokens.secondary} />
+            <MaterialIcons name="my-location" size={15} color={tokens.secondary} />
             <HudText variant="bodySm" style={styles.statusText}>
               Locating alerts near you…
             </HudText>
           </View>
         ) : permissionDenied || lat == null ? (
           <View style={styles.statusRow}>
-            <MaterialIcons name="location-off" size={14} color={tokens.onSurfaceVariant} />
+            <MaterialIcons name="location-off" size={15} color={tokens.outline} />
             <HudText variant="bodySm" style={styles.statusText}>
               Enable location to see corridor alerts within 5 km.
             </HudText>
           </View>
         ) : alerts.length === 0 ? (
           <View style={styles.statusRow}>
-            <MaterialIcons name="check-circle-outline" size={14} color={tokens.primary} />
+            <MaterialIcons name="check-circle-outline" size={15} color={tokens.tertiary} />
             <HudText variant="bodySm" style={styles.statusText}>
               No active alerts within 5 km — corridor is clear.
             </HudText>
@@ -357,6 +357,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderWidth: 1,
     borderColor: tokens.primaryContainer,
+    marginLeft: 28, // perfectly align with the header text!
   },
   geoDot: {
     width: 6,
@@ -374,14 +375,21 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 4,
-    paddingVertical: 6,
+    gap: 10,
+    backgroundColor: tokens.surfaceContainerLow,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    borderRadius: tokens.radius.card,
+    padding: 12,
+    marginTop: 4,
+    marginLeft: 28, // perfectly align with the header text!
   },
   statusText: {
     color: tokens.onSurfaceVariant,
     flex: 1,
+    fontSize: 12,
     lineHeight: 18,
+    fontFamily: 'PublicSans_600SemiBold',
   },
   alertCard: {
     flexDirection: 'row',

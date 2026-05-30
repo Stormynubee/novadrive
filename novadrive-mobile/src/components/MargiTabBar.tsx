@@ -84,13 +84,13 @@ const styles = StyleSheet.create({
   tab: { flex: 1, alignItems: 'center', paddingVertical: 2, gap: 3 },
   tabPressed: { opacity: 0.7 },
   pill: {
-    // geometry from spec — wide horizontal padding makes borderRadius 999 *visible*
-    paddingHorizontal: pillSpec.paddingHorizontal,
-    paddingVertical: pillSpec.paddingVertical,
-    borderRadius: pillSpec.borderRadius,
-    minWidth: pillSpec.minWidth,
+    height: 32,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    minWidth: 64,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   pillActive: { backgroundColor: tokens.secondary },
   label: {
