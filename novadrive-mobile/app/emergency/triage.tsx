@@ -52,7 +52,7 @@ export default function TriageScreen() {
 
   useEffect(() => {
     if (!question || triageResult) return;
-    speakFsmPrompt(triageState, settings.language, { ttsEnabled: a11y.ttsEnabled });
+    speakFsmPrompt(triageState, (settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en', { ttsEnabled: a11y.ttsEnabled });
   }, [triageState, question, a11y.ttsEnabled, settings.language, triageResult]);
 
   if (shouldGateTriageWithoutIncident(session.incidentType) || triageResult) {

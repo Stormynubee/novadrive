@@ -33,6 +33,7 @@ const env = {
   ...process.env,
   JAVA_HOME: jdk.home,
   PATH: `${path.join(jdk.home, 'bin')}${path.delimiter}${process.env.PATH || ''}`,
+  CMAKE_BUILD_PARALLEL_LEVEL: '1',
 };
 
 console.log(`Using JDK ${jdk.major} at ${jdk.home}`);

@@ -5,8 +5,8 @@ describe('sarthiStatusCopy', () => {
     expect(sarthiConnectionBanner({ offlineMode: true, bffUnavailable: false })).toBe(
       'Offline — Sarthi uses on-device safety guidance while you drive.'
     );
-    expect(sarthiConnectionBanner({ offlineMode: false, bffUnavailable: true })).toBe(
-      'Sarthi is using on-device safety guidance. Cloud assistant reconnects when online.'
+    expect(sarthiConnectionBanner({ offlineMode: false, bffUnavailable: true })).toContain(
+      'Gemini is not responding'
     );
     expect(sarthiConnectionBanner({ offlineMode: false, bffUnavailable: false })).toBeNull();
   });

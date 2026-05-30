@@ -59,3 +59,13 @@ export function getDashboardGreeting(ctx: SarthiUserContext): string {
 export function getFallbackMessage(ctx: SarthiUserContext): string {
   return formatSarthiReply(sarthiStrings.fallback[ctx.language], ctx);
 }
+
+const cloudUnavailablePrefix: Record<Lang, string> = {
+  en: "Cloud Sarthi (Gemini) is temporarily unavailable. On-device guidance:\n\n",
+  hi: "क्लाउड सारथी (Gemini) अभी उपलब्ध नहीं। ऑन-डिवाइस मार्गदर्शन:\n\n",
+  ta: "கிளவுட் சார்த்தி (Gemini) தற்காலிகமாக இல்லை. சாதனத்தில் வழிகாட்டுதல்:\n\n",
+};
+
+export function wrapCloudUnavailableReply(offlineReply: string, ctx: SarthiUserContext): string {
+  return `${cloudUnavailablePrefix[ctx.language]}${offlineReply}`;
+}

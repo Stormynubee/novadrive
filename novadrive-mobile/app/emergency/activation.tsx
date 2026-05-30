@@ -1,6 +1,6 @@
-import { type Href, router } from 'expo-router';
+import { type Href, router, useRootNavigationState } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { InteractionManager, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
 import * as Location from 'expo-location';
@@ -44,6 +44,8 @@ const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 export default function EmergencyActivationScreen() {
+  const rootNavigationState = useRootNavigationState();
+  const navigationReady = Boolean(rootNavigationState?.key);
   const { settings, updateSettings, session, resetEmergency, profile, setLocation, selectFacility, markIncidentActivated } =
     useApp();
   const [statusIndex, setStatusIndex] = useState(0);
@@ -57,22 +59,27 @@ export default function EmergencyActivationScreen() {
   const showContinue = shouldShowManualContinue(mode, secondsLeft);
 
   useEffect(() => {
+    if (!navigationReady) return;
     if (!shouldRedirectActivationToSelection(session.incidentType)) return;
     router.replace(EMERGENCY_SELECTION_PATH as Href);
-  }, [session.incidentType]);
+  }, [navigationReady, session.incidentType]);
 
   useEffect(() => {
     let active = true;
+    const readyFallback = setTimeout(() => {
+      if (active) setBackendReady(true);
+    }, 2000);
     (async () => {
       try {
         await Location.getForegroundPermissionsAsync();
         if (active) setBackendReady(true);
       } catch {
-        /* timeout fallback handles this path */
+        if (active) setBackendReady(true);
       }
     })();
     return () => {
       active = false;
+      clearTimeout(readyFallback);
     };
   }, []);
 
@@ -102,7 +109,10 @@ export default function EmergencyActivationScreen() {
       settings,
       incidentType: session.incidentType,
       smsKind: 'sos_hold',
-      triage: session.triage ?? 'RED',
+      triage:
+        session.triage === 'RED' || session.triage === 'YELLOW' || session.triage === 'GREEN'
+          ? session.triage
+          : 'RED',
     });
     if (result.coords) {
       setLocation({
@@ -116,11 +126,22 @@ export default function EmergencyActivationScreen() {
     }
   };
 
-  const navigateToResponse = async (selectedMode: ActivationMode) => {
-    await runOrchestration();
+  const navigateToResponse = (selectedMode: ActivationMode): Promise<void> => {
     markIncidentActivated();
     const responseMode = selectedMode === 'manual' ? 'guided' : 'auto';
-    router.replace(`${EMERGENCY_RESPONSE_PATH}?mode=${responseMode}` as Href);
+    const href = `${EMERGENCY_RESPONSE_PATH}?mode=${responseMode}` as Href;
+
+    return new Promise((resolve, reject) => {
+      InteractionManager.runAfterInteractions(() => {
+        try {
+          router.replace(href);
+          resolve();
+          void runOrchestration();
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
   };
 
   useEffect(() => {
@@ -134,9 +155,23 @@ export default function EmergencyActivationScreen() {
     ) {
       return;
     }
-    hasAutoNavigatedRef.current = true;
-    void navigateToResponse(mode);
-  }, [secondsLeft, mode, backendReady]);
+
+    const advance = () => {
+      if (hasAutoNavigatedRef.current) return;
+      hasAutoNavigatedRef.current = true;
+      navigateToResponse(mode).catch(() => {
+        hasAutoNavigatedRef.current = false;
+      });
+    };
+
+    if (navigationReady) {
+      advance();
+      return;
+    }
+
+    const fallback = setTimeout(advance, 400);
+    return () => clearTimeout(fallback);
+  }, [navigationReady, secondsLeft, mode, backendReady]);
 
   const cancelFlow = () => {
     resetEmergency();
@@ -211,7 +246,7 @@ export default function EmergencyActivationScreen() {
         </View>
 
         <LanguageSelector
-          value={settings.language}
+          value={(settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en'}
           onChange={(value) => {
             void updateSettings({ language: value });
           }}
@@ -235,12 +270,15 @@ export default function EmergencyActivationScreen() {
           <Pressable
             style={({ pressed }) => [styles.continueButton, pressed && styles.continueButtonPressed]}
             onPress={() => {
-              hasAutoNavigatedRef.current = true;
               if (mode === 'manual') {
+                hasAutoNavigatedRef.current = true;
                 router.push(EMERGENCY_TRIAGE_PATH as Href);
                 return;
               }
-              void navigateToResponse(mode);
+              hasAutoNavigatedRef.current = true;
+              navigateToResponse(mode).catch(() => {
+                hasAutoNavigatedRef.current = false;
+              });
             }}
           >
             <HudText variant="bodyMd" style={styles.continueText}>

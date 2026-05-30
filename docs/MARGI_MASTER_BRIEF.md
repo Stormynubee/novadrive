@@ -1,438 +1,339 @@
-# Margi — Master Team Brief
+# Margi — Complete Replication Bible
 
-> **⚠ Historical planning doc.** Margi shipped as a **native Expo Android app** (`novadrive-mobile/`), not the PWA described in sections below. For judges and reviewers, read **[CANON.md](CANON.md)** first. POI counts, sql.js, and Serwist items here are **aspirational or outdated** unless cross-checked with CANON.
+> **This is the master engineering record for Margi.** It captures the *real shipped architecture*, every subsystem, the exact tech stack and versions, environment + deployment, and a full **problem-to-solution engineering log** so the entire project can be **rebuilt from zero** by a human or an AI model. The original aspirational planning brief (PWA vision) is preserved verbatim in **Appendix A** for history.
 
-**Project:** Margi (Road Safety Hackathon 2026 — RoadSoS Track)  
-**Organizer:** CoERS & RBG Labs, IIT Madras (with MoRTH)  
-**Document version:** 1.0  
-**Last updated:** May 2026  
-**Audience:** Full hackathon team — developers, presenters, data engineers
+**Project:** Margi — offline-first Golden Hour road-safety prototype
+**Team:** Team NovaDrive · IIT Madras National Road Safety Hackathon 2026 (RoadSoS track, CoERS & RBG Labs / MoRTH)
+**Repository:** [github.com/Stormynubee/Margi](https://github.com/Stormynubee/Margi)
+**Primary client:** `novadrive-mobile/` — native Expo SDK 54 Android app (`com.margi.app`, `margi://`)
+**Optional cloud:** `novadrive/` — Next.js 14 Sarthi AI BFF + web relay (Vercel)
+**Brief site (this page):** static HTML built from this file → [roadsafetyhackathon-six.vercel.app](https://roadsafetyhackathon-six.vercel.app)
+**Tagline:** *When signal drops, the path still holds. The network failed — the golden hour didn't.*
 
 ---
 
 ## Table of Contents
 
-1. [Executive Summary](#1-executive-summary)
-2. [Hackathon Alignment](#2-hackathon-alignment)
-3. [Product Vision & One-Line Pitch](#3-product-vision--one-line-pitch)
-4. [Why We Chose This Architecture](#4-why-we-chose-this-architecture)
-5. [What We Rejected (And Why)](#5-what-we-rejected-and-why)
-6. [Core Innovation](#6-core-innovation)
-7. [System Architecture](#7-system-architecture)
-8. [End-to-End Pipeline](#8-end-to-end-pipeline)
-9. [User Flows & Mind Map](#9-user-flows--mind-map)
-10. [START Triage FSM Specification](#10-start-triage-fsm-specification)
-11. [Golden Hour Packet (GHP) Specification](#11-golden-hour-packet-ghp-specification)
-12. [Data Pipeline & Database](#12-data-pipeline--database)
-13. [Offline & Spatial Routing](#13-offline--spatial-routing)
-14. [AI Chatbot Architecture](#14-ai-chatbot-architecture)
-15. [Human QR Relay System](#15-human-qr-relay-system)
-16. [Tech Stack](#16-tech-stack)
-17. [Project Structure](#17-project-structure)
-18. [Implementation Plan (4 Weeks)](#18-implementation-plan-4-weeks)
-19. [Execution Checklist by Role](#19-execution-checklist-by-role)
-20. [Demo Day Script (90 Seconds)](#20-demo-day-script-90-seconds)
-21. [Submission Requirements](#21-submission-requirements)
-22. [Verification & Testing Plan](#22-verification--testing-plan)
-23. [Risks & Mitigations](#23-risks--mitigations)
-24. [Competitive Advantages](#24-competitive-advantages)
-25. [Glossary (Quick Reference)](#25-glossary-quick-reference)
-26. [Open Decisions & Team Actions](#26-open-decisions--team-actions)
-27. [Contacts & Resources](#27-contacts--resources)
+1. [What Margi Really Is](#1-what-margi-really-is)
+2. [The Two Safety Lanes](#2-the-two-safety-lanes)
+3. [Repository Topology](#3-repository-topology)
+4. [Complete Tech Stack And Versions](#4-complete-tech-stack-and-versions)
+5. [Mobile App Architecture](#5-mobile-app-architecture)
+6. [Expo Router Screen Map](#6-expo-router-screen-map)
+7. [Core Library Reference](#7-core-library-reference)
+8. [START Triage FSM](#8-start-triage-fsm)
+9. [Golden Hour Packet GHP](#9-golden-hour-packet-ghp)
+10. [Facilities SQLite And Trauma Tier Ranking](#10-facilities-sqlite-and-trauma-tier-ranking)
+11. [Emergency Orchestrator](#11-emergency-orchestrator)
+12. [Hold SOS Quick SOS And Incident Tracker](#12-hold-sos-quick-sos-and-incident-tracker)
+13. [Trauma Response HUD](#13-trauma-response-hud)
+14. [Naari Shakti Womens Safety Portal](#14-naari-shakti-womens-safety-portal)
+15. [Crash And Distress Voice Engines](#15-crash-and-distress-voice-engines)
+16. [Sarthi Assistant Offline And Cloud](#16-sarthi-assistant-offline-and-cloud)
+17. [Sarthi BFF Internals](#17-sarthi-bff-internals)
+18. [Supabase Backend](#18-supabase-backend)
+19. [Web Mirror And Bystander Relay](#19-web-mirror-and-bystander-relay)
+20. [Brief Site Build Pipeline](#20-brief-site-build-pipeline)
+21. [Environment Variables](#21-environment-variables)
+22. [Local Development Setup](#22-local-development-setup)
+23. [Deployment Mobile APK](#23-deployment-mobile-apk)
+24. [Deployment Sarthi BFF](#24-deployment-sarthi-bff)
+25. [Testing Strategy](#25-testing-strategy)
+26. [Engineering Problem And Solution Log](#26-engineering-problem-and-solution-log)
+27. [Replicate From Scratch Playbook](#27-replicate-from-scratch-playbook)
+28. [Honesty Boundaries And Rejected Scope](#28-honesty-boundaries-and-rejected-scope)
+29. [Glossary](#29-glossary)
+30. [Resources And Links](#30-resources-and-links)
 
 ---
 
-## 1. Executive Summary
+## 1. What Margi Really Is
 
-**Margi** is an **offline-first, AI-powered emergency chatbot** (Progressive Web App) designed for the **RoadSoS** problem statement at the IIT Madras National Road Safety Hackathon 2026.
+Margi is a **client-heavy, offline-first emergency system** for Indian highway corridors. All medical and routing decisions run **on-device**; the network is an optional enhancement (SMS to 108, Supabase auth, Gemini LLM chat).
 
-When a road accident happens — often with **no mobile signal** on highways — victims and bystanders lose precious minutes trying to explain location, injury severity, and which hospital to use. Margi compresses that chaos into a **60-second guided triage conversation**, routes the victim to the **correct trauma-tier facility** (not just the nearest clinic), builds a **Golden Hour Packet (GHP)** dispatch brief, and if offline, passes that packet through a **human QR relay chain** until any phone regains signal and can SMS **108/112**.
+| Layer | Reality |
+|-------|---------|
+| **Primary client** | `novadrive-mobile/` — Expo SDK 54, package `com.margi.app`, version 2.0.0 |
+| **Offline core** | START triage FSM → SQLite facility ranking (~50 demo POIs) → Golden Hour Packet → QR (`ND1:` envelope) / SMS composer |
+| **Optional online** | Sarthi Gemini BFF (`novadrive/`), Supabase auth + profile + NGO + dispatch audit, OSRM trip routing, HTTP dispatch hooks |
+| **Web mirror** | Bystander relay at `/relay`, plus a full web emergency wizard in `novadrive/` |
+| **Brief site** | Static HTML at `docs/site/` (this page) deployed as a separate Vercel project |
+| **Tests** | 200+ Jest unit tests over lib / FSM / encoders / orchestrator / KB |
+| **Judge APK** | GitHub Actions builds `margi-debug.apk` |
 
-**Tagline:** *The network failed. The golden hour didn't.*
+**What Margi is NOT** (honesty boundaries — keep these in every pitch):
 
----
+- Not production emergency medical software — no physician-certified triage, no verified national POI registry, no EMS dispatch guarantee.
+- Not a PWA as the primary client — early docs describe a Next.js PWA with sql.js; the **shipped** app is native Expo. (The PWA vision survives as **Appendix A**.)
+- Not always-on crash detection — accelerometer heuristics + experimental voice; native crash adapter is stubbed unless a custom dev build is used.
+- Not auto-dial — SOS opens the **SMS composer / dialer intent**; the user taps Send / Call (platform policy).
 
-## 2. Hackathon Alignment
-
-### Event Details
-
-| Item | Detail |
-|------|--------|
-| **Theme** | AI in Road Safety (2026 focus: **AI-powered chatbots**) |
-| **Our track** | **RoadSoS** — location-based emergency services during accidents |
-| **Team size** | 1–10 members (Unstop enforced) |
-| **Submission** | Unstop only — one submission, one problem statement |
-| **Indian track deadline** | **May 31, 2026, 11:59 PM IST** (extended) |
-| **Stage 1** | Online prototype + code + DB + 7 slides + Word doc |
-| **Stage 2** | Shortlisted teams present **live at IIT Madras** |
-
-### RoadSoS Evaluation Criteria (What Judges Score)
-
-| Criterion | How Margi Addresses It |
-|-----------|-------------------------------|
-| Data reliability & geographic accuracy | Pre-built, verified SQLite POI database from OSM + manual corridor verification |
-| Valid emergency contacts fetched & displayed | Hospitals, police, ambulance, towing — with real phone tags where available |
-| Offline capability | FSM triage + sql.js local DB + Service Worker + corridor packs + QR relay |
-| Innovation & extra features | GHP pre-dispatch brief + human sneakernet relay + trauma-tier routing + NH km markers |
-| Cross-country integration | Country/state config packs (IN + BIMSTEC: NP, BD, LK, etc.) |
-| AI chatbot requirement | Conversational UI with LLM slot-filling over deterministic START FSM |
-| Open-source preference | OSM, OSRM, sql.js, Llama/Mistral (Groq/Ollama), no proprietary lock-in |
-
-### Submission Deliverables Checklist
-
-- [ ] Full source code (Python preferred for backend/ingest)
-- [ ] **Structured database** (`emergency_seed.db` + export)
-- [ ] **Exactly 7 slides** (Welcome + Thank You included)
-- [ ] **Word document**: codebase overview, dependencies, assumptions
-- [ ] Working Unstop submission before deadline
+> **Margi provides decision support only. It is not a medical diagnosis. In an emergency, always call 108/112 when possible.**
 
 ---
 
-## 3. Product Vision & One-Line Pitch
+## 2. The Two Safety Lanes
 
-### Problem
+Margi ships **two parallel emergency experiences** that share the offline core.
 
-India records ~**1.7 lakh road deaths/year**. On highways, accidents often occur in **dead zones** with no signal. Victims cannot:
-- Explain exact location (lat/lng is meaningless to most users)
-- Communicate injury severity clearly to 108
-- Know whether the nearest facility is a **trauma center** or a small clinic
-- Pass information to dispatch when their phone has no connectivity
-
-### Solution
-
-Margi is a **conversational emergency agent** that:
-1. Runs **START medical triage** (international first-responder protocol)
-2. Finds the **right tier** of emergency facility offline
-3. Generates a **dispatch-ready Golden Hour Packet**
-4. **Relays** that packet via QR to a bystander when the victim has no signal
-
-### Pitches (Memorize)
-
-| Audience | Pitch |
-|----------|-------|
-| **30 sec (judges)** | Margi is an offline AI emergency chatbot. In 60 seconds it triages injuries, routes RED cases to trauma centers, builds a 108-ready brief, and if there's no signal — a bystander scans a QR and carries that brief until they get network. |
-| **Technical** | LLM-as-skin, FSM-as-spine, sql.js POI store, Haversine spatial query with trauma-tier filter, lz-string GHP encoding, IndexedDB human relay. |
-| **Emotional** | When the network fails, the golden hour doesn't. |
-
----
-
-## 4. Why We Chose This Architecture
-
-We intentionally built a system that is:
-
-1. **Demo-proof** — works in Chrome on two phones with airplane mode
-2. **Offline-first** — core path never requires live API calls
-3. **Medically grounded** — START triage protocol, not arbitrary questions
-4. **Clinically routed** — trauma-tier matching, not nearest-pin routing
-5. **Information-centric** — solves *dispatch delay*, not *sensor novelty*
-6. **Hackathon-aligned** — AI chatbot is the product, not a sidebar feature
-7. **Open-source friendly** — OSM, OSRM, open LLMs, SQLite
-
----
-
-## 5. What We Rejected (And Why)
-
-Early ideation explored a **sensor-heavy "smart vehicle mesh"** approach. After engineering verification, we **deliberately killed** those features. This section documents why — so the team stays aligned and does not re-introduce scope creep.
-
-### Rejected Feature Matrix
-
-| Rejected Idea | What It Tried To Do | Why We Killed It |
-|---------------|---------------------|------------------|
-| **Ultrasonic V2V** | Phones communicate via 19–21 kHz sound between vehicles | Browsers block mic/audio without user gesture; road noise interference; iOS ultrasonic limits; unreliable demo |
-| **BLE / DTN mesh** | Crash packets relay through passing cars via Bluetooth | Web Bluetooth cannot advertise/beacon; no BLE mesh in browsers; iOS has no Web Bluetooth |
-| **Wi-Fi Direct beacons** | Broadcast distress via Wi-Fi Direct SSID | **Not available in web browser APIs** |
-| **Crash audio ML** | Always-on mic detects tire screech/impact | False positives; privacy issues; battery drain; research-grade ML scope |
-| **Capacitor/native hybrid** | Wrap PWA in native shell for "real" Bluetooth | Doubles build complexity; judges won't sideload APKs; contradicts accessible web prototype |
-| **Curvature/anxiety physics engine** | Predict safe speed on curves from OSM geometry | Wrong problem statement (RoadWatch); OSM geometry too sparse; missing friction/banking data |
-| **Background volunteer GPS dispatch** | Track volunteers when app minimized | PWAs cannot reliably background-track GPS (especially iOS); needs gov integration |
-| **Base64-only SMS coords** | Encode GPS in SMS as Base64 | 108 operators cannot decode; useless to dispatchers |
-| **Always-on "Drive Mode"** | Mic + wake lock + audio on launch | Scary UX; permission denial; battery drain |
-
-### Strategic Lesson
-
-> **Judges score emergency chatbots with valid POI data and offline reliability — not ultrasonic chirps between cars.**
-
-Our creative differentiator is **information surviving dead zones** (GHP + human QR relay), not **machines talking to machines**.
-
----
-
-## 6. Core Innovation
-
-### The Three Pillars
+### Lane A — Golden Hour (road accident SOS)
 
 ```mermaid
 flowchart LR
-  P1["1. START TRIAGE CHATBOT<br/>(AI + FSM)"] --> P2["2. TRAUMA-TIER ROUTING<br/>(not nearest pin)"] --> P3["3. GOLDEN HOUR PACKET (GHP)<br/>+ QR HUMAN RELAY"]
+  SOS[Hold SOS 3s / Quick SOS / header SOS] --> Pick[Incident Tracker]
+  Pick --> Act[Activation ~6s splash]
+  Act --> Orch[runEmergencyOrchestrator]
+  Orch --> ICE[ICE SMS intent]
+  Orch --> S108[108 SMS intent]
+  Orch --> Maps[Google Maps -> nearest trauma POI lat/lng]
+  Orch --> Trauma[Trauma Response HUD]
+  Trauma --> Triage[START triage FSM]
+  Triage --> Route[Facility ranking]
+  Route --> GHP[GHP + QR relay]
 ```
 
-### Innovation #1 — Golden Hour Packet (GHP)
+### Lane B — Naari Shakti (women's safety portal)
 
-A **structured, dispatch-ready brief** — not raw chat logs:
+Gender-gated (self-reported on device) saffron + navy portal: SMS nearest police station, ICE alert, helpline **181**, hold-to-activate (2s) distress HUD with optional recording, **112** national fallback when far from the demo seed.
 
-- Triage color (RED/YELLOW/GREEN/BLACK)
-- GPS + landmark + optional NH km marker
-- Victim status flags
-- Selected facility (name, type, phone, ETA, distance)
-- State emergency number (108/112) + language
-- Integrity checksum (SHA-256 — detects accidental corruption, not cryptographic signing)
-- Relay chain audit log
-
-**Why it matters:** 108 dispatchers lose minutes asking "where are you? what happened?" GHP **pre-answers** those questions.
-
-### Innovation #2 — Human QR Relay (Sneakernet)
-
-When victim phone has **no signal**:
-
-1. Triage completes offline → GHP generated
-2. Victim screen shows **QR code** + human-readable brief
-3. Bystander taps **[Scan Distress QR]** on their phone
-4. Packet stored in **IndexedDB**
-5. When `online` event fires → auto-compose **SMS to 108** with readable GHP text
-
-**Why it matters:** Honest, demo-proof, works on every smartphone. No mesh fantasy.
-
-### Innovation #3 — Trauma-Tier Routing
-
-| Triage | Route To | trauma_tier |
-|--------|----------|-------------|
-| **RED** | Trauma center / surgical ER | 1, 2 |
-| **YELLOW** | General hospital with ER | 2, 3 |
-| **GREEN** | Clinic / minor care | 3 (+ police if needed) |
-| **BLACK** | Deceased after airway attempt | Police / 108 notification |
-
-**Why it matters:** Nearest hospital might be a PHC unable to handle head trauma. We route by **capability**, not distance alone.
+| Lane | What the user gets |
+|------|--------------------|
+| **Golden Hour** | Incident type → activation → automated orchestration (ICE SMS, 108 SMS, nearest trauma POI Maps) → trauma HUD with live incident timer, rear torch, Call ICE FAB, hospital navigation to **facility coords** → START triage → GHP + bystander QR |
+| **Naari Shakti** | Gender-gated portal — SMS nearest police station, ICE alert, helpline 181, 2s hold distress with recording, 112 fallback |
 
 ---
 
-## 7. System Architecture
+## 3. Repository Topology
 
-### High-Level Architecture Diagram
+```
+roadsafetyhackathon/                  # monorepo root (git: Stormynubee/Margi)
+├── novadrive-mobile/                 # PRIMARY — Expo SDK 54 Android app (ship this)
+│   ├── app/                          # expo-router screens (tabs, emergency, naari, sarthi...)
+│   ├── src/                          # lib, components, hooks, context, theme
+│   ├── scripts/                      # APK build, sarthi check, seed gen, gradle patches
+│   ├── assets/                       # icon/splash docs + models/
+│   ├── app.json / app.config.js      # Expo config
+│   ├── babel.config.js               # babel-preset-expo + reanimated plugin
+│   ├── jest.config.js                # ts-jest, node env, src roots, *.test.ts
+│   ├── tsconfig.json                 # extends expo base, @/* -> ./src/*
+│   └── package.json                  # version 2.0.0
+├── novadrive/                        # Next.js 14 Sarthi BFF + web relay (Vercel)
+│   ├── src/app/                      # web pages + api/sarthi/{health,chat}
+│   ├── src/lib/sarthi/aiConfig.ts    # Gemini provider + probe
+│   ├── vercel.json                   # separate Vercel project
+│   └── package.json
+├── docs/                             # judge docs, specs, brief site source
+│   ├── CANON.md                      # single source of truth for scope
+│   ├── ARCHITECTURE.md               # technical architecture
+│   ├── PHASE3_SETUP.md               # Supabase + Sarthi BFF deploy guide
+│   ├── MARGI_MASTER_BRIEF.md         # THIS FILE -> builds the brief site
+│   └── site/                         # build-docs.js -> index.html (deployed)
+├── supabase/migrations/              # profiles, volunteer_providers, dispatch_events + RLS
+├── data/corridors/                   # NH-48 POI verification CSV/JSON inputs
+├── scripts/                          # Python Overpass ingest + pytest (build-time only)
+├── .github/workflows/                # ci.yml, android-apk.yml, poi-ingest.yml
+├── vercel.json                       # ROOT project -> static brief site (docs/site)
+├── README.md / JUDGE_START_HERE.md / CHANGELOG.md / CONTRIBUTING.md / SECURITY.md
+```
+
+**Critical deployment split (the single biggest gotcha):**
+
+| Vercel project | `vercel.json` | Serves | Root directory |
+|----------------|---------------|--------|----------------|
+| **root** (`roadsafetyhackathon`) | repo-root `vercel.json` | static brief site from `docs/site` | repo root |
+| **novadrive** (Sarthi BFF) | `novadrive/vercel.json` | Next.js app with `/api/sarthi/*` and `/relay` | **`novadrive`** |
+
+The brief-site hosts (`roadsafetyhackathon-six.vercel.app`, `margi-tau.vercel.app`) return **404** for `/api/sarthi/health`. Sarthi must point at the separate `novadrive` project (e.g. `novadrive-eta.vercel.app`).
+
+---
+
+## 4. Complete Tech Stack And Versions
+
+### Mobile (`novadrive-mobile/package.json`, version 2.0.0)
+
+| Concern | Package | Version |
+|---------|---------|---------|
+| Runtime | `expo` | ~54.0.0 |
+| React | `react` | 19.1.0 |
+| React Native | `react-native` | 0.81.5 |
+| Router | `expo-router` | ~6.0.23 |
+| Animations | `react-native-reanimated` | ~4.1.1 |
+| Worklets | `react-native-worklets` | 0.5.1 |
+| Local DB | `expo-sqlite` | ~16.0.10 |
+| Camera / torch | `expo-camera` | ~17.0.10 |
+| Location | `expo-location` | ~19.0.8 |
+| Sensors (crash) | `expo-sensors` | ~15.0.8 |
+| Audio (voice) | `expo-audio` | ~1.1.1 |
+| Speech (TTS) | `expo-speech` | ~14.0.8 |
+| Haptics | `expo-haptics` | ~15.0.8 |
+| Crypto (hash) | `expo-crypto` | ~15.0.9 |
+| Secure store | `expo-secure-store` | ~15.0.8 |
+| Storage | `@react-native-async-storage/async-storage` | 2.2.0 |
+| Network state | `@react-native-community/netinfo` | ^11.4.1 |
+| Backend SDK | `@supabase/supabase-js` | ^2.106.2 |
+| QR | `react-native-qrcode-svg` | ^6.3.21 |
+| SVG | `react-native-svg` | 15.12.1 |
+| Compression | `lz-string` | ^1.5.0 |
+| Icons | `@expo/vector-icons` | ^15.0.2 |
+| Fonts | `@expo-google-fonts/hanken-grotesk`, `@expo-google-fonts/public-sans` | — |
+| Tests | `jest` ~29.7.0 + `ts-jest` ^29.4.11 | TypeScript ~5.9.2 |
+
+### Cloud BFF (`novadrive/package.json`, version 0.1.0)
+
+| Concern | Package | Version |
+|---------|---------|---------|
+| Framework | `next` | 14.2.35 |
+| React | `react` / `react-dom` | ^18 |
+| AI SDK | `ai` | ^6.0.191 |
+| Gemini provider | `@ai-sdk/google` | ^3.0.79 |
+| OpenAI provider (spare) | `@ai-sdk/openai` | ^3.0.65 |
+| QR (web) | `qrcode.react` | ^4.2.0 |
+| Compression | `lz-string` | ^1.5.0 |
+| Icons | `lucide-react` | ^1.16.0 |
+| Styling | `tailwindcss` | ^3.4.1 |
+
+### Build-time data pipeline (`scripts/`)
+
+Python 3 + Overpass API → `emergency_seed.db`; validated by `pytest` in CI (`poi-ingest.yml`). Not bundled into the app at runtime — the mobile app uses an inline seed.
+
+---
+
+## 5. Mobile App Architecture
+
+`novadrive-mobile` is a **client-heavy** app: the offline core never requires a server.
 
 ```mermaid
 flowchart TB
-    subgraph Client["Margi PWA (Next.js 14)"]
-        Gate[Landing Gate]
-        Chat[Triage Chat UI]
-        Agent[LLM Slot Filler]
-        FSM[START Triage FSM]
-        Router[Offline Spatial Router]
-        GHP[GHP Builder + Compressor]
-        QR[QR Generator / Scanner]
-        IDB[(IndexedDB Relay Store)]
-        SW[Service Worker / Serwist]
-        SQL[(sql.js + emergency_seed.db)]
-        Map[Leaflet Offline Map]
-    end
-
-    subgraph Build["Build-Time Pipeline"]
-        Ingest[ingestCorridors.py]
-        OSM[Overpass API / OpenStreetMap]
-        DBFile[emergency_seed.db]
-    end
-
-    subgraph Online["Online Enhancements"]
-        LLM[Groq / Ollama - Llama or Mistral]
-        OSRM[OSRM Routing API]
-    end
-
-    Gate --> Chat
-    Chat --> Agent
-    Agent --> FSM
-    FSM --> Router
-    Router --> SQL
-    Router --> OSRM
-    FSM --> GHP
-    GHP --> QR
-    QR --> IDB
-    SW --> SQL
-    Ingest --> OSM
-    Ingest --> DBFile
-    DBFile --> SQL
-    Agent --> LLM
-    GHP --> Map
+  subgraph mobile [novadrive-mobile]
+    Plan[Trip + OSRM when online]
+    J[Journey HUD + HoldSOS]
+    Orch[emergencyOrchestrator]
+    S[START Triage FSM]
+    DB[(SQLite trauma POI)]
+    G[GHP + QR + SMS 108]
+    N[Naari Shakti engine]
+    Sarthi[Sarthi KB + optional BFF]
+    Plan --> J
+    J --> Orch
+    J --> S
+    Orch --> DB
+    S --> DB
+    DB --> G
+    N -.->|parallel| G
+    Sarthi -.-> J
+  end
+  subgraph cloud [optional online]
+    SB[(Supabase)]
+    BFF[Sarthi BFF on Vercel]
+  end
+  mobile -.-> SB
+  mobile -.-> BFF
 ```
 
-### Layer Responsibilities
+**Conventions**
 
-| Layer | Responsibility | Must Work Offline? |
-|-------|----------------|-------------------|
-| **UI (Next.js PWA)** | Chat, map, QR, scan, landing gate | Yes (cached shell) |
-| **FSM (TypeScript)** | Medical triage logic | **Yes — mandatory** |
-| **LLM (optional)** | Natural language → structured slots | No (enhancement only) |
-| **sql.js + SQLite** | POI lookup | **Yes — mandatory** |
-| **GHP encoder** | Serialize, compress, hash | **Yes — mandatory** |
-| **QR relay** | Encode/decode, IndexedDB, SMS trigger | **Yes — mandatory** |
-| **Service Worker** | Cache app shell, DB, wasm, tiles | **Yes — mandatory** |
-| **OSRM** | Road-accurate ETA | No (fallback: Haversine ETA) |
-| **Ingest script** | Build POI database | Build-time only |
+- **Path alias:** `@/*` → `./src/*` (tsconfig + babel).
+- **State:** React Context providers wrap the app in `app/_layout.tsx`: `AppProvider` (journey, triage FSM, GHP, crash, facilities), `SarthiProvider`, `NaariShaktiProvider`, plus `QuickMenuProvider` in `(tabs)/_layout.tsx`.
+- **Data boundaries:** auth tokens + relay GHP in **SecureStore**; profile + accessibility in **AsyncStorage**; POI in the **SQLite** file seeded on first launch.
+- **TDD discipline:** every `src/lib` module that holds logic ships with a colocated `*.test.ts`.
 
 ---
 
-## 8. End-to-End Pipeline
-
-### Pipeline A — Build-Time (Developer Machine / CI)
+## 6. Expo Router Screen Map
 
 ```
-OpenStreetMap data
-        ↓
-Overpass API queries (nwr: hospitals, clinics, police, ambulance)
-        ↓
-ingestCorridors.py
-  • Parse names, phones, types
-  • Assign trauma_tier (1/2/3)
-  • Tag corridor + state
-  • Manual verification CSV merge (top 50 POIs per demo corridor)
-        ↓
-public/emergency_seed.db
-        ↓
-Bundled into PWA + submitted with hackathon deliverables
+app/
+  _layout.tsx              # Root: fonts, providers, Stack
+  index.tsx / splash.tsx   # Boot + splash
+  home.tsx                 # Standalone home (also see (tabs)/explore)
+  auth.tsx                 # Supabase sign-in (Guest mode bypasses)
+  settings.tsx             # notifyEmergencyContacts toggle, voice sensitivity
+  accessibility.tsx medical.tsx emergency-contacts.tsx
+  sarthi.tsx               # full-screen Sarthi chat
+  scan.tsx                 # bystander QR scanner
+  naari-shakti.tsx         # women's portal
+  journey.tsx
+  (tabs)/
+    _layout.tsx            # MargiTabBar + SarthiOverlayBridge + QuickMenuProvider
+    explore.tsx            # Home tab (Drive mode, Quick SOS, Naari, brief, Sarthi FAB)
+    drive.tsx              # Journey HUD — Hold SOS lives here
+    history.tsx            # Community hazards (~5 km), leaderboard
+    profile.tsx            # Medical ICE, voice toggle, a11y
+  emergency/
+    selection.tsx          # incident type picker + cancel-SOS countdown
+    activation.tsx         # 6s activation splash + runEmergencyOrchestrator
+    locate.tsx             # GPS capture + reverse geocode
+    triage.tsx             # START triage FSM UI
+    route.tsx              # facility ranking list + Maps navigate
+    response.tsx           # trauma HUD: timer, torch, ICE, QR, first aid
+    packet.tsx             # GHP QR + relay URL
+    relay.tsx              # bystander relay steps + RahVeer claim
+  journey/ depart.tsx complete.tsx feedback.tsx
+  settings/ journey-history.tsx
+  trip/ _layout.tsx plan.tsx discover.tsx
+  brief/ [slug].tsx
+  rahveer/ index.tsx claim.tsx
+  ngo/ index.tsx register.tsx
 ```
 
-### Pipeline B — Runtime (Victim Path)
-
-```
-User taps [Start Emergency Triage]
-        ↓
-Browser requests GPS (single getCurrentPosition)
-        ↓
-Chatbot conversation (LLM online / scripted offline)
-        ↓
-Slots fill START FSM states
-        ↓
-FSM outputs triage color
-        ↓
-Spatial query: bbox filter → Haversine sort → trauma-tier filter
-        ↓
-Select best facility + compute ETA
-        ↓
-Build GoldenHourPacket + SHA-256 integrity hash
-        ↓
-┌─────────────────┴─────────────────┐
-│ ONLINE                            │ OFFLINE
-│ • Call 108 / hospital             │ • Show GHP on screen
-│ • SMS / WhatsApp share            │ • Display QR code
-│ • Show map route                  │ • Prompt bystander scan
-└───────────────────────────────────┘
-```
-
-### Pipeline C — Runtime (Bystander Relay Path)
-
-```
-Bystander taps [Scan Distress QR]
-        ↓
-Camera decodes QR payload
-        ↓
-Deserialize + verify integrity hash
-        ↓
-Store in IndexedDB + append relayChain entry
-        ↓
-Listen for navigator 'online' event
-        ↓
-Format human-readable SMS template (Tamil/Hindi/English)
-        ↓
-Trigger sms:108?body=... OR navigator.share() OR copy-to-clipboard
-        ↓
-(Optional) POST anonymized GHP to backend audit endpoint
-```
+**Canonical emergency flow:** `selection → activation → locate → triage → route → response → packet → relay`.
 
 ---
 
-## 9. User Flows & Mind Map
+## 7. Core Library Reference
 
-### Landing Gate (3 Entry Points)
+`novadrive-mobile/src/lib/` — the brain of the app.
 
-```mermaid
-flowchart TB
-  Home["Margi Home"]
-  Home --> Start["Start Emergency<br/>Victim / Bystander-help"]
-  Home --> Scan["Scan Distress QR<br/>Bystander"]
-  Home --> Download["Download Corridor Pack<br/>Pre-trip offline prep"]
-```
-
-### Mind Map — Full System
-
-```mermaid
-mindmap
-  root((Margi))
-    INPUT
-      Voice Web Speech API
-      Text chat
-      GPS + NH km marker
-    PROCESSING
-      LLM slot filling online
-      START triage FSM always
-      Trauma-tier routing
-      GHP builder
-    DATA
-      emergency_seed.db
-      IndexedDB relay packets
-      Service Worker cache
-    OUTPUT
-      Ranked facility map
-      Human-readable GHP
-      Compressed QR payload
-      Call SMS WhatsApp
-      Bystander relay to 108
-    SUBMISSION
-      Source code
-      Database file
-      7 slides
-      Word doc
-```
-
-### Flowchart — Triage Decision (Simplified)
-
-```mermaid
-flowchart TD
-    Start([Start Emergency]) --> Walk{Can victim walk?}
-    Walk -->|Yes| GREEN[GREEN - Minor]
-    Walk -->|No| Breath{Breathing?}
-    Breath -->|No| Airway{Breathing after airway reposition?}
-    Airway -->|No| BLACK[BLACK - Deceased]
-    Airway -->|Yes| RR{Respiratory rate > 30?}
-    Breath -->|Yes| RR
-    RR -->|Yes| RED[RED - Immediate]
-    RR -->|No| Pulse{Radial pulse OK / cap refill < 2s?}
-    Pulse -->|No| RED
-    Pulse -->|Yes| Mental{Follows simple commands?}
-    Mental -->|No| RED
-    Mental -->|Yes| YELLOW[YELLOW - Delayed]
-    GREEN --> Route[Trauma-Tier Routing]
-    YELLOW --> Route
-    RED --> Route
-    BLACK --> Police[Police / 108 notify]
-    Route --> GHP[Build GHP + QR]
-```
+| Module | Responsibility |
+|--------|----------------|
+| `startTriageFSM.ts` | START protocol deterministic FSM — `initialState`, `getQuestion`, `applyAnswer` |
+| `parseEmergencyText.ts` | offline keyword → FSM slot prefill |
+| `facilitiesDb.ts` | `expo-sqlite` seed (`emergency_nodes`) + `rankFacilities(triage, lat, lng)` (Haversine + tier filter) |
+| `ghp.ts` | `buildPacket`, `hashPayload`, `formatSms`, `encodeQrPayload`, `encodeQrRelayUrl`, `decodeQrPayload`, `verifyQrDecodedIntegrity` |
+| `emergencySms.ts` | ICE + 108 SMS intents, coords resolver (`sos_hold`, `crash_detected` templates) |
+| `emergency/emergencyOrchestratorPlan.ts` | `planEmergencyOrchestrator`, `buildMargiIceSmsBody`, `notifyEmergencyContacts` gate |
+| `emergency/emergencyOrchestrator.ts` | `runEmergencyOrchestrator` — runs ICE + 108 + Maps in sequence |
+| `emergency/holdSosReleaseGrace.ts` | debounce so a quick release does not skip incident picker |
+| `emergency/hospitalNavTarget.ts` | resolve Maps destination to the **facility** lat/lng |
+| `emergency/dispatchOrchestrator.ts` | optional Supabase `dispatch_events` insert |
+| `emergency/incidentCatalog.ts` `incidentElapsed.ts` | incident types + live timer math |
+| `emergency/traumaSession.ts` `traumaAssistantOffline.ts` | trauma HUD session + offline first-aid copy |
+| `crashEngine.ts` + `crash/crashOrchestrator.ts` `crash/nativeCrashAdapter.ts` | accel + speed fusion (journey-active only); native adapter stubbed |
+| `sarthiEngine.ts` | `createThread`, `sendMessage` — offline-first; cloud when online + BFF healthy + not a KB match |
+| `sarthiOffline.ts` | offline reply wrapper → knowledge base |
+| `sarthi/sarthiKnowledgeBase.ts` | `SARTHI_KB_ENTRIES` pattern-matched offline answers (en/hi/ta) |
+| `sarthi/sarthiHealth.ts` | `checkSarthiBffHealth()` — GET `/api/sarthi/health`, requires `geminiReachable` |
+| `sarthi/sarthiStrings.ts` `sarthiStatusCopy.ts` | welcome/fallback strings, status chip + connection banner copy |
+| `supabase/client.ts` `authSession.ts` `profileSync.ts` | Supabase client (SecureStore auth), session, `profiles` upsert |
+| `naariShakti/*` | women's portal engine, stations, SMS, linking actions |
+| `voice/*` | distress voice classifier (YAMNet path), default OFF |
+| `routing/*` | OSRM + Nominatim trip routing |
+| `tts/narrator.ts` | spoken FSM prompts |
+| `storage.ts` `types.ts` `brand.ts` `relayChain.ts` `journeyDb.ts` | persistence, types, brand tokens, relay log, journey store |
 
 ---
 
-## 10. START Triage FSM Specification
+## 8. START Triage FSM
+
+Deterministic finite state machine implementing the international START (Simple Triage And Rapid Treatment) protocol. **The FSM, not the LLM, makes every medical decision.**
 
 ### States
 
-| State | Purpose |
-|-------|---------|
-| `AMBULATORY` | Can victim walk? |
-| `BREATHING_CHECK` | Are they breathing? |
-| `AIRWAY_REPOSITION` | After airway maneuver, breathing? |
-| `RESPIRATORY_RATE` | RR > 30/min? |
-| `PERFUSION_CHECK` | Radial pulse / capillary refill |
-| `MENTAL_STATUS` | Follows simple commands? |
-| `TAGGED` | Final triage color assigned |
+`AMBULATORY → BREATHING_CHECK → AIRWAY_REPOSITION → RESPIRATORY_RATE → PERFUSION_CHECK → MENTAL_STATUS → TAGGED`
 
-### Correct Transition Rules (Critical — Do Not Simplify Wrong)
+### Transition rules (do not simplify incorrectly)
 
 | Condition | Result |
 |-----------|--------|
 | Can walk | **GREEN** → done |
-| Not breathing → airway fails | **BLACK** → done |
-| Not breathing → airway succeeds | → **RESPIRATORY_RATE** (NOT immediate RED) |
-| RR > 30 | **RED** |
-| No radial pulse OR cap refill ≥ 2s | **RED** |
-| Cannot follow commands | **RED** |
+| Not breathing → airway maneuver fails | **BLACK** → done |
+| Not breathing → airway maneuver succeeds | → RESPIRATORY_RATE (NOT immediate RED) |
+| Respiratory rate > 30/min | **RED** |
+| No radial pulse OR capillary refill ≥ 2s | **RED** |
+| Cannot follow simple commands | **RED** |
 | All checks pass, non-ambulatory | **YELLOW** |
 
-### FSM Interface (TypeScript)
+### Interface
 
 ```typescript
 export type TriageState =
@@ -452,66 +353,48 @@ export interface TriageContext {
 }
 ```
 
-### Medical Disclaimer (Required in UI)
-
-> *Margi provides decision support only. It is not a medical diagnosis. In an emergency, always call 108/112 when possible.*
+UI: `app/emergency/triage.tsx` drives the FSM via `AppContext.answerTriage`, renders `AnswerChips`, and speaks prompts through `tts/narrator.ts`. Triage color feeds facility ranking.
 
 ---
 
-## 11. Golden Hour Packet (GHP) Specification
+## 9. Golden Hour Packet GHP
+
+A structured, dispatch-ready brief (not raw chat logs). Built in `src/lib/ghp.ts`.
 
 ### Schema
 
 ```typescript
 export interface GoldenHourPacket {
-  id: string;                    // UUID v4
+  id: string;                    // UUID-ish
   createdAt: string;             // ISO8601
   triage: 'RED' | 'YELLOW' | 'GREEN' | 'BLACK';
-  location: {
-    lat: number;                 // 6 decimal places
-    lng: number;
-    landmark?: string;
-    nhCode?: string;             // e.g. "NH48"
-    nhKm?: number;
-  };
+  location: { lat: number; lng: number; landmark?: string; nhCode?: string; nhKm?: number };
   victims: {
-    count: number;
-    canWalk: boolean;
-    breathing: boolean;
-    severeBleeding: boolean;
-    capillaryRefillOk: boolean;
-    followsCommands: boolean;
+    count: number; canWalk: boolean; breathing: boolean;
+    severeBleeding: boolean; capillaryRefillOk: boolean; followsCommands: boolean;
   };
-  routing: {
-    facilityName: string;
-    facilityType: 'trauma' | 'hospital' | 'clinic';
-    phone: string;
-    etaMinutes: number;
-    distanceKm: number;
-  };
-  emergency: {
-    dial: string;                // "108" | "112" | "102"
-    state: string;
-    language: 'en' | 'hi' | 'ta';
-  };
+  routing: { facilityName: string; facilityType: 'trauma' | 'hospital' | 'clinic';
+             phone: string; etaMinutes: number; distanceKm: number };
+  emergency: { dial: string; state: string; language: 'en' | 'hi' | 'ta' };
   relayChain: Array<{ at: string; deviceHint: string }>;
-  integrity: string;             // SHA-256 hex digest
+  integrity: string;             // SHA-256 hex digest (corruption check, not crypto signing)
 }
 ```
 
-### Encoding Strategy
+### Encoding and relay
 
 | Step | Method |
 |------|--------|
-| 1 | Build minimal JSON or pipe-delimited string |
-| 2 | Compress with **lz-string** (`compressToEncodedURIComponent`) |
-| 3 | If payload > 800 bytes → QR carries **only** `{ id, lat, lng, triage, integrity }`; full GHP on screen + IndexedDB |
-| 4 | Integrity via **Web Crypto SHA-256** (not HMAC — no client secrets) |
+| 1 | Build minimal payload |
+| 2 | Compress with `lz-string` |
+| 3 | Wrap in the **`ND1:`** envelope for relay URLs (`encodeQrRelayUrl`) |
+| 4 | Integrity via SHA-256 (`hashPayload`); `verifyQrDecodedIntegrity` rejects tampered/corrupt packets |
+| 5 | If the payload is too large for a reliable QR, the QR carries the minimal `{ id, triage, lat, lng, integrity }` and the full GHP stays on screen + in SecureStore |
 
-### SMS Template Example (English)
+### SMS template (English)
 
 ```
-🚨 ROAD EMERGENCY - Margi
+ROAD EMERGENCY - Margi
 Triage: RED | Victims: 1
 Location: NH48 km 87 (13.082700, 80.270700)
 Injuries: Not walking, breathing, severe bleeding suspected
@@ -520,537 +403,551 @@ Call: 108 (Tamil Nadu)
 Generated offline via bystander relay.
 ```
 
+The GHP screen (`app/emergency/packet.tsx`) renders the QR; a bystander scans it (in-app `scan.tsx` or the web `/relay?p=ND1...`), the packet is verified, the relay chain is appended, and an SMS to 108 is composed when signal returns.
+
 ---
 
-## 12. Data Pipeline & Database
+## 10. Facilities SQLite And Trauma Tier Ranking
 
-### SQLite Schema
+`src/lib/facilitiesDb.ts` opens an `expo-sqlite` database (`emergency_seed.db`, table `emergency_nodes`), seeds it on first launch from an inline `SEED[]` (~50 Chennai-corridor POIs) plus a `POI_COORDS` map, then ranks.
+
+### Schema
 
 ```sql
 CREATE TABLE emergency_nodes (
-    id INTEGER PRIMARY KEY,       -- OSM node id
-    name TEXT NOT NULL,
-    lat REAL NOT NULL,
-    lng REAL NOT NULL,
-    type TEXT NOT NULL,           -- hospital, clinic, police, ambulance
-    trauma_tier INTEGER NOT NULL, -- 1=trauma center, 2=hospital ER, 3=clinic
-    emergency_phone TEXT,
-    nh_corridor TEXT,
-    state TEXT,
-    verified INTEGER DEFAULT 0,   -- 1 if manually verified
-    verified_at TEXT
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  lat REAL NOT NULL,
+  lng REAL NOT NULL,
+  type TEXT NOT NULL,            -- hospital | clinic | police | ambulance
+  trauma_tier INTEGER NOT NULL,  -- 1 trauma center, 2 hospital ER, 3 clinic
+  emergency_phone TEXT,
+  nh_corridor TEXT,
+  state TEXT,
+  verified INTEGER DEFAULT 0,
+  verified_at TEXT
 );
 CREATE INDEX idx_coords ON emergency_nodes(lat, lng);
 CREATE INDEX idx_tier ON emergency_nodes(trauma_tier);
 ```
 
-### trauma_tier Assignment Heuristics
+### `rankFacilities(triage, lat, lng)`
 
-| Tier | Signals in OSM name/tags |
-|------|--------------------------|
-| **1** | "trauma", "AIIMS", "medical college", "super specialty" |
-| **2** | "district hospital", "general hospital", `healthcare=hospital` |
-| **3** | clinic, PHC, small dispensary |
+1. Filter by triage-appropriate `trauma_tier` (RED → 1,2 / YELLOW → 2,3 / GREEN → 3).
+2. Compute Haversine distance to each candidate.
+3. Sort ascending, take top 6, mark the first as `recommended`.
+4. Offline ETA fallback: `etaMinutes = (distanceKm / 40) * 60` (40 km/h ambulance average). Online uses OSRM duration.
 
-**Important:** Manually verify top 50 POIs in demo corridor. Do **not** default all missing phones to "108" — mark as `unknown` and exclude from "verified count" claims.
-
-### Demo Corridors (Pick One Primary)
-
-| Corridor | Bbox (south,west,north,east) | Notes |
-|----------|------------------------------|-------|
-| **Chennai–Bengaluru NH48** | 12.5,77.5,13.2,80.3 (expand as needed) | Near IIT Madras relevance |
-| **Delhi–Jaipur NH48** | 26.5,75.5,28.7,77.3 | High traffic |
-| **Kathmandu valley (BIMSTEC)** | Separate ingest pass | International track appeal |
-
-### Overpass Query Pattern (Use `nwr`, not nodes only)
-
-```overpass
-[out:json][timeout:120];
-(
-  nwr["amenity"="hospital"]({{bbox}});
-  nwr["amenity"="clinic"]({{bbox}});
-  nwr["emergency"="ambulance_station"]({{bbox}});
-  nwr["amenity"="police"]({{bbox}});
-);
-out center;
-```
+**Honesty:** the NH48 verified pack is 50 OSM nodes (40 phone-verified) inside the Chennai corridor bbox. Outside it, the app runs **baseline mode** — 108 + GPS + triage, no verified hospital routing until a regional pack ships. Naari uses Chennai demo police stations with 112 national fallback beyond ~150 km. Seed regeneration helper: `scripts/generate-facilities-seed.mjs`.
 
 ---
 
-## 13. Offline & Spatial Routing
+## 11. Emergency Orchestrator
 
-### Spatial Query Algorithm
+The orchestrator turns one SOS into a coordinated burst of actions. Plan is pure/testable; the runner performs side effects.
 
-```
-1. User GPS (lat, lng) + triage color
-2. Compute bbox delta (~50 km radius)
-3. SQL: SELECT * FROM emergency_nodes WHERE lat/lng in bbox AND trauma_tier matches triage
-4. For each result: Haversine distance
-5. Sort ascending by distance
-6. Return top N (display top 3 on map)
-```
-
-### ETA Calculation
-
-| Mode | Formula |
-|------|---------|
-| **Offline fallback** | `etaMinutes = (distanceKm / 40) * 60` (assume 40 km/h ambulance avg) |
-| **Online enhancement** | OSRM `/route/v1/driving/{lng,lat};{lng,lat}` → duration |
-
-Document the 40 km/h assumption in the Word doc submission.
-
-### sql.js Critical Rule
-
-```typescript
-// ✅ CORRECT — bundled locally
-locateFile: () => '/sql-wasm.wasm'
-
-// ❌ WRONG — breaks offline demo
-locateFile: (file) => `https://sql.js.org/dist/${file}`
-```
-
----
-
-## 14. AI Chatbot Architecture
-
-### Hybrid Model: LLM-as-Skin, FSM-as-Spine
-
-```mermaid
-flowchart TB
-  NL[User natural language] --> Branch{Network?}
-  Branch -->|Online| LLM[LLM extracts structured slots]
-  Branch -->|Offline| Regex[Regex / keyword patterns<br/>OR scripted button options]
-  LLM --> FSM[START Triage FSM always runs]
-  Regex --> FSM
-  FSM --> Color[Deterministic triage color]
-```
-
-### LLM Policy
-
-| Requirement | Choice |
-|-------------|--------|
-| Hackathon open-source preference | **Primary: Llama 3 / Mistral via Groq or Ollama** |
-| Offline | FSM + scripted prompts — **never depend on LLM for demo** |
-| Role | Slot filling only — FSM makes all medical/routing decisions |
-
-### Example Slot Filling
-
-| User says | Extracted slot |
-|-----------|----------------|
-| "He can't walk" | `canWalk: false` |
-| "Breathing very fast" | `respiratoryRateOver30: true` |
-| "Lots of blood" | `severeBleeding: true` |
-| "NH48 near km 87" | `nhCode: 'NH48', nhKm: 87` |
-
-### Voice Input
-
-- **Web Speech API** — triggered by mic button (user gesture required)
-- Support **English, Hindi, Tamil** responses minimum
-
----
-
-## 15. Human QR Relay System
-
-### QR Payload Strategy
-
-| Payload size | QR contains | Also show on screen |
-|--------------|-------------|---------------------|
-| **Small (<800 bytes)** | Full compressed GHP | Human-readable brief |
-| **Large (>800 bytes)** | `{ id, triage, lat, lng, integrity }` | Full GHP (bystander reads + verifies) |
-
-### Bystander Relay Logic
-
-```typescript
-// Pseudocode
-onQRScanned(payload) {
-  const ghp = deserializeAndVerify(payload);
-  if (!ghp) return showError('Tampered or corrupted packet');
-  ghp.relayChain.push({ at: new Date().toISOString(), deviceHint: getDeviceId() });
-  await idb.put('relay_packets', ghp);
-  if (navigator.onLine) dispatchSMS(ghp);
-  else window.addEventListener('online', () => dispatchSMS(ghp), { once: true });
-}
-```
-
-### iOS PWA SMS Fallback
-
-`sms:` URIs may fail in installed iOS PWA mode. Fallback chain:
-
-1. `navigator.share({ text: ghpSmsText })`
-2. Copy to clipboard + toast notification
-3. Display full text for manual send
-
----
-
-## 16. Tech Stack
-
-| Layer | Technology | Why |
-|-------|------------|-----|
-| Frontend | **Next.js 14** (App Router) | React PWA, SSR optional, team familiarity |
-| Styling | **Tailwind CSS** | Fast UI |
-| PWA / Offline | **Serwist** or `@ducanh2912/next-pwa` | Service Worker caching |
-| Maps | **Leaflet** + OpenStreetMap tiles | Free, cacheable tiles |
-| Client DB | **sql.js** + `emergency_seed.db` | Offline SQL queries in browser |
-| Client storage | **IndexedDB** (via `idb` library) | Relay packet persistence |
-| QR | `qrcode` + `html5-qrcode` or `@yudiel/react-qr-scanner` | Generate + scan |
-| Compression | `lz-string` | QR size reduction |
-| Hashing | **Web Crypto API** (SHA-256) | Integrity check |
-| Routing (online) | **OSRM** public or self-hosted | Road ETA |
-| LLM (online) | **Groq** (Llama 3) or **Ollama** local | Open-source preference |
-| Backend (optional) | **FastAPI** (Python) | POI ingest helpers, optional GHP audit POST |
-| Data ingest | **Python 3** + Overpass API | Build-time pipeline |
-| Tests | **Vitest** or **Jest** | FSM + encoder unit tests |
-
----
-
-## 17. Project Structure
-
-```
-roadsafetyhackathon/
-├── docs/
-│   └── MARGI_MASTER_BRIEF.md          ← this document
-├── scripts/
-│   ├── ingestCorridors.py                  # Overpass → SQLite
-│   └── verify_pois.py                      # Manual verification helper
-├── public/
-│   ├── emergency_seed.db                   # Compiled POI database
-│   ├── sql-wasm.wasm                       # Bundled locally (CRITICAL)
-│   ├── manifest.json                       # PWA manifest
-│   └── icons/                              # PWA icons
-├── src/
-│   ├── app/
-│   │   ├── page.tsx                        # Landing gate (3 buttons)
-│   │   ├── triage/page.tsx                 # Chat + FSM + GHP + QR
-│   │   ├── scan/page.tsx                   # Bystander QR scanner
-│   │   ├── dashboard/page.tsx              # Offline map view
-│   │   └── api/
-│   │       └── chat/route.ts               # LLM slot-filling proxy (optional)
-│   ├── db/
-│   │   └── sqliteClient.ts                 # sql.js init + spatial queries
-│   ├── utils/
-│   │   ├── startTriageFSM.ts               # START state machine
-│   │   ├── ghpCompressor.ts                # Serialize, lz-string, hash
-│   │   ├── offlineRouter.ts                # Haversine + tier filter + ETA
-│   │   ├── smsFormatter.ts                 # 108 SMS templates (en/hi/ta)
-│   │   └── llmSlotFiller.ts                # Online NL → slots
-│   ├── components/
-│   │   ├── ChatBox.tsx
-│   │   ├── QRGenerator.tsx
-│   │   ├── QRScanner.tsx
-│   │   ├── OfflineMap.tsx
-│   │   └── TriageSummary.tsx
-│   └── lib/
-│       └── idb.ts                          # IndexedDB wrapper
-├── tests/
-│   ├── startTriageFSM.test.ts
-│   ├── ghpCompressor.test.ts
-│   └── offlineRouter.test.ts
-├── submission/
-│   ├── slides/                             # Exactly 7 slides
-│   └── documentation.docx                  # Dependencies + assumptions
-├── package.json
-├── next.config.js
-└── README.md
-```
-
----
-
-## 18. Implementation Plan (4 Weeks)
-
-### Week 1 — Data Foundation
-
-| Day | Task | Owner | Done? |
-|-----|------|-------|-------|
-| 1–2 | Finalize demo corridor bbox | Team lead | [ ] |
-| 2–3 | Write + run `ingestCorridors.py` with `nwr` queries | Data eng | [ ] |
-| 3–4 | Manual verify top 50 POIs (spreadsheet) | All | [ ] |
-| 4–5 | Bundle `emergency_seed.db` + `sql-wasm.wasm` in `/public` | Backend | [ ] |
-| 5 | Implement `sqliteClient.ts` + basic spatial query test | Frontend | [ ] |
-
-### Week 2 — Core Logic
-
-| Day | Task | Owner | Done? |
-|-----|------|-------|-------|
-| 1–2 | Implement `startTriageFSM.ts` with correct airway transitions | Frontend | [ ] |
-| 2–3 | Implement `offlineRouter.ts` (Haversine + tier filter + ETA) | Frontend | [ ] |
-| 3–4 | Implement `ghpCompressor.ts` (lz-string + SHA-256) | Frontend | [ ] |
-| 4–5 | Unit tests for FSM, encoder, router | QA/Dev | [ ] |
-
-### Week 3 — UI & Integration
-
-| Day | Task | Owner | Done? |
-|-----|------|-------|-------|
-| 1–2 | Landing gate + triage chat UI | Frontend | [ ] |
-| 2–3 | GHP summary screen + QR generator | Frontend | [ ] |
-| 3–4 | Bystander scan page + IndexedDB relay | Frontend | [ ] |
-| 4–5 | SMS formatter + online event trigger | Frontend | [ ] |
-| 5 | Serwist offline caching configured | Frontend | [ ] |
-
-### Week 4 — Polish & Submit
-
-| Day | Task | Owner | Done? |
-|-----|------|-------|-------|
-| 1 | LLM integration (Groq/Ollama) for online slot filling | AI/Dev | [ ] |
-| 2 | Hindi + Tamil UI strings + SMS templates | All | [ ] |
-| 3 | Offline demo rehearsal (airplane mode test) | All | [ ] |
-| 4 | 7 slides + Word doc + README | Presenter | [ ] |
-| 5 | Unstop submission + backup demo video | Team lead | [ ] |
-
----
-
-## 19. Execution Checklist by Role
-
-### Frontend Developer
-- [ ] Next.js PWA shell + Serwist
-- [ ] Chat UI wired to FSM
-- [ ] QR generate + scan flows
-- [ ] Leaflet map with POI markers
-- [ ] iOS SMS fallback (share / clipboard)
-
-### Data / Backend Developer
-- [ ] Overpass ingest script
-- [ ] trauma_tier heuristics + manual verify CSV
-- [ ] `emergency_seed.db` export for submission
-- [ ] Optional FastAPI audit endpoint
-
-### AI / Logic Developer
-- [ ] START FSM (correct medical transitions)
-- [ ] LLM prompt for slot filling
-- [ ] Offline scripted fallback prompts
-- [ ] Voice input integration
-
-### Presenter / PM
-- [ ] 7-slide deck (problem → solution → demo → results)
-- [ ] 90-second demo script memorized
-- [ ] Word doc assumptions (ETA formula, POI sources, START simplification)
-- [ ] Unstop registration + submission
-
----
-
-## 20. Demo Day Script (90 Seconds)
-
-| Time | Action | Say |
-|------|--------|-----|
-| 0:00 | Enable airplane mode on Phone A | "NH48, zero signal — common on Indian highways." |
-| 0:10 | Tap Start Emergency, voice/text input | "Victim: friend bleeding, can't walk, NH48 km 87." |
-| 0:25 | FSM completes → RED → trauma center shown | "RED triage — routing to trauma center, not nearest clinic." |
-| 0:35 | GHP displayed + QR shown | "Golden Hour Packet ready — everything 108 needs." |
-| 0:45 | Phone B scans QR | "Victim phone dead — bystander carries the packet." |
-| 0:55 | Disable airplane mode on Phone B | "Bystander drives 5 km — signal returns." |
-| 1:05 | SMS to 108 pre-filled | "Information reaches dispatch before the ambulance is called." |
-| 1:15 | Show POI count + offline architecture slide | "~50 demo POIs (11 curated NH48 trauma names + corridor padding), fully offline triage." |
-
-**Backup:** Pre-record 2-minute demo video if live Wi-Fi fails.
-
----
-
-## 21. Submission Requirements
-
-### 7-Slide Deck Outline
-
-| Slide | Content |
-|-------|---------|
-| 1 | Welcome — Team name, Margi, RoadSoS |
-| 2 | Problem — Golden hour, dead zones, wrong hospital routing |
-| 3 | Solution — Offline AI triage chatbot + GHP + human relay |
-| 4 | Architecture — FSM + SQLite + QR relay diagram |
-| 5 | Innovation — Trauma-tier routing, NH km markers, multilingual |
-| 6 | Demo results — POI count, offline test, sample GHP |
-| 7 | Thank you + future work (volunteer network, OSRM live, BIMSTEC expansion) |
-
-### Word Document Must Include
-
-- Complete codebase map
-- All npm/pip dependencies
-- Assumptions: ETA formula, START simplification, POI verification level
-- How to run ingest script + dev server
-- Offline demo instructions
-
----
-
-## 22. Verification & Testing Plan
-
-### Automated Tests
-
-```typescript
-// startTriageFSM.test.ts
-expect(triage({ canWalk: true })).toBe('GREEN');
-expect(triage({ canWalk: false, breathing: false, airwayOk: false })).toBe('BLACK');
-expect(triage({ canWalk: false, breathing: false, airwayOk: true })).toContinueTo('RESPIRATORY_RATE');
-expect(triage({ respiratoryRateOver30: true })).toBe('RED');
-
-// ghpCompressor.test.ts
-expect(roundTrip(ghpWithTamilLandmark)).toEqual(ghpWithTamilLandmark);
-expect(verifyQrDecodedIntegrity(tamperedDecode)).resolves.toBe(false);
-
-// offlineRouter.test.ts
-expect(route('RED', chennaiCoords)[0].traumaTier).toBeLessThanOrEqual(2);
-```
-
-### Manual Tests (Required Before Submit)
-
-| Test | Pass criteria |
-|------|---------------|
-| Airplane mode triage | Full FSM + GHP without network |
-| QR scan relay | Phone A → Phone B packet verified |
-| SMS trigger | 108 message readable in Tamil/Hindi/English |
-| sql.js offline | DB loads with CDN disabled |
-| POI search | Known hospital appears within 50 km of test coord |
-| LLM offline fallback | Scripted prompts work when API key removed |
-
----
-
-## 23. Risks & Mitigations
-
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| QR too large to scan | Demo fail | lz-string + minimal QR payload |
-| sql.js CDN load | Offline fail | Bundle `sql-wasm.wasm` locally |
-| Wrong START medical flow | Judge challenge | Use spec in Section 10 exactly |
-| Fake POI phone numbers | Credibility loss | Manual verify; honest unverified counts |
-| iOS SMS broken in PWA | Demo fail on iPhone | `navigator.share()` + clipboard fallback |
-| LLM hallucination | Wrong triage | FSM validates all decisions |
-| Overpass rate limit | Ingest fail | Retry + bbox chunking at build time |
-| Scope creep | Nothing finished | Reject sensor features (Section 5) |
-
----
-
-## 24. Competitive Advantages
-
-### Why Margi Beats Typical Submissions
-
-| Typical team builds | Margi builds |
-|--------------------|-------------------|
-| Map with hospital pins | START triage + trauma-tier routing |
-| Generic chatbot | FSM-backed medical protocol + AI skin |
-| Online-only POI lookup | Pre-baked SQLite + corridor packs |
-| Sends GPS coordinates | Sends full **108-ready Golden Hour Packet** |
-| No offline story | QR human relay through dead zones |
-| English only | Hindi + Tamil + BIMSTEC config ready |
-
-### Pros of This System
-
-1. **Reliable demo** — airplane mode + QR works every time
-2. **Medically defensible** — START protocol, not made-up questions
-3. **Clinically smarter routing** — trauma center for RED cases
-4. **Offline-first engineering** — real dead-zone problem on NH highways
-5. **Human relay innovation** — creative but honest (no fake mesh)
-6. **Open-source stack** — aligns with CoERS evaluation preference
-7. **Submission-complete** — includes required database artifact
-8. **BIMSTEC-ready** — country packs expandable
-9. **Stage 2 ready** — live demo on two phones, no special hardware
-10. **Clear narrative** — one story judges remember: *information survives when network doesn't*
-
----
-
-## 25. Glossary (Quick Reference)
-
-| Term | Brief definition |
-|------|------------------|
-| **PWA** | Website that installs and works offline |
-| **FSM** | Fixed step-by-step logic (Finite State Machine) |
-| **START** | Standard medical triage protocol for accident scenes |
-| **GHP** | Golden Hour Packet — structured emergency brief for 108 |
-| **POI** | Point of Interest — hospital, police, ambulance on map |
-| **SQLite** | Single-file local database |
-| **sql.js** | SQLite running inside the browser |
-| **OSM** | OpenStreetMap — free map/POI data source |
-| **Overpass API** | Server to query OpenStreetMap data |
-| **trauma_tier** | Hospital capability level: 1=trauma center, 2=hospital, 3=clinic |
-| **Haversine** | Formula for distance in km between GPS coordinates |
-| **bbox** | Bounding box — rectangular geo filter for fast SQL |
-| **OSRM** | Open Source Routing Machine — road travel time |
-| **ETA** | Estimated time of arrival in minutes |
-| **IndexedDB** | Browser database for relay packets |
-| **Service Worker** | Script that caches app files for offline use |
-| **QR relay** | Offline handoff via bystander scanning QR code |
-| **Sneakernet** | Data carried by humans, not network |
-| **LLM-as-skin** | AI makes conversation natural |
-| **FSM-as-spine** | Rules make all critical decisions |
-| **lz-string** | Compression library for shrinking QR payloads |
-| **SHA-256** | Hash function for packet integrity check |
-| **Golden hour** | First ~60 minutes after trauma — critical for survival |
-| **108 / 112** | Indian emergency ambulance / unified emergency numbers |
-| **NH km marker** | Highway kilometer marker (e.g. NH48 km 87) |
-| **BIMSTEC** | Bay of Bengal regional countries for international track |
-| **CoERS** | Centre of Excellence for Road Safety, IIT Madras |
-| **RoadSoS** | Our hackathon problem — emergency services access |
-
----
-
-## 26. Open Decisions & Team Actions
-
-| Decision | Options | Deadline | Owner |
-|----------|---------|----------|-------|
-| Primary demo corridor | Chennai-Bengaluru NH48 vs Delhi-Jaipur | Week 1 Day 1 | Team lead |
-| LLM provider | Groq (cloud) vs Ollama (local) | Week 3 | AI dev |
-| BIMSTEC pack | Add Nepal OR Bangladesh corridor | Week 4 (if time) | Data eng |
-| Backend audit API | Include FastAPI POST or skip for MVP | Week 2 | Team vote |
-| Repo host | GitHub/GitLab for team collaboration | Immediately | All |
-
-### Immediate Next Steps (This Week)
-
-1. Create GitHub repo with folder structure from Section 17
-2. Register team on Unstop (if not done)
-3. Run first Overpass ingest for chosen corridor
-4. Implement `startTriageFSM.ts` + unit tests
-5. Schedule daily 15-min standup until submission
-
----
-
-## 27. Contacts & Resources
-
-| Resource | Link |
-|----------|------|
-| CoERS event page | https://coers.iitm.ac.in/event/national-road-safety-hackathon-2026/ |
-| Unstop (Indian track) | https://unstop.com/hackathons/road-safety-hackathon-2026-iit-madras-1680515 |
-| Hackathon email | hackathon@rbg.iitm.ac.in |
-| Coordinator | Dr. Swathy — +91 9791628414 |
-| OpenStreetMap | https://www.openstreetmap.org |
-| Overpass API | https://overpass-api.de |
-| OSRM demo server | http://router.project-osrm.org |
-| sql.js | https://sql.js.org |
-| START triage reference | https://en.wikipedia.org/wiki/Simple_triage_and_rapid_treatment |
-
----
-
-## Appendix A — Architecture Comparison (Before vs After)
+- **Plan:** `src/lib/emergency/emergencyOrchestratorPlan.ts` — `planEmergencyOrchestrator()` + `buildMargiIceSmsBody()`.
+- **Runner:** `src/lib/emergency/emergencyOrchestrator.ts` — `runEmergencyOrchestrator()`.
 
 ```mermaid
 flowchart LR
-    subgraph Before["Rejected Approach"]
-        B1[Ultrasonic V2V]
-        B2[BLE Mesh]
-        B3[Crash Audio ML]
-        B4[Curvature Engine]
-        B5[Native Hybrid App]
-    end
-
-    subgraph After["Margi"]
-        A1[START FSM Chatbot]
-        A2[SQLite POI DB]
-        A3[GHP Packet]
-        A4[QR Human Relay]
-        A5[Next.js PWA]
-    end
-
-    Before -.->|replaced by| After
+  start[Activation done] --> coords[Resolve GPS coords]
+  coords --> rank[rankFacilities -> nearest trauma POI]
+  rank --> plan[planEmergencyOrchestrator]
+  plan --> ice{notifyEmergencyContacts?}
+  ice -->|yes & ICE set| iceSms[Open ICE SMS intent]
+  ice -->|no| skip[skip ICE]
+  iceSms --> s108[Open 108 SMS intent]
+  skip --> s108
+  s108 --> maps[Open Google Maps to facility lat/lng]
+  maps --> trauma[Navigate to Trauma Response HUD]
 ```
+
+- `notifyEmergencyContacts` is a boolean in `UserProfile.settings` (default `true` in `storage.ts`, toggled in `app/settings.tsx`); the plan gates ICE SMS on it.
+- Maps navigation targets the **facility** coordinates (`hospitalNavTarget.ts`), not the user's pin — a deliberate fix (see §26).
+- Triggered from `app/emergency/activation.tsx` after the countdown.
 
 ---
 
-## Appendix B — Full Runtime Sequence Diagram
+## 12. Hold SOS Quick SOS And Incident Tracker
+
+All SOS entry points share one **intentional** path — no premature SMS before an incident type is chosen.
+
+| Entry | Behavior |
+|-------|----------|
+| **Hold SOS (3s)** on Drive HUD | `HoldSOSButton.tsx` (haptics + progress ring) opens the Incident Tracker; `holdSosReleaseGrace.ts` prevents accidental skips on quick release |
+| **Quick SOS** (Home) | `src/lib/home/quickSos.ts` → Incident Tracker |
+| **Header SOS** | same path |
+
+`app/emergency/selection.tsx` is the Incident Tracker (road accident / natural calamity) and includes a cancel-SOS countdown. After selection → `activation.tsx` (≈6s splash) → orchestrator runs.
+
+---
+
+## 13. Trauma Response HUD
+
+`app/emergency/response.tsx` with `src/components/emergency/TraumaResponseActionBar.tsx`.
+
+- **Live incident timer** since SOS (`incidentElapsed.ts`).
+- **Rear-flash torch** via `useTorch.ts` (camera permission + `torchOn`) rendered through `TorchCameraLayer.tsx` (a hidden 1×1 `CameraView` with `enableTorch`). The torch logic and the camera layer are deliberately split (see §26).
+- **Call ICE** + **Call Center** FABs (`contactActions.ts`).
+- **First-aid board** (`FirstAidBoard.tsx`) + offline trauma copy (`traumaAssistantOffline.ts`).
+- Sarthi assistant available inline.
+
+---
+
+## 14. Naari Shakti Womens Safety Portal
+
+Gender-gated (self-reported in Medical) women's safety lane with a saturated saffron + navy identity.
+
+- Routes: `app/naari-shakti.tsx`; components under `src/components/naari/*`; logic in `src/lib/naariShakti/*`.
+- Actions: SMS nearest police station, ICE alert, helpline **181**, 2s hold-to-activate distress HUD with optional recording.
+- **112** national fallback when the user is far from the demo police seed.
+- Entry: Medical → set **Female** → Home **NAARI SHAKTI** card → enable portal → Safety Mode → hold Emergency Help 2s.
+
+---
+
+## 15. Crash And Distress Voice Engines
+
+### CrashEngine (`crashEngine.ts`)
+
+Active **only** when `journey.status === ACTIVE`. Heuristic fusion:
+
+1. Peak accelerometer above threshold within a window.
+2. Speed before impact > 25 km/h.
+3. Speed after < 5 km/h.
+
+Output: a calm **15-second confirmation dialog** (`CrashCandidateModal.tsx`). **No automatic triage or 108 at timer zero** — the user confirms. Native OS crash APIs are stubbed (`crash/nativeCrashAdapter.ts`) unless a custom dev build supplies them.
+
+### Distress voice (`voice/*`)
+
+Optional YAMNet-based distress classifier, **off by default** (sensitivity setting in Profile). Even when triggered, the countdown does **not** auto-open the 108 SMS — fail-safe against false positives. Evaluation: `docs/VOICE_CLASSIFIER_EVAL.md`.
+
+---
+
+## 16. Sarthi Assistant Offline And Cloud
+
+Sarthi is the in-app AI helper. It is **offline-first**: a deterministic knowledge base answers without any network, and the cloud Gemini BFF is an enhancement.
+
+### Decision flow (`src/lib/sarthiEngine.ts`)
+
+```mermaid
+flowchart TD
+  msg[User message] --> kb{KB match?}
+  kb -->|yes, offline-first| offline[Knowledge base reply]
+  kb -->|no| online{Online AND BFF healthy?}
+  online -->|yes| cloud[POST /api/sarthi/chat -> Gemini]
+  online -->|no| offlineFb[Offline reply + cloud-unavailable prefix]
+  cloud -->|error| offlineFb
+```
+
+- `matchKnowledgeBase()` over `SARTHI_KB_ENTRIES` (crash, fire, trapped, bleeding, not-breathing, SOS, corridor, medical, greeting, help_general, guest_identity...) in en/hi/ta.
+- `shouldUseOfflineFirst()` keeps emergency/help intents fully offline even when online.
+- When the cloud call fails, `wrapCloudUnavailableReply()` prefixes the offline answer with *"Cloud Sarthi (Gemini) is temporarily unavailable. On-device guidance:"* so it never silently degrades to a generic boilerplate.
+- Health gate: `checkSarthiBffHealth()` requires `ok === true` **and** `geminiReachable !== false`. The status chip ("Gemini online" vs "Offline KB") is driven by this real probe, not by "is an API key present".
+
+This offline-first design is exactly why a misconfigured BFF used to show the same canned intro for every message — see the Sarthi entries in §26.
+
+---
+
+## 17. Sarthi BFF Internals
+
+`novadrive/` is a Next.js 14 app. Only two API routes matter.
+
+### `src/lib/sarthi/aiConfig.ts`
+
+- Reads `GOOGLE_GENERATIVE_AI_API_KEY` and **sanitizes a UTF-8 BOM** (`\uFEFF`) and whitespace that CLI env uploads can prepend (`sanitizeGoogleApiKey`).
+- Scrubs `process.env` on load so libraries reading the raw var get a clean key.
+- Builds the provider explicitly: `createGoogleGenerativeAI({ apiKey })` rather than relying on implicit env reads.
+- Model: `process.env.SARTHI_GEMINI_MODEL || 'gemini-2.5-flash'`.
+- `probeSarthiGemini()` performs a **real** generation (`system: 'You are Sarthi health check. Reply in one short word.'`, `prompt: 'ping'`, `maxOutputTokens: 64`) and returns `{ ok, error? }` based on whether non-empty text comes back.
+- `resolveSarthiModel()` prefers direct Google when a key exists, else falls back to the AI Gateway string model.
+
+### `GET /api/sarthi/health` (`src/app/api/sarthi/health/route.ts`)
+
+Returns `{ ok, service, model, geminiConfigured, geminiReachable, provider, probeError? }`, status 200 only when configured **and** the probe actually reaches Gemini. CORS enabled.
+
+### `POST /api/sarthi/chat` (`src/app/api/sarthi/chat/route.ts`)
+
+- 503 if not configured.
+- Builds a system prompt from the context (journey phase, language en/hi/ta, display name, guest vs auth, medical summary, ICE presence, regional protocols) and calls `generateText({ model: resolveSarthiModel(), system, messages, maxOutputTokens: 256 })`.
+- Returns `{ reply, actionCard? }` (action card appears when corridor/route is mentioned). CORS enabled.
+
+A local helper `novadrive-mobile/scripts/check-sarthi-bff.cjs` hits both endpoints to validate a deployment from the dev machine.
+
+---
+
+## 18. Supabase Backend
+
+Project `Projectmargi` (`yllcmksndrhlektbjvcu`). Migrations under `supabase/migrations/`.
+
+| Migration | Contents |
+|-----------|----------|
+| `20260528_phase3_core.sql` | Tables `profiles`, `volunteer_providers`, `dispatch_events`; RLS policies; `handle_new_user()` trigger on `auth.users` |
+| `20260528_phase3_security_fix.sql` | Revokes public RPC execution on `handle_new_user()` |
+
+Mobile integration:
+
+- `src/lib/supabase/client.ts` — `createClient` with `expo-secure-store` auth persistence; reads `EXPO_PUBLIC_SUPABASE_URL` + `EXPO_PUBLIC_SUPABASE_ANON_KEY` (use the **publishable** `sb_publishable_...` key, never the secret).
+- `profileSync.ts` — `from('profiles')` select/upsert; `authSession.ts` — session helpers.
+- `ngo/volunteerProviders.ts` — `from('volunteer_providers')`; set `verified = true` for a demo NGO row.
+- `emergency/dispatchOrchestrator.ts` — `from('dispatch_events').insert(...)` audit.
+- **Guest mode** bypasses auth entirely so judges never need to sign in.
+
+---
+
+## 19. Web Mirror And Bystander Relay
+
+`novadrive/src/app/` mirrors the emergency flow for laptop demos and, crucially, hosts the **bystander relay**:
+
+- **`/relay`** (`relay/page.tsx`) — decodes a `?p=` query (`ND1:` + lz-string), shows triage + location, and offers Google Maps + SMS-to-108 links. This is the URL embedded in the mobile GHP QR.
+- **`/emergency/*`** — a full web wizard (`locate → triage → route → packet → relay`) backed by `lib/session-store.ts`, reusing web copies of `startTriageFSM.ts`, `ghp.ts`, and `facilities.ts`.
+
+---
+
+## 20. Brief Site Build Pipeline
+
+This very page is generated by `docs/site/build-docs.js`:
+
+1. Reads `docs/MARGI_MASTER_BRIEF.md` (this file).
+2. Splits out fenced `mermaid` blocks, converts the rest of the markdown to HTML with a small custom parser (headers, tables, lists, code fences, blockquotes, inline code, bold/italic, links, horizontal rules).
+3. Generates the sidebar TOC from lines matching `N. [Label](#anchor)`.
+4. Writes `docs/site/index.html` and copies `MARGI_MASTER_BRIEF.md` (+ PDF if present) for download.
+5. Mermaid renders client-side; a print stylesheet produces a clean PDF via "Save as PDF".
+
+Run locally: `node docs/site/build-docs.js`. Deployed by the **root** Vercel project (`vercel.json`: `buildCommand: node docs/site/build-docs.js`, `outputDirectory: docs/site`).
+
+**Anchor rule:** a heading `## N. Title` becomes id `n-title` (lowercased, punctuation stripped, spaces → hyphens). Keep headings ASCII and punctuation-free so the TOC links resolve.
+
+---
+
+## 21. Environment Variables
+
+Never commit real values. Names only:
+
+### `novadrive-mobile/.env`
+
+| Name | Purpose |
+|------|---------|
+| `EXPO_PUBLIC_SARTHI_API_URL` | Sarthi BFF origin (the **novadrive** Vercel project, not the brief site) |
+| `EXPO_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Supabase **publishable** key |
+| `EXPO_PUBLIC_TRAUMA_DISPATCH_URL` | optional HTTP dispatch endpoint (trauma) |
+| `EXPO_PUBLIC_POLICE_DISPATCH_URL` | optional HTTP dispatch endpoint (police) |
+
+### `novadrive/.env`
+
+| Name | Purpose |
+|------|---------|
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Google AI Studio key for Gemini (server-side only) |
+| `SARTHI_GEMINI_MODEL` | optional model override (default `gemini-2.5-flash`) |
+| `AI_GATEWAY_API_KEY` / `VERCEL_OIDC_TOKEN` | optional alternative providers via AI Gateway |
+
+After changing mobile `.env`, restart Metro with `npx expo start --clear` (env is inlined at bundle time).
+
+---
+
+## 22. Local Development Setup
+
+```bash
+# Mobile (primary)
+cd novadrive-mobile
+npm install --legacy-peer-deps
+npx expo install react-native-worklets babel-preset-expo
+cp .env.example .env            # add Sarthi BFF + Supabase keys (optional)
+npm test                        # Jest unit tests
+npm run typecheck               # tsc --noEmit
+npm run android                 # dev build + Metro (Android Studio JBR on Windows)
+# or Expo Go on same Wi-Fi:
+npm run start:lan
+
+# Cloud BFF
+cd ../novadrive
+npm install
+npm run dev                     # http://localhost:3000
+npm run dev:lan                 # -H 0.0.0.0 -p 3000 for device testing
+
+# Brief site
+node docs/site/build-docs.js    # regenerate docs/site/index.html
+```
+
+**Recommended SOS demo:** Guest → Trip → Start Driving → calibration → hold SOS 3s → pick incident → activation → trauma response (verify ICE FAB, timer, torch, Maps opens toward the hospital, not the user pin).
+
+---
+
+## 23. Deployment Mobile APK
+
+GitHub Actions `.github/workflows/android-apk.yml`:
+
+- Triggers on `workflow_dispatch` and published `release`.
+- Node 20 + Java 17 + Android SDK → `cd novadrive-mobile && npm install` → `expo prebuild --platform android --clean` → `./gradlew assembleDebug`.
+- Uploads artifact `margi-debug.apk`; attaches it to the GitHub Release when triggered by a release.
+
+Local APK: `npm run android:apk` (needs JDK 17+; scripts patch the Foojay Gradle resolver and resolve the JDK). Judges install the APK and tap **Continue as Guest**.
+
+---
+
+## 24. Deployment Sarthi BFF
+
+Deploy `novadrive/` as a **separate** Vercel project.
+
+### From GitHub (recommended)
+
+1. Import `Stormynubee/Margi` at vercel.com/new.
+2. **Root Directory → `novadrive`** (not repo root).
+3. Framework: Next.js (auto).
+4. Build & Output Settings: Install `npm install`, Build `npm run build`, **Output Directory empty** (delete any `docs/site` value — that belongs to the brief-site project).
+5. Env var `GOOGLE_GENERATIVE_AI_API_KEY` (Production + Preview).
+6. Deploy; note the URL.
+
+### From CLI
+
+```powershell
+cd novadrive
+npm install
+npx vercel --prod
+# add GOOGLE_GENERATIVE_AI_API_KEY in the dashboard, then redeploy
+```
+
+### Verify
+
+```bash
+curl https://YOUR-BFF.vercel.app/api/sarthi/health
+# expect: { "ok": true, "geminiConfigured": true, "geminiReachable": true, "model": "gemini-2.5-flash" }
+node novadrive-mobile/scripts/check-sarthi-bff.cjs https://YOUR-BFF.vercel.app
+```
+
+Then set `EXPO_PUBLIC_SARTHI_API_URL` to that URL (no trailing slash) and restart Expo.
+
+---
+
+## 25. Testing Strategy
+
+- **Mobile:** Jest + ts-jest, `testEnvironment: node`, roots in `src/`, pattern `**/*.test.ts` (logic only — no `.tsx` rendering tests). ~72 test files / 200+ cases. Notable clusters: `startTriageFSM`, `ghp`, `facilitiesDb`, `emergencyOrchestrator`, `sarthiEngine`, `sarthiKnowledgeBase`, voice/distress, naariShakti, home/safety brief.
+- **Discipline:** TDD for every `src/lib` logic module; keep side effects (intents, navigation, SQLite) behind pure plan functions so they are testable.
+- **Docs/branding gates:** `npm run verify:docs`, `npm run verify:branding`.
+- **CI (`ci.yml`):** Job 1 mobile typecheck + test + verify gates; Job 2 `novadrive` `next build`; Job 3 build the brief site.
+- **POI CI (`poi-ingest.yml`):** Python pytest on `scripts/tests` for any `scripts/**` or `data/**` change.
+- **Manual:** `novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md` (device matrix), optional Maestro flows.
+
+---
+
+## 26. Engineering Problem And Solution Log
+
+This is the institutional memory — every non-trivial bug solved while building Margi, with the real root cause and fix. **Read this before re-touching the relevant subsystem.**
+
+### 26.1 Metro bundling failed on `useTorch.ts` (JSX in a `.ts` file)
+
+- **Symptom:** Android Metro bundling error; torch hook would not compile.
+- **Root cause:** JSX (the hidden `CameraView`) lived in a `.ts` file; only `.tsx` may contain JSX.
+- **Fix:** split responsibilities — `src/hooks/useTorch.ts` holds permission + `torchOn` logic only; the JSX moved to `src/components/emergency/TorchCameraLayer.tsx`. `TraumaResponseActionBar.tsx` renders the layer. Lesson: keep hooks JSX-free, or use `.tsx`.
+
+### 26.2 SOS stuck on "ADVANCING NOW..." at timer 0
+
+- **Symptom:** Activation countdown reached 0 and froze on "ADVANCING NOW…".
+- **Root cause:** navigation was attempted before the router was ready, and the orchestrator ran before navigation, blocking the transition.
+- **Fix:** in `app/emergency/activation.tsx`, **navigate first, then run the orchestrator**, and guard navigation with `useRootNavigationState()`. Also corrected the triage type passed to the orchestrator.
+
+### 26.3 Trauma screen crash — `FirstAidBoard` missing
+
+- **Symptom:** opening the trauma response screen crashed.
+- **Root cause:** `app/emergency/response.tsx` referenced `FirstAidBoard` without importing it.
+- **Fix:** import `FirstAidBoard` from `src/components/emergency/FirstAidBoard.tsx`.
+
+### 26.4 Sarthi returned the same canned reply for every message
+
+- **Symptom:** every message ("how are u", "I need sleep") returned the identical intro/fallback line, while the chip claimed the BFF was online.
+- **Root causes (stacked):**
+  1. **Health lied** — the old health route returned `ok: true` when the API key merely *existed*, without ever calling Gemini.
+  2. **Chat failed silently** — the mobile send path caught BFF errors and fell back to `getFallbackMessage()` (the same boilerplate every time).
+  3. **Wrong BFF URL** — the app was pointed at the static brief site (`roadsafetyhackathon-six` / `margi-tau`), which 404s on `/api/sarthi/*`.
+- **Fixes:**
+  - Health now does a **real Gemini probe** (`probeSarthiGemini`) and returns `geminiReachable`; the mobile health check requires `geminiReachable !== false`.
+  - On cloud failure, the offline answer is prefixed with a visible "Cloud Sarthi unavailable" banner instead of silently repeating boilerplate; KB intents stay offline-first by design.
+  - `EXPO_PUBLIC_SARTHI_API_URL` points at the dedicated `novadrive` project (e.g. `novadrive-eta.vercel.app`).
+
+### 26.5 Fake "GEMINI BFF ONLINE" chip
+
+- **Symptom:** chip showed online even when Gemini never responded.
+- **Root cause:** status was derived from "is a key configured", not from reachability.
+- **Fix:** status copy (`sarthiStatusCopy.ts`, `app/sarthi.tsx`) is driven by the real `geminiReachable` probe; chip reads "Gemini online" only when the probe truly succeeds, otherwise "Offline KB".
+
+### 26.6 UTF-8 BOM in the Vercel env key (`character at index 0 has value 65279`)
+
+- **Symptom:** health/chat errored with `... character at index 0 has a value of 65279 ...`.
+- **Root cause:** piping the key via PowerShell into `vercel env add` prepended a UTF-8 **BOM** (`\uFEFF`); `@ai-sdk/google` sent it verbatim in the auth header.
+- **Fix:** `sanitizeGoogleApiKey()` strips BOM + whitespace, `process.env` is scrubbed on load, and the provider is built explicitly with `createGoogleGenerativeAI({ apiKey: clean })`. Re-added the env without BOM and redeployed.
+
+### 26.7 Gemini quota exceeded on `gemini-2.0-flash`
+
+- **Symptom:** `You exceeded your current quota ... free_tier ... limit: 0, model: gemini-2.0-flash`.
+- **Root cause:** the key had no free-tier quota for `gemini-2.0-flash`.
+- **Fix:** switched the default model to **`gemini-2.5-flash`** (overridable via `SARTHI_GEMINI_MODEL`), which had availability for the key. Chat then returned real, contextual replies.
+
+### 26.8 Health probe false-negative ("Empty model response" / "Unexpected probe reply: i")
+
+- **Symptom:** chat worked but health reported `geminiReachable: false`.
+- **Root cause:** the probe demanded the model echo an exact word with a tiny token budget; `gemini-2.5-flash` returned empty/partial text for the over-constrained prompt.
+- **Fix:** relaxed the probe to a short system + `prompt: 'ping'` with `maxOutputTokens: 64`, accepting any non-empty reply as healthy. Health then matched chat reality.
+
+### 26.9 Maps opened to the user's pin instead of the hospital
+
+- **Symptom:** orchestrator's Maps step navigated to the victim location, not the destination hospital.
+- **Root cause:** the navigate target used current coords.
+- **Fix:** `hospitalNavTarget.ts` resolves the **ranked facility** lat/lng (added lat/lng to the `Facility` type) and Maps opens toward it.
+
+### 26.10 Premature SMS before incident selection / false alerts
+
+- **Symptom:** SMS could fire before the user chose an incident type; voice/crash countdowns risked auto-SMS.
+- **Fix:** unified all SOS entries through the Incident Tracker first; added `holdSosReleaseGrace` so a quick release doesn't skip the picker; **disabled voice detection by default**; removed the countdown-0 auto-SMS so the user always confirms.
+
+### 26.11 Documentation drift (PWA vision vs shipped native app)
+
+- **Symptom:** docs described a Next.js PWA + sql.js that was never the shipped client.
+- **Fix:** created `docs/CANON.md` as the single source of truth; marked the old brief as historical (now **Appendix A** here); README + this bible describe the real Expo app.
+
+---
+
+## 27. Replicate From Scratch Playbook
+
+To rebuild Margi from zero:
+
+1. **Monorepo:** create `novadrive-mobile/` (Expo), `novadrive/` (Next.js), `docs/`, `supabase/migrations/`, `scripts/`, `.github/workflows/`. Add the **two** `vercel.json` files (root → brief site; `novadrive/` → Next.js).
+2. **Mobile scaffold:** `npx create-expo-app` (SDK 54), add expo-router, the dependency set in §4, the `@/*` alias, and `react-native-reanimated/plugin` in babel. Configure `app.json` (`com.margi.app`, `margi://`, camera/location/SMS permissions, plugins).
+3. **Offline core first (TDD):** build `startTriageFSM.ts` (§8) → `facilitiesDb.ts` + seed (§10) → `ghp.ts` encoder + integrity (§9), each with `*.test.ts`. This is the demo-critical path; it must work in airplane mode.
+4. **SOS path:** `HoldSOSButton` → Incident Tracker (`emergency/selection`) → `activation` (navigate-then-orchestrate, router guard) → `emergencyOrchestratorPlan`/`emergencyOrchestrator` (ICE SMS → 108 SMS → Maps to facility) → trauma HUD (`response.tsx` + `TraumaResponseActionBar` + `useTorch`/`TorchCameraLayer`) → `packet` (QR) → `relay`.
+5. **Sarthi:** offline KB (`sarthiKnowledgeBase.ts`) + engine (`sarthiEngine.ts`) offline-first; health gate (`sarthiHealth.ts`) requiring `geminiReachable`. Then the BFF (§17): `aiConfig.ts` (BOM-safe key, explicit provider, `gemini-2.5-flash`), `/api/sarthi/health` (real probe), `/api/sarthi/chat`.
+6. **Naari Shakti** (§14), **crash + voice** off-by-default (§15).
+7. **Supabase** (§18): apply migrations, wire client with SecureStore, keep Guest mode.
+8. **CI/CD** (§23–§25): `ci.yml`, `android-apk.yml`, `poi-ingest.yml`.
+9. **Brief site** (§20): write this file; `node docs/site/build-docs.js`; deploy root project.
+10. **Wire env** (§21) and verify health endpoints before claiming "online".
+
+**Golden rules learned the hard way:** keep JSX out of `.ts`; navigate before side effects and guard the router; never report a service "online" without probing it; sanitize CLI-uploaded secrets (BOM); pick a model the key actually has quota for; route Maps to the destination, not the origin; never auto-SMS without explicit user confirmation.
+
+---
+
+## 28. Honesty Boundaries And Rejected Scope
+
+| Topic | Demo truth |
+|-------|------------|
+| POI database | NH48 verified pack (50 OSM nodes, 40 phone-verified) in the Chennai bbox; baseline 108 + GPS + triage elsewhere |
+| Naari police | Chennai demo stations; 112 national fallback beyond the seed |
+| "production" tag | `v2.0.0-production` = integration milestone, **not** clinical production |
+| Sarthi | 31+ offline KB entries; cloud LLM optional |
+| Gender | self-reported on device, unverified in P0 |
+| Crash/voice | sensor heuristics + experimental voice; no OS crash API in P0; no auto-SMS |
+
+### Deliberately rejected (do not reintroduce without a team vote)
+
+| Rejected idea | Why killed |
+|---------------|------------|
+| Ultrasonic V2V | browsers block mic without gesture; road noise; unreliable demo |
+| BLE / DTN mesh | browsers can't advertise BLE; iOS has no Web Bluetooth |
+| Wi-Fi Direct beacons | not available in web/RN-managed APIs |
+| Always-on crash audio ML | false positives, privacy, battery, research-grade scope |
+| Curvature/anxiety physics engine | wrong problem statement; OSM geometry too sparse |
+| Background volunteer GPS | unreliable background tracking; needs gov integration |
+| Auto-dial 108 | platform policy; user must tap Send/Call |
+
+**Strategic lesson:** judges score reliable offline triage with valid POI data — not machines chirping at each other. Margi's differentiator is *information surviving dead zones* (GHP + human QR relay).
+
+---
+
+## 29. Glossary
+
+| Term | Meaning |
+|------|---------|
+| **START** | Simple Triage And Rapid Treatment — accident-scene triage protocol |
+| **FSM** | Finite State Machine — deterministic step logic |
+| **GHP** | Golden Hour Packet — structured 108-ready emergency brief |
+| **ND1:** | Margi relay payload envelope (lz-string compressed) carried in QR / `/relay?p=` |
+| **trauma_tier** | hospital capability: 1 trauma center, 2 hospital ER, 3 clinic |
+| **Haversine** | great-circle distance between two GPS points |
+| **ICE** | In Case of Emergency contact |
+| **108 / 112 / 181** | India ambulance / unified emergency / women's helpline |
+| **Naari Shakti** | Margi's women's safety lane |
+| **BFF** | Backend-For-Frontend — the `novadrive` Next.js server fronting Gemini |
+| **Sarthi** | Margi's in-app AI assistant (offline KB + optional Gemini) |
+| **OSRM** | Open Source Routing Machine — road ETA |
+| **RLS** | Row Level Security (Supabase/Postgres) |
+| **Golden hour** | first ~60 minutes after trauma — survival-critical |
+| **RoadSoS** | the hackathon problem statement — emergency services access |
+| **CoERS** | Centre of Excellence for Road Safety, IIT Madras |
+
+---
+
+## 30. Resources And Links
+
+| Resource | Link |
+|----------|------|
+| GitHub repo | https://github.com/Stormynubee/Margi |
+| Live brief site (this page) | https://roadsafetyhackathon-six.vercel.app |
+| Android APK workflow | https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml |
+| Google AI Studio (Gemini key) | https://aistudio.google.com/apikey |
+| CoERS event | https://coers.iitm.ac.in/event/national-road-safety-hackathon-2026/ |
+| Unstop (Indian track) | https://unstop.com/hackathons/road-safety-hackathon-2026-iit-madras-1680515 |
+| OpenStreetMap / Overpass | https://www.openstreetmap.org · https://overpass-api.de |
+| OSRM demo | http://router.project-osrm.org |
+| START reference | https://en.wikipedia.org/wiki/Simple_triage_and_rapid_treatment |
+
+In-repo: `docs/CANON.md` (scope truth), `docs/ARCHITECTURE.md`, `docs/PHASE3_SETUP.md`, `JUDGE_START_HERE.md`, `docs/SUBMISSION.md`, `novadrive-mobile/README.md`, `novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md`.
+
+---
+
+## Appendix A — Original Planning Brief (Historical PWA Vision)
+
+> The content below is the **original aspirational brief**. Margi shipped as a **native Expo Android app**, not the Next.js PWA + sql.js described here. Sections 1–30 above are canonical. This appendix is retained for learning and provenance — it documents the architecture we explored, the reasoning, and the rejected sensor-mesh path.
+
+### A.1 Core innovation (three pillars)
+
+```mermaid
+flowchart LR
+  P1["1. START TRIAGE CHATBOT<br/>(AI + FSM)"] --> P2["2. TRAUMA-TIER ROUTING<br/>(not nearest pin)"] --> P3["3. GOLDEN HOUR PACKET (GHP)<br/>+ QR HUMAN RELAY"]
+```
+
+The three pillars (offline START triage, capability-based trauma-tier routing, and the GHP carried through dead zones by a human QR relay) survived from this vision into the shipped app — only the delivery platform changed from PWA to native Expo.
+
+### A.2 Original PWA system architecture
+
+```mermaid
+flowchart TB
+    subgraph Client["Margi PWA (Next.js 14)"]
+        Chat[Triage Chat UI]
+        FSM[START Triage FSM]
+        Router[Offline Spatial Router]
+        GHP[GHP Builder + Compressor]
+        QR[QR Generator / Scanner]
+        IDB[(IndexedDB Relay Store)]
+        SW[Service Worker / Serwist]
+        SQL[(sql.js + emergency_seed.db)]
+    end
+    Chat --> FSM --> Router --> SQL
+    FSM --> GHP --> QR --> IDB
+    SW --> SQL
+```
+
+In the shipped app: Next.js PWA → Expo Router native; `sql.js` → `expo-sqlite`; IndexedDB relay → SecureStore + `/relay`; Serwist service worker → native offline (assets bundled in the APK); Web Speech API → `expo-speech` + optional YAMNet voice.
+
+### A.3 Original build-time data pipeline
+
+```
+OpenStreetMap -> Overpass API (nwr: hospitals, clinics, police, ambulance)
+  -> ingestCorridors.py (parse names/phones/types, assign trauma_tier, tag corridor/state, manual verify CSV)
+  -> emergency_seed.db -> bundled + submitted
+```
+
+This pipeline still exists under `scripts/` (validated by `poi-ingest.yml`) and produces the verified NH48 pack, but the **runtime** app uses an inline seed in `facilitiesDb.ts` rather than loading the built DB file.
+
+### A.4 Original full runtime sequence
 
 ```mermaid
 sequenceDiagram
     participant V as Victim Phone (Offline)
     participant FSM as START FSM
-    participant DB as SQLite (sql.js)
+    participant DB as SQLite
     participant GHP as GHP Builder
     participant B as Bystander Phone
-    participant IDB as IndexedDB
     participant SMS as 108 SMS
-
     V->>FSM: Start Emergency + GPS
     FSM->>FSM: Triage questions
     FSM->>DB: Query trauma-tier POIs
@@ -1058,13 +955,11 @@ sequenceDiagram
     FSM->>GHP: Build packet + hash
     GHP-->>V: Display QR + brief
     B->>V: Scan QR
-    B->>IDB: Store verified GHP
     Note over B: Drives until signal returns
     B->>SMS: Auto-compose 108 message
 ```
 
 ---
 
-*End of Margi Master Team Brief — share freely with all team members.*
-
-**Document maintainer:** Update this file when scope, corridor, or demo script changes. Do not re-introduce rejected features without team vote.
+*End of Margi — Complete Replication Bible · Team NovaDrive · CoERS Road Safety Hackathon 2026.*
+*Maintainer note: `docs/CANON.md` wins on any scope dispute. Update the Problem and Solution Log (Section 26) whenever a non-trivial bug is fixed, and rebuild the brief site with `node docs/site/build-docs.js`.*

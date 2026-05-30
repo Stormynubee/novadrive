@@ -62,6 +62,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "verify:docs": "node scripts/verify-readme-stats.mjs",
+    "check:sarthi": "node scripts/check-sarthi-bff.cjs",
     "verify:branding": "node scripts/verify-public-branding.mjs",
     "postinstall": "node scripts/patch-foojay-gradle.js"
   },

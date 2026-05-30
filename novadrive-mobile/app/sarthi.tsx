@@ -24,9 +24,9 @@ function sessionLabel() {
 
 function statusChipLabel(status: string, offlineMode: boolean): string {
   if (offlineMode) return 'Offline safety KB — no cloud required';
-  if (status === 'online') return 'Gemini BFF online';
-  if (status === 'unconfigured') return 'Offline KB only';
-  return 'Offline KB (BFF unreachable)';
+  if (status === 'online') return 'Gemini online';
+  if (status === 'unconfigured') return 'Offline KB — set Sarthi BFF URL in .env';
+  return 'Offline KB — BFF unreachable (deploy novadrive/)';
 }
 
 export default function SarthiScreen() {
@@ -61,9 +61,11 @@ export default function SarthiScreen() {
           {statusChipLabel(bffStatus, offlineMode)}
         </HudText>
       </View>
-      {offlineMode ? (
+      {offlineMode || bffStatus !== 'online' ? (
         <HudText variant="bodySm" style={styles.offlineHint}>
-          Ask about SOS, START triage, GHP, or Naari Shakti — answers stay on-device.
+          {bffStatus === 'online'
+            ? 'Ask about SOS, START triage, GHP, or Naari Shakti — answers stay on-device.'
+            : 'Cloud Sarthi needs the Next.js BFF (novadrive/). Try “help”, “SOS”, or “offline” for on-device answers. Run: node scripts/check-sarthi-bff.cjs'}
         </HudText>
       ) : null}
       <FlatList

@@ -42,7 +42,8 @@ export function buildSarthiUserContext(
   journeyPhase: 'IDLE' | 'ACTIVE',
   location: SarthiLocationContext = {}
 ): SarthiUserContext {
-  const language = profile.settings?.language ?? 'en';
+  const rawLang = profile.settings?.language ?? 'en';
+  const language = (rawLang === 'hi' || rawLang === 'ta') ? rawLang : 'en';
   const displayName =
     profile.name?.trim() ||
     (profile.mode === 'guest' ? sarthiStrings.guestName[language] : undefined);

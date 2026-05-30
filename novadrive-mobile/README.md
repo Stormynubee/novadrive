@@ -164,6 +164,7 @@ Connection status chip shows when cloud is unavailable — no fake “online” 
 | **HTTP dispatch** | `dispatchOrchestrator.ts` + Supabase `dispatch_events` audit |
 | **Rah-Veer** | `app/rahveer/*`, `src/lib/rahveerDb.ts` — Good Samaritan claim log |
 | **Native crash (dev)** | `nativeCrashAdapter` — source badge on calm dialog; requires dev client / APK |
+| **Multilingual Support** | `app/auth.tsx`, `src/lib/translations/*` — **15 languages** (Spanish, Arabic, Hindi, Tamil, etc.) inside a prominent searchable selector grid with quick-filters & haptics |
 
 ---
 
@@ -199,7 +200,7 @@ Design: [docs/superpowers/specs/2026-05-28-distress-voice-detection-design.md](d
 
 ```bash
 npm run typecheck
-npm test                 # 220 unit tests (72 suites)
+npm test                 # 225 unit tests (73 suites)
 npm run verify:docs      # README test count matches src/**/*.test.ts
 npm run verify:branding
 npm run test:coverage
@@ -257,6 +258,7 @@ See [scripts/BUILD_APK.md](scripts/BUILD_APK.md). Windows uses Android Studio **
 | JSX in `.ts` hook | Keep JSX in `.tsx` (e.g. `TorchCameraLayer.tsx`, not `useTorch.ts`) |
 | foojay / IBM_SEMERU | `node scripts/patch-foojay-gradle.js` runs on `postinstall` |
 | `[CXX5304] SDK XML version 4` | Harmless warning when Studio CLI versions differ; build can still succeed |
+| `CreateProcess: paging file too small` | Disable parallel builds via `gradle.properties` (`org.gradle.parallel=false`, `org.gradle.workers.max=1`) and sequentialize C++ compilation via `CMAKE_BUILD_PARALLEL_LEVEL=1` env variable |
 
 ---
 

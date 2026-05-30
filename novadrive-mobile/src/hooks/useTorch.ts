@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Alert } from 'react-native';
+import { useCameraPermissions } from 'expo-camera';
 
 export function useTorch() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -22,25 +22,10 @@ export function useTorch() {
 
   const turnOffTorch = useCallback(() => setTorchOn(false), []);
 
-  const TorchLayer =
-    torchOn && permission?.granted ? (
-      <View style={styles.torchHost} pointerEvents="none">
-        <CameraView style={styles.torchCamera} facing="back" enableTorch />
-      </View>
-    ) : null;
-
-  return { torchOn, toggleTorch, turnOffTorch, TorchLayer };
+  return {
+    torchOn,
+    toggleTorch,
+    turnOffTorch,
+    torchReady: Boolean(permission?.granted),
+  };
 }
-
-const styles = StyleSheet.create({
-  torchHost: {
-    position: 'absolute',
-    width: 1,
-    height: 1,
-    opacity: 0,
-    left: -80,
-    top: -80,
-    overflow: 'hidden',
-  },
-  torchCamera: { width: 1, height: 1 },
-});

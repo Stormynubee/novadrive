@@ -6,7 +6,7 @@ export function sarthiConnectionBanner(input: {
     return 'Offline — Sarthi uses on-device safety guidance while you drive.';
   }
   if (input.bffUnavailable) {
-    return 'Sarthi is using on-device safety guidance. Cloud assistant reconnects when online.';
+    return 'Gemini is not responding — on-device safety KB only. Try “help”, “SOS”, or “crash”.';
   }
   return null;
 }

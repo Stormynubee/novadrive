@@ -16,6 +16,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { HudText } from '../../src/components/HudText';
 import { MargiButton } from '../../src/components/MargiButton';
 import { TraumaResponseActionBar } from '../../src/components/emergency/TraumaResponseActionBar';
+import { FirstAidBoard } from '../../src/components/emergency/FirstAidBoard';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { TraumaCenterPanel } from '../../src/components/emergency/TraumaCenterPanel';
 import { useApp } from '../../src/context/AppContext';
@@ -92,7 +93,7 @@ export default function TraumaResponseScreen() {
     markIncidentActivated();
     const started = engine.startSession({
       incidentType: session.incidentType,
-      language: settings.language,
+      language: (settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en',
       userName: 'Citizen',
     });
     setSessionId(started.id);
@@ -160,7 +161,7 @@ export default function TraumaResponseScreen() {
           incidentType: session.incidentType ?? 'road_accident',
           lat: loc.lat,
           lng: loc.lng,
-          language: settings.language,
+          language: (settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en',
           autoDispatchMedical: settings.autoDispatchMedical,
           medical: profile.medical,
           userId: profile.supabaseUserId,
@@ -244,8 +245,9 @@ export default function TraumaResponseScreen() {
     setDraft('');
     if (!sessionId) return;
     engine.recordAnswer(sessionId, msg);
-    const reply = getOfflineTraumaReply(msg, settings.language);
-    const locale = resolveSpeechLocale(settings.language);
+    const sarthiLang = (settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en';
+    const reply = getOfflineTraumaReply(msg, sarthiLang);
+    const locale = resolveSpeechLocale(sarthiLang);
     const assistantText = `${reply.message} ${reply.actions[0]}`;
     setChat((prev) => [...prev, { role: 'assistant', text: assistantText }]);
     speakA11y(assistantText, { ...a11y, ttsEnabled: true }, locale);
@@ -260,7 +262,7 @@ export default function TraumaResponseScreen() {
 
   const activeReply = getOfflineTraumaReply(
     [...chat].reverse().find((c) => c.role === 'user')?.text ?? '',
-    settings.language
+    (settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en'
   );
 
   const traumaCenter = dispatchResult?.traumaCenter ?? {
@@ -321,7 +323,7 @@ export default function TraumaResponseScreen() {
           </HudText>
         </View>
 
-        <LanguageSelector value={settings.language} onChange={(value) => void updateSettings({ language: value })} />
+        <LanguageSelector value={(settings.language === 'hi' || settings.language === 'ta') ? settings.language : 'en'} onChange={(value) => void updateSettings({ language: value })} />
 
         {dispatchError ? (
           <View style={styles.infoCard}>

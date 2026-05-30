@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, View, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -25,15 +25,36 @@ import {
 } from '../src/lib/supabase/authSession';
 import { fetchRemoteProfile, mergeRemoteIntoProfile } from '../src/lib/supabase/profileSync';
 import { tokens } from '../src/theme/tokens';
+import { getAuthString } from '../src/lib/translations';
+
+const LANGUAGES_LIST = [
+  { code: 'en', native: 'English', name: 'English', flag: '🇺🇸' },
+  { code: 'hi', native: 'हिन्दी', name: 'Hindi', flag: '🇮🇳' },
+  { code: 'ta', native: 'தமிழ்', name: 'Tamil', flag: '🇮🇳' },
+  { code: 'es', native: 'Español', name: 'Spanish', flag: '🇪🇸' },
+  { code: 'fr', native: 'Français', name: 'French', flag: '🇫🇷' },
+  { code: 'de', native: 'Deutsch', name: 'German', flag: '🇩🇪' },
+  { code: 'zh', native: '中文', name: 'Mandarin', flag: '🇨🇳' },
+  { code: 'ja', native: '日本語', name: 'Japanese', flag: '🇯🇵' },
+  { code: 'ar', native: 'العربية', name: 'Arabic', flag: '🇸🇦' },
+  { code: 'pt', native: 'Português', name: 'Portuguese', flag: '🇧🇷' },
+  { code: 'ru', native: 'Русский', name: 'Russian', flag: '🇷🇺' },
+  { code: 'bn', native: 'বাংলা', name: 'Bengali', flag: '🇮🇳' },
+  { code: 'pa', native: 'ਪੰਜਾਬੀ', name: 'Punjabi', flag: '🇮🇳' },
+  { code: 'mr', native: 'मराठी', name: 'Marathi', flag: '🇮🇳' },
+  { code: 'te', native: 'తెలుగు', name: 'Telugu', flag: '🇮🇳' },
+] as const;
 
 export default function AuthScreen() {
-  const { updateProfile, profile } = useApp();
+  const { updateProfile, profile, settings, updateSettings } = useApp();
   const [tab, setTab] = useState<AuthTab>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [gender, setGender] = useState<GenderIdentity | undefined>();
   const [busy, setBusy] = useState(false);
+  const [selectorExpanded, setSelectorExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const supabaseReady = isSupabaseConfigured();
 
@@ -155,24 +176,132 @@ export default function AuthScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.brandRow}>
-          <MargiLogo size={36} showWordmark={false} />
-          <View>
-            <HudText variant="headlineMd" style={styles.brandTitle}>
-              Margi
-            </HudText>
-            <HudText variant="mono" style={styles.brandSub}>
-              Secure sign-in
-            </HudText>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <MargiLogo size={36} showWordmark={false} />
+            <View>
+              <HudText variant="headlineMd" style={styles.brandTitle}>
+                Margi
+              </HudText>
+              <HudText variant="mono" style={styles.brandSub}>
+                {getAuthString('secureSignIn', settings.language)}
+              </HudText>
+            </View>
           </View>
         </View>
 
+        {/* Prominent Tactile Expandable Language Selector */}
+        <View style={styles.promoSelectorCard}>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => undefined);
+              setSelectorExpanded(!selectorExpanded);
+            }}
+            style={({ pressed }) => [
+              styles.promoSelectorHeader,
+              pressed && styles.promoSelectorPressed
+            ]}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <MaterialIcons name="language" size={20} color={tokens.primary} />
+              <HudText variant="mono" style={styles.promoSelectorLabel}>
+                {LANGUAGES_LIST.find((l) => l.code === settings.language)?.flag}{' '}
+                {LANGUAGES_LIST.find((l) => l.code === settings.language)?.native} ({LANGUAGES_LIST.find((l) => l.code === settings.language)?.name})
+              </HudText>
+            </View>
+            <MaterialIcons
+              name={selectorExpanded ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
+              size={22}
+              color={tokens.primary}
+            />
+          </Pressable>
+
+          {selectorExpanded && (
+            <View style={styles.promoSelectorBody}>
+              {/* Search Bar */}
+              <View style={styles.promoSearchWrapper}>
+                <MaterialIcons name="search" size={18} color={tokens.onSurfaceVariant} style={{ marginRight: 6 }} />
+                <TextInput
+                  placeholder="Search language..."
+                  placeholderTextColor={tokens.onSurfaceVariant}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  style={styles.promoSearchInput}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                />
+              </View>
+
+              {/* Language Grid */}
+              <ScrollView
+                style={styles.promoGridScroll}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={true}
+              >
+                <View style={styles.promoGrid}>
+                  {LANGUAGES_LIST.filter(
+                    (l) =>
+                      l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      l.native.toLowerCase().includes(searchQuery.toLowerCase())
+                  ).map((lang) => {
+                    const active = settings.language === lang.code;
+                    return (
+                      <Pressable
+                        key={lang.code}
+                        onPress={async () => {
+                          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+                          await updateSettings({ language: lang.code });
+                          setSelectorExpanded(false);
+                          setSearchQuery('');
+                        }}
+                        style={({ pressed }) => [
+                          styles.promoGridChip,
+                          active && styles.promoGridChipActive,
+                          pressed && styles.promoGridChipPressed,
+                        ]}
+                      >
+                        <HudText variant="mono" style={styles.promoGridFlag}>
+                          {lang.flag}
+                        </HudText>
+                        <HudText
+                          variant="mono"
+                          style={[
+                            styles.promoGridNative,
+                            active && styles.promoGridNativeActive,
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {lang.native}
+                        </HudText>
+                        <HudText
+                          variant="mono"
+                          style={[
+                            styles.promoGridLocal,
+                            active && styles.promoGridLocalActive,
+                          ]}
+                          numberOfLines={1}
+                        >
+                          {lang.name}
+                        </HudText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </ScrollView>
+            </View>
+          )}
+        </View>
+
         <HudText variant="headlineLg" style={styles.title}>
-          {tab === 'guest' ? 'Demo mode' : tab === 'signup' ? 'Create account' : 'Sign in'}
+          {tab === 'guest'
+            ? getAuthString('demoMode', settings.language)
+            : tab === 'signup'
+            ? getAuthString('createAccount', settings.language)
+            : getAuthString('signIn', settings.language)}
         </HudText>
         <HudText variant="bodyMd" style={styles.body}>
           {supabaseReady
-            ? 'Your profile syncs to Supabase when signed in. Guest mode stays fully offline on this device.'
-            : 'Supabase keys are not configured — use Guest demo mode. Add keys in .env for production auth.'}
+            ? getAuthString('profileSyncDesc', settings.language)
+            : getAuthString('supabaseMissingDesc', settings.language)}
         </HudText>
 
         <View style={styles.tabBlock}>
@@ -189,7 +318,9 @@ export default function AuthScreen() {
                 ]}
               >
                 <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
-                  {key === 'signin' ? 'Sign in' : 'Create account'}
+                  {key === 'signin'
+                    ? getAuthString('signIn', settings.language)
+                    : getAuthString('createAccount', settings.language)}
                 </HudText>
               </Pressable>
             ))}
@@ -204,7 +335,7 @@ export default function AuthScreen() {
             ]}
           >
             <HudText variant="mono" style={[styles.tabText, tab === 'guest' && styles.tabTextActive]}>
-              Guest demo
+              {getAuthString('guestDemo', settings.language)}
             </HudText>
           </Pressable>
         </View>
@@ -214,40 +345,46 @@ export default function AuthScreen() {
             {tab === 'signup' ? (
               <>
                 <HudText variant="mono" style={styles.label}>
-                  Display name
+                  {getAuthString('displayName', settings.language)}
                 </HudText>
                 <MargiInput
-                  placeholder="Your name"
+                  placeholder={getAuthString('namePlaceholder', settings.language)}
                   value={displayName}
                   onChangeText={setDisplayName}
                 />
               </>
             ) : null}
             <HudText variant="mono" style={styles.label}>
-              Email address
+              {getAuthString('emailAddress', settings.language)}
             </HudText>
             <MargiInput
-              placeholder="you@example.com"
+              placeholder={getAuthString('emailPlaceholder', settings.language)}
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
               keyboardType="email-address"
             />
             <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
-              Password
+              {getAuthString('password', settings.language)}
             </HudText>
             <MargiInput
-              placeholder="At least 8 characters"
+              placeholder={getAuthString('passwordPlaceholder', settings.language)}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
             <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
-              Gender (optional)
+              {getAuthString('genderOptional', settings.language)}
             </HudText>
             <GenderIdentityPicker value={gender} onChange={setGender} />
             <MargiButton
-              label={busy ? 'Please wait…' : tab === 'signup' ? 'Create account' : 'Sign in'}
+              label={
+                busy
+                  ? getAuthString('pleaseWait', settings.language)
+                  : tab === 'signup'
+                  ? getAuthString('createAccount', settings.language)
+                  : getAuthString('signIn', settings.language)
+              }
               onPress={() => void (tab === 'signup' ? submitSignUp() : submitSignIn())}
               large
               disabled={busy}
@@ -257,14 +394,14 @@ export default function AuthScreen() {
         ) : (
           <HudCard>
             <HudText variant="bodyMd" style={styles.hint}>
-              Guest mode keeps all data on this device. Ideal for judges and offline corridor demos.
+              {getAuthString('guestDesc', settings.language)}
             </HudText>
             <HudText variant="mono" style={[styles.label, { marginTop: 16 }]}>
-              Gender (optional)
+              {getAuthString('genderOptional', settings.language)}
             </HudText>
             <GenderIdentityPicker value={gender} onChange={setGender} />
             <MargiButton
-              label="Continue as Guest"
+              label={getAuthString('continueAsGuest', settings.language)}
               onPress={() => void continueGuest()}
               variant="secondary"
               large
@@ -274,7 +411,7 @@ export default function AuthScreen() {
         )}
 
         <HudText variant="mono" style={styles.footer}>
-          {TEAM_DISPLAY_NAME} · Government of India · IIT Madras
+          {TEAM_DISPLAY_NAME} · {getAuthString('teamDisplay', settings.language)}
         </HudText>
       </ScrollView>
     </SafeAreaView>
@@ -284,13 +421,115 @@ export default function AuthScreen() {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: tokens.background },
   scroll: { padding: 24, paddingBottom: 48 },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 32 },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
   brandTitle: {
     color: tokens.primary,
     fontFamily: 'HankenGrotesk_800ExtraBold',
     letterSpacing: 1,
   },
   brandSub: { color: tokens.onSurfaceVariant, marginTop: 2, fontSize: 10 },
+  promoSelectorCard: {
+    backgroundColor: tokens.surface,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    borderRadius: tokens.radius.card || 12,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  promoSelectorHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    backgroundColor: tokens.surface,
+  },
+  promoSelectorPressed: {
+    backgroundColor: tokens.surfaceContainerLow || '#f1f3f5',
+  },
+  promoSelectorLabel: {
+    fontSize: 12,
+    color: tokens.primary,
+    fontWeight: '700',
+  },
+  promoSelectorBody: {
+    borderTopWidth: 1,
+    borderTopColor: tokens.outlineVariant,
+    padding: 12,
+    backgroundColor: tokens.surface,
+  },
+  promoSearchWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: tokens.background || '#f8f9fa',
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 12,
+    height: 40,
+  },
+  promoSearchInput: {
+    flex: 1,
+    borderWidth: 0,
+    height: '100%',
+    paddingVertical: 0,
+    backgroundColor: 'transparent',
+    fontSize: 11,
+    color: tokens.primary,
+  },
+  promoGridScroll: {
+    maxHeight: 220,
+  },
+  promoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  promoGridChip: {
+    width: '48%',
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: tokens.outlineVariant,
+    backgroundColor: tokens.background,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  promoGridChipActive: {
+    backgroundColor: tokens.primary,
+    borderColor: tokens.primary,
+  },
+  promoGridChipPressed: {
+    backgroundColor: tokens.primaryContainer || '#e8f0fe',
+  },
+  promoGridFlag: {
+    fontSize: 18,
+    marginBottom: 4,
+  },
+  promoGridNative: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: tokens.primary,
+    textAlign: 'center',
+  },
+  promoGridNativeActive: {
+    color: tokens.onPrimary,
+  },
+  promoGridLocal: {
+    fontSize: 8,
+    color: tokens.onSurfaceVariant,
+    marginTop: 2,
+    textAlign: 'center',
+  },
+  promoGridLocalActive: {
+    color: tokens.onPrimary,
+    opacity: 0.8,
+  },
   title: { color: tokens.primary },
   body: { color: tokens.onSurfaceVariant, marginTop: 8, marginBottom: 24, lineHeight: 24 },
   tabBlock: { gap: 8, marginBottom: 16 },

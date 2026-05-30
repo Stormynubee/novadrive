@@ -113,12 +113,28 @@ npx expo start --clear
 
 Open **Sarthi** → status chip should say **Gemini BFF online**. Ask a non-KB question; reply should come from Gemini (not only offline rules).
 
+### Do not use the team brief URL for Sarthi
+
+These hosts serve the **static** brief site from repo-root `vercel.json` — they return **404** for `/api/sarthi/health`:
+
+- `https://margi-tau.vercel.app`
+- `https://roadsafetyhackathon-six.vercel.app`
+
+Sarthi requires a **separate Vercel project** with **Root Directory = `novadrive`**, or local `npm run dev:lan` in `novadrive/`.
+
+Verify from your machine:
+
+```powershell
+cd novadrive-mobile
+node scripts/check-sarthi-bff.cjs https://YOUR-NOVADRIVE-BFF.vercel.app
+```
+
 ### Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
 | Chip says “BFF not configured” | Set `EXPO_PUBLIC_SARTHI_API_URL` and restart Expo |
-| Chip says “BFF unreachable” | Wrong URL, Vercel deploy failed, or phone has no internet |
+| Chip says “BFF unreachable” | URL points at brief site (404), BFF not deployed, or phone cannot reach LAN IP |
 | Health returns 503 | Missing `GOOGLE_GENERATIVE_AI_API_KEY` on Vercel |
 | Works on emulator, not phone | LAN URL (`192.168.x.x`) only works on same Wi‑Fi — use Vercel URL on physical devices |
 | Build: *No Next.js version detected* | Install Command was static-site echo — set `npm install` |

@@ -18,6 +18,11 @@ describe('sarthiKnowledgeBase', () => {
     expect(m?.entry.category).toBe('emergency');
   });
 
+  it('matches short greetings and help', () => {
+    expect(matchKnowledgeBase('Hey')?.entry.id).toBe('greeting');
+    expect(matchKnowledgeBase('help')?.entry.id).toBe('help_general');
+  });
+
   it('prefers higher priority when multiple match', () => {
     const m = matchKnowledgeBase('SOS not breathing help');
     expect(m?.priority).toBeGreaterThanOrEqual(90);

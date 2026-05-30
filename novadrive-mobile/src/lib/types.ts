@@ -70,6 +70,7 @@ export interface EmergencySession {
 }
 
 export type Lang = 'en' | 'hi' | 'ta';
+export type ExtendedLang = Lang | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'ar' | 'pt' | 'ru' | 'bn' | 'pa' | 'mr' | 'te';
 
 export type JourneyStatus = 'IDLE' | 'ACTIVE' | 'ENDED';
 
@@ -121,7 +122,7 @@ export interface NaariShaktiPrefs {
 }
 
 export interface AppSettings {
-  language: Lang;
+  language: ExtendedLang;
   regionalProtocols: boolean;
   biometricAuth: boolean;
   sosSensitivity: SosSensitivity;

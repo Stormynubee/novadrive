@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudText } from '../HudText';
 import { useTorch } from '../../hooks/useTorch';
+import { TorchCameraLayer } from './TorchCameraLayer';
 import {
   buildIncidentElapsedDisplay,
   type IncidentElapsedDisplay,
@@ -37,7 +38,7 @@ function severityColors(severity: IncidentElapsedDisplay['severity']) {
 }
 
 export function TraumaResponseActionBar({ activatedAt, incidentLabel }: Props) {
-  const { torchOn, toggleTorch, turnOffTorch, TorchLayer } = useTorch();
+  const { torchOn, toggleTorch, turnOffTorch, torchReady } = useTorch();
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export function TraumaResponseActionBar({ activatedAt, incidentLabel }: Props) {
 
   return (
     <View style={styles.wrap}>
-      {TorchLayer}
+      <TorchCameraLayer active={torchOn && torchReady} />
       <Pressable
         style={({ pressed }) => [styles.statusCard, pressed && styles.pressed]}
         accessibilityRole="text"

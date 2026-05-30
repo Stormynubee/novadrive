@@ -299,6 +299,28 @@ export const SARTHI_KB_ENTRIES: SarthiKbEntry[] = [
     },
   },
   {
+    id: 'greeting',
+    category: 'app_help',
+    patterns: [/^\s*(hi|hey|hello|namaste|vanakkam)\s*[!?.]*\s*$/i],
+    priority: 45,
+    replies: {
+      en: '{{name}}, I am Sarthi on Margi. Ask about SOS, your corridor, breakdowns, triage, or Naari Shakti — I answer offline too.',
+      hi: '{{name}}, मैं Margi पर सारथी हूँ। SOS, कॉरिडोर, खराबी, ट्राइएज या Naari Shakti पूछें — ऑफ़लाइन भी जवाब मिलता है।',
+      ta: '{{name}}, நான் Margi-ல் சார்த்தி. SOS, காரிடார், பழுது, ட்ரையேஜ் அல்லது Naari Shakti கேளுங்கள் — ஆஃப்லைனிலும் பதில்.',
+    },
+  },
+  {
+    id: 'help_general',
+    category: 'app_help',
+    patterns: [/^\s*help\s*[!?.]*\s*$/i, /\bwhat can you do\b/i, /\bhow (can|do) you help\b/i],
+    priority: 48,
+    replies: {
+      en: '{{name}}, I guide road safety on Margi: Hold SOS (3s) during a trip, Quick SOS from Home, START triage, Golden Hour Packet, and community hazards. Try “SOS”, “offline”, or “plan corridor”.',
+      hi: '{{name}}, Margi पर सड़क सुरक्षा: यात्रा में SOS (3s), होम से Quick SOS, START ट्राइएज, GHP, समुदाय खतरे। “SOS”, “offline”, या “plan corridor” पूछें।',
+      ta: '{{name}}, Margi பாதுகாப்பு: பயணத்தில் SOS (3s), வீட்டில் Quick SOS, START triage, GHP, சமூக அபாயம். “SOS”, “offline”, “plan corridor” முயற்சிக்கவும்.',
+    },
+  },
+  {
     id: 'guest_identity',
     category: 'app_help',
     patterns: [/who am i|my name|account|sign in|guest/i],

@@ -1,11 +1,8 @@
 import { generateText } from 'ai';
-import { google } from '@ai-sdk/google';
 import { NextRequest, NextResponse } from 'next/server';
+import { isSarthiAiConfigured, resolveSarthiModel } from '@/lib/sarthi/aiConfig';
 
 export const runtime = 'nodejs';
-
-/** Gemini Flash — fast Sarthi replies */
-const SARTHI_MODEL = 'gemini-2.0-flash';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
@@ -45,10 +42,12 @@ export async function POST(req: NextRequest) {
   const origin = req.headers.get('origin');
   const headers = corsHeaders(origin);
 
-  const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
-  if (!apiKey) {
+  if (!isSarthiAiConfigured()) {
     return NextResponse.json(
-      { error: 'GOOGLE_GENERATIVE_AI_API_KEY is not configured on the Sarthi BFF.' },
+      {
+        error:
+          'Sarthi AI is not configured. Set GOOGLE_GENERATIVE_AI_API_KEY or AI_GATEWAY_API_KEY on the novadrive BFF (see docs/PHASE3_SETUP.md).',
+      },
       { status: 503, headers }
     );
   }
@@ -90,7 +89,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const { text } = await generateText({
-      model: google(SARTHI_MODEL),
+      model: resolveSarthiModel(),
       system,
       messages: messages.map((m) => ({
         role: m.role,
@@ -111,6 +110,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply, actionCard }, { headers });
   } catch (err) {
     console.error('[sarthi/chat]', err);
-    return NextResponse.json({ error: 'Sarthi generation failed' }, { status: 500, headers });
+    const message = err instanceof Error ? err.message : 'Sarthi generation failed';
+    return NextResponse.json({ error: message }, { status: 500, headers });
   }
 }

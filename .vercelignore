@@ -1,0 +1,12 @@
+# Root Vercel project only builds the static brief site (docs/site) from docs/MARGI_MASTER_BRIEF.md.
+# Exclude everything heavy that the brief-site build does not need.
+node_modules
+**/node_modules
+.git
+novadrive
+novadrive-mobile
+supabase
+scripts
+data
+.pytest_cache
+.githooks

@@ -5,7 +5,7 @@ import type {
   SarthiUserContext,
 } from './sarthiTypes';
 import { getOfflineReply, matchKnowledgeBase, shouldUseOfflineFirst } from './sarthiOffline';
-import { getWelcomeMessage } from './sarthi/sarthiStrings';
+import { getWelcomeMessage, wrapCloudUnavailableReply } from './sarthi/sarthiStrings';
 
 export type SarthiEngineDeps = {
   apiBaseUrl?: string;
@@ -68,16 +68,30 @@ export async function sendMessage(
   const offlineFirst = shouldUseOfflineFirst(kbMatch);
 
   const hasBff = Boolean(deps.apiBaseUrl?.trim());
+  let cloudFailed = false;
 
   try {
     const online = await deps.isOnline();
     if (online && !offlineFirst && hasBff) {
-      response = await deps.fetchChat(history, context);
+      try {
+        response = await deps.fetchChat(history, context);
+      } catch {
+        cloudFailed = true;
+        response = deps.getOfflineReply(trimmed, context);
+      }
     } else {
       response = deps.getOfflineReply(trimmed, context);
     }
   } catch {
+    cloudFailed = true;
     response = deps.getOfflineReply(trimmed, context);
+  }
+
+  if (cloudFailed && !kbMatch) {
+    response = {
+      ...response,
+      reply: wrapCloudUnavailableReply(response.reply, context),
+    };
   }
 
   const assistantMsg: SarthiMessage = {
@@ -112,13 +126,23 @@ export function createProductionDeps(apiBaseUrl: string): SarthiEngineDeps {
     fetchChat: async (messages, context) => {
       if (!base) throw new Error('Sarthi BFF URL not configured');
       const url = `${base.replace(/\/$/, '')}/api/sarthi/chat`;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages, context }),
-      });
-      if (!res.ok) throw new Error(`Sarthi API ${res.status}`);
-      return (await res.json()) as SarthiChatResponse;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25_000);
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages, context }),
+          signal: controller.signal,
+        });
+        if (!res.ok) {
+          const errBody = await res.text().catch(() => '');
+          throw new Error(`Sarthi API ${res.status}${errBody ? `: ${errBody.slice(0, 120)}` : ''}`);
+        }
+        return (await res.json()) as SarthiChatResponse;
+      } finally {
+        clearTimeout(timeout);
+      }
     },
     getOfflineReply: (text, ctx) => {
       const r = getOfflineReply(text, ctx);
