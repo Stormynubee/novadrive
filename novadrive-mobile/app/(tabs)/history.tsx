@@ -139,30 +139,45 @@ export default function CommunityTabScreen() {
           </Pressable>
         </HudCard>
 
+        {/* ── Local Safety Alerts header ── */}
         <View style={styles.sectionHead}>
+          {/* Row 1: icon + title */}
           <View style={styles.sectionTitleRow}>
             <MaterialIcons name="campaign" size={20} color={tokens.secondary} />
             <HudText variant="headlineMd" style={styles.sectionTitle}>
               Local Safety Alerts
             </HudText>
           </View>
-          <HudText variant="bodySm" style={styles.sectionHint}>
-            Active strictly within 5km
-          </HudText>
+          {/* Row 2: geo-radius badge chip */}
+          <View style={styles.geoBadge}>
+            <View style={styles.geoDot} />
+            <HudText variant="mono" style={styles.geoBadgeText}>
+              Active within 5 km
+            </HudText>
+          </View>
         </View>
 
         {locationLoading ? (
-          <HudText variant="bodySm" style={styles.sectionHint}>
-            Locating alerts near you…
-          </HudText>
+          <View style={styles.statusRow}>
+            <MaterialIcons name="my-location" size={14} color={tokens.secondary} />
+            <HudText variant="bodySm" style={styles.statusText}>
+              Locating alerts near you…
+            </HudText>
+          </View>
         ) : permissionDenied || lat == null ? (
-          <HudText variant="bodySm" style={styles.sectionHint}>
-            Enable location to see corridor alerts within 5 km.
-          </HudText>
+          <View style={styles.statusRow}>
+            <MaterialIcons name="location-off" size={14} color={tokens.onSurfaceVariant} />
+            <HudText variant="bodySm" style={styles.statusText}>
+              Enable location to see corridor alerts within 5 km.
+            </HudText>
+          </View>
         ) : alerts.length === 0 ? (
-          <HudText variant="bodySm" style={styles.sectionHint}>
-            No alerts near you within 5 km.
-          </HudText>
+          <View style={styles.statusRow}>
+            <MaterialIcons name="check-circle-outline" size={14} color={tokens.primary} />
+            <HudText variant="bodySm" style={styles.statusText}>
+              No active alerts within 5 km — corridor is clear.
+            </HudText>
+          </View>
         ) : null}
 
         {alerts.map((alert) => (
@@ -323,14 +338,51 @@ const styles = StyleSheet.create({
     fontFamily: 'PublicSans_700Bold',
   },
   sectionHead: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    // Column stack: [icon+title row] then [geo-badge chip]
+    flexDirection: 'column',
+    gap: 6,
     marginTop: 4,
   },
   sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sectionTitle: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  sectionHint: { color: tokens.onSurfaceVariant },
+  // Geo-filter badge — pill chip with live dot indicator
+  geoBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+    backgroundColor: tokens.primaryFixed,
+    borderRadius: 99,
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderWidth: 1,
+    borderColor: tokens.primaryContainer,
+  },
+  geoDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: tokens.secondary, // saffron = live/active
+  },
+  geoBadgeText: {
+    fontSize: 10,
+    color: tokens.primary,
+    letterSpacing: 0.4,
+    fontFamily: 'PublicSans_700Bold',
+  },
+  // Status row for loading/empty/denied — icon + text side by side
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+  },
+  statusText: {
+    color: tokens.onSurfaceVariant,
+    flex: 1,
+    lineHeight: 18,
+  },
   alertCard: {
     flexDirection: 'row',
     gap: 12,

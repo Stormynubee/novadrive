@@ -2,8 +2,10 @@ import { type Href, router, usePathname } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
+import { tabPillGeometry } from './margiTabBarLayout';
 
 type TabKey = 'drive' | 'explore' | 'history' | 'profile';
 
@@ -18,6 +20,8 @@ const TABS: {
   { key: 'history', href: '/(tabs)/history' as Href, icon: 'groups', label: 'Community' },
   { key: 'profile', href: '/(tabs)/profile' as Href, icon: 'person', label: 'Profile' },
 ];
+
+const pillSpec = tabPillGeometry();
 
 export function MargiTabBar() {
   const pathname = usePathname();
@@ -37,20 +41,28 @@ export function MargiTabBar() {
         return (
           <Pressable
             key={tab.key}
-            onPress={() => router.replace(tab.href)}
-            style={styles.tab}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+              router.replace(tab.href);
+            }}
+            style={({ pressed }) => [styles.tab, pressed && styles.tabPressed]}
             accessibilityRole="button"
             accessibilityLabel={tab.label}
             accessibilityState={active ? { selected: true } : undefined}
           >
+            {/* Pill indicator: only rendered when active, fully pill-shaped */}
             <View style={[styles.pill, active && styles.pillActive]}>
               <MaterialIcons
                 name={tab.icon}
                 size={22}
-                color={active ? tokens.onSecondary : tokens.primary}
+                color={active ? tokens.onSecondary : tokens.onSurfaceVariant}
               />
             </View>
-            <HudText variant="mono" style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
+            <HudText
+              variant="mono"
+              style={[styles.label, active && styles.labelActive]}
+              numberOfLines={1}
+            >
               {tab.label}
             </HudText>
           </Pressable>
@@ -64,17 +76,19 @@ const styles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     backgroundColor: tokens.surface,
-    paddingTop: 8,
-    paddingHorizontal: 8,
+    paddingTop: 10,
+    paddingHorizontal: 4,
     borderTopWidth: 1,
     borderTopColor: tokens.outlineVariant,
   },
-  tab: { flex: 1, alignItems: 'center', paddingVertical: 4, gap: 4 },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: 2, gap: 3 },
+  tabPressed: { opacity: 0.7 },
   pill: {
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    borderRadius: 999,
-    minWidth: 56,
+    // geometry from spec — wide horizontal padding makes borderRadius 999 *visible*
+    paddingHorizontal: pillSpec.paddingHorizontal,
+    paddingVertical: pillSpec.paddingVertical,
+    borderRadius: pillSpec.borderRadius,
+    minWidth: pillSpec.minWidth,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -82,7 +96,12 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 10,
     color: tokens.onSurfaceVariant,
-    letterSpacing: 0.4,
+    letterSpacing: 0.3,
+    fontFamily: 'PublicSans_400Regular',
   },
-  labelActive: { color: tokens.secondary, fontFamily: 'PublicSans_700Bold' },
+  labelActive: {
+    color: tokens.secondary,
+    fontFamily: 'PublicSans_700Bold',
+  },
 });
+
