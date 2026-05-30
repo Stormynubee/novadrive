@@ -9,9 +9,13 @@ Human operators phone-verify hospitals along the NH48 Chennai→Chengalpattu cor
 ## Prerequisites
 
 - Python 3.11+ and repo checkout
-- OSM ingest completed: `python scripts/ingestCorridors.py --bbox-json data/corridors/nh48_bbox.json --mode demo --min-pois 50 --out data/emergency_seed_raw.db`
+- OSM ingest completed (see **Overpass 406** note below): `python scripts/ingestCorridors.py --bbox-json data/corridors/nh48_bbox.json --mode demo --min-pois 50 --out data/emergency_seed_raw.db`
 - Spreadsheet or text editor for CSV edits
 - Tamil/English phone script (below)
+
+### Overpass HTTP 406
+
+If ingest prints `HTTP Error 406: Not Acceptable`, update to latest `scripts/ingestCorridors.py` (sends `User-Agent` + form-encoded `data=` body, retries mirror). Success looks like: `Overpass OK via …` and `Fetched N hospitals from OSM`.
 
 ---
 

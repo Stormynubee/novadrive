@@ -14,12 +14,18 @@ import argparse
 import json
 import sqlite3
 import sys
+import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
 # Chennai corridor bbox (demo fallback)
 DEFAULT_BBOX = (12.85, 79.90, 13.15, 80.35)
-OVERPASS = "https://overpass-api.de/api/interpreter"
+OVERPASS_ENDPOINTS = (
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+)
+USER_AGENT = "Margi-C1-POI-Ingest/1.0 (+https://github.com/Stormynubee/Margi)"
 
 
 def load_bbox(bbox_json: Path | None) -> tuple[float, float, float, float]:
@@ -29,19 +35,48 @@ def load_bbox(bbox_json: Path | None) -> tuple[float, float, float, float]:
     return (data["south"], data["west"], data["north"], data["east"])
 
 
-def fetch_hospitals(bbox: tuple[float, float, float, float]) -> list[dict]:
+def build_hospital_query(bbox: tuple[float, float, float, float]) -> str:
     south, west, north, east = bbox
-    query = f"""
-    [out:json][timeout:25];
-    (
-      node["amenity"="hospital"]({south},{west},{north},{east});
-      way["amenity"="hospital"]({south},{west},{north},{east});
-    );
-    out center 50;
-    """
-    req = urllib.request.Request(OVERPASS, data=query.encode(), method="POST")
-    with urllib.request.urlopen(req, timeout=60) as resp:
-        data = json.load(resp)
+    return f"""[out:json][timeout:60];
+(
+  node["amenity"="hospital"]({south},{west},{north},{east});
+  way["amenity"="hospital"]({south},{west},{north},{east});
+);
+out center 50;
+"""
+
+
+def overpass_query(query: str, endpoint: str) -> dict:
+    """POST Overpass QL; uses form field `data` and required User-Agent."""
+    body = urllib.parse.urlencode({"data": query}).encode("utf-8")
+    req = urllib.request.Request(
+        endpoint,
+        data=body,
+        method="POST",
+        headers={
+            "User-Agent": USER_AGENT,
+            "Accept": "*/*",
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+    )
+    with urllib.request.urlopen(req, timeout=90) as resp:
+        return json.load(resp)
+
+
+def fetch_hospitals(bbox: tuple[float, float, float, float]) -> list[dict]:
+    query = build_hospital_query(bbox)
+    last_error: Exception | None = None
+    data: dict | None = None
+    for endpoint in OVERPASS_ENDPOINTS:
+        try:
+            data = overpass_query(query, endpoint)
+            print(f"Overpass OK via {endpoint}")
+            break
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+            last_error = e
+            print(f"Overpass failed via {endpoint}: {e}", file=sys.stderr)
+    if data is None:
+        raise RuntimeError(f"All Overpass endpoints failed: {last_error}")
     nodes = []
     for el in data.get("elements", []):
         lat = el.get("lat") or (el.get("center") or {}).get("lat")
@@ -169,8 +204,9 @@ def main() -> None:
     if not args.skip_fetch:
         try:
             rows = fetch_hospitals(bbox)
+            print(f"Fetched {len(rows)} hospitals from OSM")
         except Exception as e:
-            print(f"Overpass failed ({e}); using empty row list.")
+            print(f"Overpass failed ({e}); using empty row list.", file=sys.stderr)
             rows = []
 
     write_db(
