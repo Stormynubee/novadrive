@@ -44,6 +44,7 @@
 28. [Honesty Boundaries And Rejected Scope](#28-honesty-boundaries-and-rejected-scope)
 29. [Glossary](#29-glossary)
 30. [Resources And Links](#30-resources-and-links)
+31. [Multilingual Support and Searchable Tactile Grid Selector](#31-multilingual-support-and-searchable-tactile-grid-selector)
 
 ---
 
@@ -58,7 +59,7 @@ Margi is a **client-heavy, offline-first emergency system** for Indian highway c
 | **Optional online** | Sarthi Gemini BFF (`novadrive/`), Supabase auth + profile + NGO + dispatch audit, OSRM trip routing, HTTP dispatch hooks |
 | **Web mirror** | Bystander relay at `/relay`, plus a full web emergency wizard in `novadrive/` |
 | **Brief site** | Static HTML at `docs/site/` (this page) deployed as a separate Vercel project |
-| **Tests** | 200+ Jest unit tests over lib / FSM / encoders / orchestrator / KB |
+| **Tests** | 225 Jest unit tests (73 suites) over lib / FSM / encoders / orchestrator / KB |
 | **Judge APK** | GitHub Actions builds `margi-debug.apk` |
 
 **What Margi is NOT** (honesty boundaries — keep these in every pitch):
@@ -176,7 +177,9 @@ The brief-site hosts (`roadsafetyhackathon-six.vercel.app`, `margi-tau.vercel.ap
 | Compression | `lz-string` | ^1.5.0 |
 | Icons | `@expo/vector-icons` | ^15.0.2 |
 | Fonts | `@expo-google-fonts/hanken-grotesk`, `@expo-google-fonts/public-sans` | — |
+| Localization | `src/lib/translations/` | 15-Language engine (modular registry) |
 | Tests | `jest` ~29.7.0 + `ts-jest` ^29.4.11 | TypeScript ~5.9.2 |
+
 
 ### Cloud BFF (`novadrive/package.json`, version 0.1.0)
 
@@ -722,7 +725,7 @@ Then set `EXPO_PUBLIC_SARTHI_API_URL` to that URL (no trailing slash) and restar
 
 ## 25. Testing Strategy
 
-- **Mobile:** Jest + ts-jest, `testEnvironment: node`, roots in `src/`, pattern `**/*.test.ts` (logic only — no `.tsx` rendering tests). ~72 test files / 200+ cases. Notable clusters: `startTriageFSM`, `ghp`, `facilitiesDb`, `emergencyOrchestrator`, `sarthiEngine`, `sarthiKnowledgeBase`, voice/distress, naariShakti, home/safety brief.
+- **Mobile:** Jest + ts-jest, `testEnvironment: node`, roots in `src/`, pattern `**/*.test.ts` (logic only — no `.tsx` rendering tests). 73 test files / 225 cases. Notable clusters: `startTriageFSM`, `ghp`, `facilitiesDb`, `emergencyOrchestrator`, `sarthiEngine`, `sarthiKnowledgeBase`, voice/distress, naariShakti, home/safety brief.
 - **Discipline:** TDD for every `src/lib` logic module; keep side effects (intents, navigation, SQLite) behind pure plan functions so they are testable.
 - **Docs/branding gates:** `npm run verify:docs`, `npm run verify:branding`.
 - **CI (`ci.yml`):** Job 1 mobile typecheck + test + verify gates; Job 2 `novadrive` `next build`; Job 3 build the brief site.
@@ -804,6 +807,17 @@ This is the institutional memory — every non-trivial bug solved while building
 
 - **Symptom:** docs described a Next.js PWA + sql.js that was never the shipped client.
 - **Fix:** created `docs/CANON.md` as the single source of truth; marked the old brief as historical (now **Appendix A** here); README + this bible describe the real Expo app.
+
+### 26.12 Windows parallel Gradle and C++ compiler OOM crash
+
+- **Symptom:** Android CLI build (`npx expo run:android`) crash with `CreateProcess error=1455, The paging file is too small for this operation to complete` or Gradle Daemon compiler exhaustion.
+- **Root cause:** Default parallel execution inside `gradle.properties` (`org.gradle.parallel=true`) coupled with unconstrained C++ compilation threads (e.g. building Reanimated or custom modules) overcommited host system memory on Windows machines.
+- **Fix:** Disabled parallel builds and workers in `gradle.properties` (`org.gradle.parallel=false`, `org.gradle.workers.max=1`) and restricted concurrent C++ compiler processes by launching the build with `CMAKE_BUILD_PARALLEL_LEVEL=1` set. This bounds paging size requirements perfectly, enabling stable builds under 1.5GB total JVM memory footprint.
+
+### 26.13 Prominent 15-language selector reactive translation sync
+
+- **Symptom:** When translating the core login screen, text fragments did not reactively update when regional (Hindi/Tamil) chips were selected; selector UI felt generic.
+- **Fix:** Designed a robust full-width Expandable Tactile Grid Language Selector containing 15 global locales (with individual flag glyphs, native, and English labels). Built the translation registry (`src/lib/translations/` - mapping English, Hindi, Tamil, Spanish, German, Mandarin, etc.) into the reactive state context (`useApp()`). Selecting a chip reactively re-evaluates all active text keys (`getAuthString()`) instantly while triggering pleasant haptics (`Haptics.notificationAsync`).
 
 ---
 
@@ -891,6 +905,38 @@ To rebuild Margi from zero:
 | START reference | https://en.wikipedia.org/wiki/Simple_triage_and_rapid_treatment |
 
 In-repo: `docs/CANON.md` (scope truth), `docs/ARCHITECTURE.md`, `docs/PHASE3_SETUP.md`, `JUDGE_START_HERE.md`, `docs/SUBMISSION.md`, `novadrive-mobile/README.md`, `novadrive-mobile/docs/DEVICE_SMOKE_MATRIX.md`.
+
+---
+## 31. Multilingual Support and Searchable Tactile Grid Selector
+
+To ensure extreme accessibility across diverse Indian highway demographics and global locales, Margi features a robust, fully localized **15-Language Engine**. This system empowers users and first responders to switch the interface language reactively on the fly.
+
+### Shipped Languages
+
+| Locale | Native Name | English Name | Region/Country |
+|--------|-------------|--------------|----------------|
+| **en** | English | English | Global |
+| **hi** | हिन्दी | Hindi | India (National) |
+| **ta** | தமிழ் | Tamil | India (Tamil Nadu) |
+| **es** | Español | Spanish | Global |
+| **fr** | Français | French | Global |
+| **de** | Deutsch | German | Global |
+| **zh** | 中文 | Mandarin | Global |
+| **ja** | 日本語 | Japanese | Global |
+| **ar** | العربية | Arabic | Global |
+| **pt** | Português | Portuguese | Global |
+| **ru** | Русский | Russian | Global |
+| **bn** | বাংলা | Bengali | India / Bangladesh |
+| **pa** | ਪੰਜਾਬੀ | Punjabi | India / Pakistan |
+| **mr** | मराठी | Marathi | India (Maharashtra) |
+| **te** | తెలుగు | Telugu | India (Andhra/Telangana) |
+
+### Key Capabilities
+
+1. **Searchable Tactile Grid Selector**: Built as a full-width, expandable UI component in `app/auth.tsx`. It displays each language in a distinct, high-impact tile featuring native labels, English translations, and country flags. An embedded real-time search input filters the grid instantly.
+2. **Haptic Touch Integration**: Utilizes native haptics (`expo-haptics`) to trigger medium and success haptic bumps on interaction, providing physical confirmation of language changes to the user.
+3. **Modular Translation Registry**: The dictionaries are separated cleanly into `src/lib/translations/` (`en.ts`, `hi.ts`, `ta.ts`, `global_dicts.ts`) and unified in `index.ts`.
+4. **Reactive App-Wide Translation**: The selected locale is managed in the app-wide settings state (`useApp()`). Core auth screens and subsequent pages re-render reactively using the `getAuthString()` helper, keeping the active language synchronized across the entire user experience without requiring an app reload.
 
 ---
 

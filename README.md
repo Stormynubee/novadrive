@@ -101,10 +101,11 @@ flowchart LR
 | **Trauma HUD** | `TraumaResponseActionBar` — incident timer, torch, team attribution on home header |
 | **Naari Shakti** | Restored saturated saffron/navy portal (not washed-out secondary containers) |
 | **Location** | Geo-filtered community alerts, regional daily brief, Sarthi corridor context from GPS |
+| **Multilingual** | **15-Language Engine** (English, Hindi, Tamil, Spanish, French, German, Chinese, Japanese, Arabic, Portuguese, Russian, Bengali, Punjabi, Marathi, Telugu) + prominent searchable haptic tactile grid selector |
 | **Phase 3** | Supabase auth + profile sync, NGO volunteer registry, OSRM trip routing, Sarthi BFF health, HTTP dispatch audit |
 | **Phase 2 P1** | Drive HUD layout, Rah-Veer claim log, journey debrief, TTS on START triage |
 | **Voice** | Distress policy + classifier; optional YAMNet on dev/APK builds |
-| **Quality** | **220** Jest unit tests · `npm run verify:docs` · `npm run verify:branding` |
+| **Quality** | **225** Jest unit tests · `npm run verify:docs` · `npm run verify:branding` |
 
 Package: `novadrive-mobile` **2.0.0** · Android `com.margi.app` · deep link `margi://`
 
@@ -211,9 +212,11 @@ cd novadrive-mobile
 npm install --legacy-peer-deps
 npx expo install react-native-worklets babel-preset-expo
 cp .env.example .env    # optional: Sarthi BFF + Supabase keys
-npm test                # 220 unit tests
+npm test                # 225 unit tests
 npm run android         # debug APK + Metro (uses Android Studio JBR on Windows)
 ```
+
+> **Windows Compiler Optimization Note:** To prevent Gradle out-of-memory crashes ("CreateProcess: paging file too small") during native builds on Windows, we sequentialize C++ compilation and disable heavy parallel workers. Check `gradle.properties` (`org.gradle.parallel=false`, `org.gradle.workers.max=1`) and run compilation with `CMAKE_BUILD_PARALLEL_LEVEL=1` set.
 
 **Recommended SOS demo:** Guest → Trip → **Start Driving** → calibration → **hold SOS 3s** (top HUD strip) → pick incident type → activation → trauma response → verify ICE FAB, timer, torch, Maps opens toward **hospital** (not user pin).
 
