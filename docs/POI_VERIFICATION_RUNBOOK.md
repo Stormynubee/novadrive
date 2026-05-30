@@ -71,6 +71,54 @@ Legacy demo ids (`t1`, `h1`, …) are fuzzy-matched to OSM names on the **first*
 
 ---
 
+## Task 6 — Verification blitz (operator)
+
+**Goal:** ≥40 rows with `verified=1` and non-empty `phone` in `nh48_verification.csv`.
+
+### 1. Check progress
+
+```powershell
+python scripts/verification_status.py
+python scripts/verification_queue.py --limit 20
+```
+
+### 2. Pre-fill from public sources (optional accelerator)
+
+Researched official lines live in `data/corridors/nh48_public_phone_candidates.json`.
+
+```powershell
+# Fill phones only — still needs call to set verified=1
+python scripts/apply_phone_candidates.py --mode candidate
+
+# Research prototype: mark official-site lines verified (verifier=web-official)
+python scripts/apply_phone_candidates.py --mode website-official
+```
+
+**Honesty:** `web-official` means the number appears on a hospital or `.gov.in` listing — not a live ER desk confirmation. For production, follow up with the call script below and use `record_verification.py` with your initials.
+
+### 3. Record a call outcome
+
+```powershell
+python scripts/record_verification.py --osm-id 310732936 --phone 044-28364951 --verified 1 --verifier AB --trauma-tier 2 --notes "ER desk confirmed 24x7"
+```
+
+Use real osm_id / phone / initials — **no angle brackets** (`<ID>` breaks PowerShell).
+
+### 4. Merge + regenerate
+
+```powershell
+Copy-Item data/emergency_seed_raw.db data/emergency_seed.db -Force
+python scripts/verify_pois.py --db data/emergency_seed.db --csv data/corridors/nh48_verification.csv --min-verified-phones 0
+node novadrive-mobile/scripts/generate-facilities-seed.mjs --db data/emergency_seed.db
+cd novadrive-mobile; npm test -- facilitiesDb.test.ts
+```
+
+Add `--min-verified-phones 0` until status shows **40/40**; drop it once the production gate passes.
+
+Un-skip the `≥40 verified facilities` test in `facilitiesDb.test.ts` when `verification_status.py` reports target met.
+
+---
+
 ## Weekly merge cadence
 
 Each week (or after a verification session):

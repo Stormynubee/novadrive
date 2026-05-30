@@ -61,22 +61,23 @@ function patchFacilitiesTs(seedLines, coordLines, verifiedDate) {
   const seedBlock = `const SEED: Omit<Facility, 'distanceKm' | 'etaMinutes' | 'recommended'>[] = [\n${seedLines.join('\n')}\n];`;
   const coordBlock = `const POI_COORDS: Record<string, { lat: number; lng: number }> = {\n${coordLines.join('\n')}\n};`;
 
-  let next = src.replace(
-    /const SEED: Omit<Facility, 'distanceKm' \| 'etaMinutes' \| 'recommended'>\[\] = \[[\s\S]*?\];/,
-    seedBlock
-  );
-  next = next.replace(
-    /const POI_COORDS: Record<string, \{ lat: number; lng: number \}> = \{[\s\S]*?\};/,
-    coordBlock
-  );
+  const seedRe = /const SEED:[\s\S]*?\n\];/;
+  const coordRe = /const POI_COORDS:[\s\S]*?\n};/;
+
+  if (!seedRe.test(src)) {
+    throw new Error('facilitiesDb.ts patch failed — SEED block not found');
+  }
+  if (!coordRe.test(src)) {
+    throw new Error('facilitiesDb.ts patch failed — POI_COORDS block not found');
+  }
+
+  let next = src.replace(seedRe, seedBlock);
+  next = next.replace(coordRe, coordBlock);
   next = next.replace(
     /export const POI_DATA_VERIFIED = '[^']*';/,
     `export const POI_DATA_VERIFIED = '${verifiedDate}';`
   );
 
-  if (next === src) {
-    throw new Error('facilitiesDb.ts patch failed — SEED/POI_COORDS blocks not found');
-  }
   fs.writeFileSync(facilitiesPath, next, 'utf8');
 }
 
