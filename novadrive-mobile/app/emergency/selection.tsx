@@ -166,9 +166,9 @@ const styles = StyleSheet.create({
   },
   scroll: {
     paddingHorizontal: tokens.spacing.sideMargin,
-    paddingTop: tokens.spacing.stackLg,
+    paddingTop: tokens.spacing.stackLg + 8,
     paddingBottom: tokens.spacing.stackLg,
-    gap: tokens.spacing.stackLg,
+    gap: tokens.spacing.stackLg + 4,
   },
   intro: { alignItems: 'center', gap: 8 },
   screenTitle: {

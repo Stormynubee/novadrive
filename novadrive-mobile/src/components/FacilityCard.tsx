@@ -7,10 +7,12 @@ export function FacilityCard({
   facility,
   selected,
   onPress,
+  onNavigate,
 }: {
   facility: Facility;
   selected?: boolean;
   onPress: () => void;
+  onNavigate?: () => void;
 }) {
   const warnFar = facility.distanceKm > 150;
   return (
@@ -50,6 +52,12 @@ export function FacilityCard({
       </View>
       {warnFar ? (
         <Text style={styles.warn}>Outside offline pack — verify by phone</Text>
+      ) : null}
+      {onNavigate && facility.lat != null && facility.lng != null ? (
+        <Pressable style={styles.navigateBtn} onPress={onNavigate}>
+          <MaterialIcons name="navigation" size={16} color={tokens.onPrimary} />
+          <Text style={styles.navigateLabel}>Navigate</Text>
+        </Pressable>
       ) : null}
       <Text style={styles.dataNote}>
         Demo POI seed (~50 nodes). Not NHA-verified — confirm facility by phone before routing.
@@ -118,6 +126,17 @@ const styles = StyleSheet.create({
     fontFamily: 'PublicSans_700Bold',
   },
   warn: { color: tokens.error, fontSize: 12, marginTop: 8, fontFamily: 'PublicSans_700Bold' },
+  navigateBtn: {
+    marginTop: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    backgroundColor: tokens.primary,
+    borderRadius: tokens.radius.button,
+    paddingVertical: 10,
+  },
+  navigateLabel: { color: tokens.onPrimary, fontFamily: 'PublicSans_700Bold', fontSize: 13 },
   dataNote: {
     color: tokens.onSurfaceVariant,
     fontSize: 11,

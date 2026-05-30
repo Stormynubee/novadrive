@@ -58,7 +58,7 @@ function sensitivityConfig(sensitivity: VoiceDistressSensitivity) {
         highBandMin: DISTRESS_CLASSIFIER_CONFIG.HIGH_BAND_MIN,
         zcrMin: DISTRESS_CLASSIFIER_CONFIG.ZCR_MIN,
         yamnetMin: DISTRESS_CLASSIFIER_CONFIG.YAMNET_DISTRESS_MIN,
-        confirmFrames: DISTRESS_CLASSIFIER_CONFIG.CONFIRM_FRAMES,
+        confirmFrames: 4,
       };
   }
 }

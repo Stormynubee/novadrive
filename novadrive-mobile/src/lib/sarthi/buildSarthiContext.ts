@@ -1,6 +1,24 @@
 import type { UserProfile } from '../types';
 import type { SarthiUserContext } from '../sarthiTypes';
+import { resolveRegionalCoverage } from '../regionalCoverage';
 import { sarthiStrings } from './sarthiStrings';
+
+export type SarthiLocationContext = {
+  lat?: number;
+  lng?: number;
+  regionLabel?: string;
+};
+
+export function buildSarthiCorridorLabel(location: SarthiLocationContext): string | undefined {
+  if (location.lat != null && location.lng != null) {
+    const coverage = resolveRegionalCoverage(location.lat, location.lng);
+    if (coverage.mode === 'verified_pack') {
+      return `${coverage.stateName} · NH-48 corridor`;
+    }
+    return `${coverage.stateName} · baseline coverage`;
+  }
+  return location.regionLabel?.trim() || undefined;
+}
 
 export function buildMedicalSummary(profile: UserProfile): string | undefined {
   const m = profile.medical;
@@ -22,12 +40,13 @@ export function hasEmergencyContacts(profile: UserProfile): boolean {
 export function buildSarthiUserContext(
   profile: UserProfile,
   journeyPhase: 'IDLE' | 'ACTIVE',
-  corridorLabel?: string
+  location: SarthiLocationContext = {}
 ): SarthiUserContext {
   const language = profile.settings?.language ?? 'en';
   const displayName =
     profile.name?.trim() ||
     (profile.mode === 'guest' ? sarthiStrings.guestName[language] : undefined);
+  const corridorLabel = buildSarthiCorridorLabel(location);
 
   return {
     journeyPhase,

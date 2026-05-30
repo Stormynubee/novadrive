@@ -1,5 +1,6 @@
 import type { SafetyBriefArticle } from './briefCatalog';
 import type { BriefHighlight } from './briefHighlightDisplay';
+import { resolveRegionalCoverage } from '../regionalCoverage';
 
 export type BriefSeverity = 'info' | 'advisory' | 'active';
 
@@ -192,4 +193,39 @@ export function severityLabel(severity: BriefSeverity): string {
     default:
       return 'INFO';
   }
+}
+
+export type DailyBriefCard = {
+  slug: string;
+  title: string;
+  subtitle: string;
+};
+
+export function resolveDailyBriefCards(
+  lat: number | null,
+  lng: number | null
+): { protocol: DailyBriefCard; regional: DailyBriefCard } {
+  const inPack =
+    lat != null && lng != null && resolveRegionalCoverage(lat, lng).mode === 'verified_pack';
+
+  return {
+    protocol: {
+      slug: 'protocol-alpha',
+      title: 'Safety Protocol Alpha',
+      subtitle: inPack
+        ? 'New AI fatigue detection guidelines deployed for commercial drivers.'
+        : 'National guidance — local corridor pack unavailable for your area.',
+    },
+    regional: inPack
+      ? {
+          slug: 'regional-alert',
+          title: 'Regional Alert',
+          subtitle: 'Emergency lanes now active on NH-45 for fast-track response.',
+        }
+      : {
+          slug: 'regional-alert',
+          title: 'Regional Brief · Baseline',
+          subtitle: 'Outside verified NH pack — follow national protocol and call 108 in emergencies.',
+        },
+  };
 }

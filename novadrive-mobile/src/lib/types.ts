@@ -27,6 +27,8 @@ export interface Facility {
   phone: string;
   distanceKm: number;
   etaMinutes: number;
+  lat?: number;
+  lng?: number;
   recommended?: boolean;
   verified?: boolean;
 }

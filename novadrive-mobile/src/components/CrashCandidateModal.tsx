@@ -36,7 +36,7 @@ export function CrashCandidateModal({
             {safetyAlertTitle(reason)}
           </HudText>
           <HudText variant="bodyMd" style={styles.body}>
-            {safetyAlertBody(reason)}
+            Possible sensor alert — tap I'm okay to dismiss. Only continue if you need help.
           </HudText>
           {crashSource ? (
             <HudText variant="mono" style={styles.sourceBadge}>
@@ -51,8 +51,8 @@ export function CrashCandidateModal({
             <View style={styles.countdownDot} />
             <HudText variant="mono" style={styles.countdownText}>
               {countdown > 0
-                ? `${countdown}s · take a breath`
-                : 'SMS 108 composer may open — cancel in Messages if you are okay'}
+                ? `${countdown}s · tap I'm okay if this is a false alert`
+                : 'Tap I need help to open emergency flow'}
             </HudText>
           </View>
           <MargiButton label="I need help" onPress={onConfirm} variant="secondary" large />

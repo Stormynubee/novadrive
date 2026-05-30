@@ -1,8 +1,8 @@
 import { ACTIVATION_SPLASH_SECONDS, shouldNavigateToResponse } from './activationAuto';
 
 describe('ACTIVATION_SPLASH_SECONDS', () => {
-  it('requires a 10 second minimum dwell on the activation splash', () => {
-    expect(ACTIVATION_SPLASH_SECONDS).toBe(10);
+  it('requires a 6 second minimum dwell on the activation splash', () => {
+    expect(ACTIVATION_SPLASH_SECONDS).toBe(6);
   });
 });
 

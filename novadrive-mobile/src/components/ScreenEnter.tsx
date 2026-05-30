@@ -17,7 +17,7 @@ export function ScreenEnter({
   }
   const entering =
     variant === 'fade'
-      ? FadeInDown.duration(380).delay(delay)
-      : FadeInRight.duration(420).delay(delay).springify().damping(22);
+      ? FadeInDown.duration(160).delay(delay)
+      : FadeInRight.duration(180).delay(delay);
   return <Animated.View entering={entering} style={{ flex: 1 }}>{children}</Animated.View>;
 }

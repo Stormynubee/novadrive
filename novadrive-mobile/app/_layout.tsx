@@ -58,7 +58,7 @@ export default function RootLayout() {
           headerTitleStyle: { fontFamily: 'HankenGrotesk_700Bold' },
           contentStyle: { backgroundColor: tokens.background },
           animation: 'slide_from_right',
-          animationDuration: 280,
+          animationDuration: 200,
         }}
       >
         <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -73,14 +73,14 @@ export default function RootLayout() {
         <Stack.Screen name="journey/complete" options={{ headerShown: false }} />
         <Stack.Screen name="journey/feedback" options={{ headerShown: false }} />
         <Stack.Screen name="journey" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/locate" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/activation" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/response" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/selection" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/triage" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/route" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/packet" options={{ headerShown: false }} />
-        <Stack.Screen name="emergency/relay" options={{ headerShown: false }} />
+        <Stack.Screen name="emergency/locate" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/activation" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/response" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/selection" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/triage" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/route" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/packet" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
+        <Stack.Screen name="emergency/relay" options={{ headerShown: false, animation: 'fade', animationDuration: 180 }} />
         <Stack.Screen name="scan" options={{ headerShown: false }} />
         <Stack.Screen
           name="sarthi"

@@ -13,6 +13,8 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { DashboardHeader } from '../../src/components/DashboardHeader';
 import { HudCard } from '../../src/components/HudCard';
 import { HudText } from '../../src/components/HudText';
+import { useHomeLocationWeather } from '../../src/hooks/useHomeLocationWeather';
+import { filterAlertsWithinKm } from '../../src/lib/home/localSafetyAlerts';
 import {
   OFFICIAL_REPORT_OPTIONS,
   SEED_ALERTS,
@@ -59,19 +61,30 @@ export default function CommunityTabScreen() {
   const [reportCategory, setReportCategory] = useState(0);
   const [reportText, setReportText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const { lat, lng, loading: locationLoading, permissionDenied, refresh: refreshLocation } =
+    useHomeLocationWeather();
 
   useFocusEffect(
     useCallback(() => {
+      void refreshLocation();
       listCommunityFeedback(40).then(setFeedback);
-    }, [])
+    }, [refreshLocation])
   );
 
   const alerts = useMemo(() => {
     const userAlerts = feedback
       .filter((f) => f.category === 'safety' || f.category === 'road')
       .map(feedbackToAlert);
-    return [...userAlerts, ...SEED_ALERTS];
-  }, [feedback]);
+    const geoAlerts = SEED_ALERTS.filter(
+      (a): a is CommunityAlert & { lat: number; lng: number } =>
+        a.lat != null && a.lng != null
+    );
+    if (lat == null || lng == null) {
+      return userAlerts;
+    }
+    const nearbySeed = filterAlertsWithinKm(geoAlerts, lat, lng, 5);
+    return [...userAlerts, ...nearbySeed];
+  }, [feedback, lat, lng]);
 
   const submitOfficialReport = async () => {
     if (!reportText.trim()) {
@@ -137,6 +150,20 @@ export default function CommunityTabScreen() {
             Active strictly within 5km
           </HudText>
         </View>
+
+        {locationLoading ? (
+          <HudText variant="bodySm" style={styles.sectionHint}>
+            Locating alerts near you…
+          </HudText>
+        ) : permissionDenied || lat == null ? (
+          <HudText variant="bodySm" style={styles.sectionHint}>
+            Enable location to see corridor alerts within 5 km.
+          </HudText>
+        ) : alerts.length === 0 ? (
+          <HudText variant="bodySm" style={styles.sectionHint}>
+            No alerts near you within 5 km.
+          </HudText>
+        ) : null}
 
         {alerts.map((alert) => (
           <View key={alert.id} style={styles.alertCard}>

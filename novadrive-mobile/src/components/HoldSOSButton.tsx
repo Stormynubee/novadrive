@@ -10,6 +10,7 @@ import {
 } from './holdSosHudTopLayout';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
+import { shouldFireHoldSosOnRelease } from '../lib/emergency/holdSosReleaseGrace';
 
 const HOLD_MS = 1500;
 const HOLD_DASHBOARD_MS = 3000;
@@ -33,6 +34,8 @@ export function HoldSOSButton({
   const holdMs = isHudTop || variant === 'dashboard' ? HOLD_HUD_TOP_MS : HOLD_MS;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const tick = useRef<ReturnType<typeof setInterval> | null>(null);
+  const activatedRef = useRef(false);
+  const pressStartRef = useRef(0);
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
   const idlePulse = useRef(new Animated.Value(0)).current;
@@ -49,8 +52,21 @@ export function HoldSOSButton({
     return () => loop.stop();
   }, [holding, idlePulse]);
 
+  const fireTrigger = () => {
+    if (activatedRef.current) return;
+    activatedRef.current = true;
+    if (tick.current) clearInterval(tick.current);
+    if (timer.current) clearTimeout(timer.current);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
+    onTrigger();
+    setHolding(false);
+    setProgress(0);
+  };
+
   const start = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy).catch(() => undefined);
+    activatedRef.current = false;
+    pressStartRef.current = Date.now();
     setHolding(true);
     setProgress(0);
     const startAt = Date.now();
@@ -58,19 +74,21 @@ export function HoldSOSButton({
       setProgress(Math.min(1, (Date.now() - startAt) / holdMs));
     }, 50);
     timer.current = setTimeout(() => {
-      if (tick.current) clearInterval(tick.current);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
-      onTrigger();
-      setHolding(false);
-      setProgress(0);
+      fireTrigger();
     }, holdMs);
   };
 
   const cancel = () => {
+    const elapsedMs = Date.now() - pressStartRef.current;
+    const wasActivated = activatedRef.current;
     if (timer.current) clearTimeout(timer.current);
     if (tick.current) clearInterval(tick.current);
     setHolding(false);
     setProgress(0);
+    if (wasActivated) return;
+    if (shouldFireHoldSosOnRelease(elapsedMs, holdMs)) {
+      fireTrigger();
+    }
   };
 
   const ringScale = idlePulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.18] });

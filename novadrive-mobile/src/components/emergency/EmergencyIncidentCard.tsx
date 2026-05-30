@@ -2,6 +2,10 @@ import * as Haptics from 'expo-haptics';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { HudText } from '../HudText';
+import {
+  incidentCardOverflow,
+  priorityBadgeTopOffset,
+} from '../../lib/emergency/emergencyIncidentCardLayout';
 import type { IncidentOption } from '../../lib/emergency/incidentCatalog';
 import { tokens } from '../../theme/tokens';
 
@@ -107,11 +111,11 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
     padding: tokens.spacing.stackLg,
-    paddingTop: tokens.spacing.stackLg + 8,
+    paddingTop: tokens.spacing.stackLg + 20,
     backgroundColor: tokens.surfaceContainerLowest,
     borderRadius: tokens.radius.card,
     borderWidth: 1,
-    overflow: 'hidden',
+    overflow: incidentCardOverflow(),
   },
   cardHighlighted: {
     borderWidth: 2,
@@ -133,12 +137,13 @@ const styles = StyleSheet.create({
   },
   priorityBadge: {
     position: 'absolute',
-    top: -12,
+    top: priorityBadgeTopOffset(),
     alignSelf: 'center',
     backgroundColor: tokens.secondaryDeep,
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderRadius: tokens.radius.chip,
+    zIndex: 1,
   },
   priorityText: {
     color: tokens.onSecondary,

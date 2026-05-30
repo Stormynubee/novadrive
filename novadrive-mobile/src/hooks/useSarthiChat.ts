@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useHomeLocationWeather } from './useHomeLocationWeather';
 import { checkSarthiBffHealth, type SarthiBffStatus } from '../lib/sarthi/sarthiHealth';
 import { buildSarthiUserContext } from '../lib/sarthi/buildSarthiContext';
 import {
@@ -13,9 +14,34 @@ import type { SarthiThread, SarthiUserContext } from '../lib/sarthiTypes';
 const STORAGE_KEY = '@novadrive/sarthi-thread';
 
 export function useSarthiChat() {
-  const { journeyStatus, profile } = useApp();
+  const { journeyStatus, profile, session } = useApp();
+  const { lat, lng, regionLabel, cityLabel, refresh: refreshLocation } = useHomeLocationWeather();
   const apiBase = process.env.EXPO_PUBLIC_SARTHI_API_URL ?? '';
   const deps = useMemo(() => createProductionDeps(apiBase), [apiBase]);
+
+  useEffect(() => {
+    void refreshLocation();
+  }, [refreshLocation]);
+
+  const locationContext = useMemo(() => {
+    if (session.location) {
+      return { lat: session.location.lat, lng: session.location.lng };
+    }
+    if (lat != null && lng != null) {
+      return { lat, lng, regionLabel: regionLabel || cityLabel };
+    }
+    return { regionLabel: regionLabel || cityLabel };
+  }, [session.location, lat, lng, regionLabel, cityLabel]);
+
+  const context: SarthiUserContext = useMemo(
+    () =>
+      buildSarthiUserContext(
+        profile,
+        journeyStatus === 'ACTIVE' ? 'ACTIVE' : 'IDLE',
+        locationContext
+      ),
+    [profile, journeyStatus, locationContext]
+  );
 
   const [thread, setThread] = useState<SarthiThread | null>(null);
   const threadRef = useRef<SarthiThread | null>(null);
@@ -23,15 +49,6 @@ export function useSarthiChat() {
   const [networkOffline, setNetworkOffline] = useState(false);
   const [bffStatus, setBffStatus] = useState<SarthiBffStatus>(!apiBase.trim() ? 'unconfigured' : 'offline');
   const [hydrated, setHydrated] = useState(false);
-
-  const context: SarthiUserContext = useMemo(
-    () =>
-      buildSarthiUserContext(
-        profile,
-        journeyStatus === 'ACTIVE' ? 'ACTIVE' : 'IDLE'
-      ),
-    [profile, journeyStatus]
-  );
 
   useEffect(() => {
     threadRef.current = thread;

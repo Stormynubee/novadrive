@@ -19,7 +19,7 @@ export function SarthiComposer({
     <View style={styles.row}>
       <TextInput
         style={styles.input}
-        placeholder="Ask Sarthi about your corridor…"
+        placeholder="Ask Sarthi…"
         placeholderTextColor={tokens.onSurfaceVariant}
         value={value}
         onChangeText={onChangeText}

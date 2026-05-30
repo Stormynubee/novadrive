@@ -20,9 +20,12 @@ import {
   shouldShowManualContinue,
 } from '../../src/lib/emergency/activationUi';
 import {
+  EMERGENCY_HOLD_ENTRY_PATH,
   EMERGENCY_RESPONSE_PATH,
   EMERGENCY_SELECTION_PATH,
+  shouldRedirectActivationToSelection,
 } from '../../src/lib/emergency/emergencyNavigation';
+import { runEmergencyOrchestrator } from '../../src/lib/emergency/emergencyOrchestrator';
 
 const EMERGENCY_TRIAGE_PATH = '/emergency/triage';
 import { tokens } from '../../src/theme/tokens';
@@ -41,20 +44,21 @@ const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 export default function EmergencyActivationScreen() {
-  const { settings, updateSettings, session, resetEmergency } = useApp();
+  const { settings, updateSettings, session, resetEmergency, profile, setLocation, selectFacility } =
+    useApp();
   const [statusIndex, setStatusIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(ACTIVATION_SPLASH_SECONDS);
   const [mode, setMode] = useState<ActivationMode>('auto');
   const [backendReady, setBackendReady] = useState(false);
   const hasAutoNavigatedRef = useRef(false);
+  const orchestratorRanRef = useRef(false);
   const status = useMemo(() => ROTATING_STATUS[statusIndex % ROTATING_STATUS.length], [statusIndex]);
   const progress = activationCountdownProgress(secondsLeft, ACTIVATION_SPLASH_SECONDS);
   const showContinue = shouldShowManualContinue(mode, secondsLeft);
 
   useEffect(() => {
-    if (!session.incidentType) {
-      router.replace('/emergency/selection' as Href);
-    }
+    if (!shouldRedirectActivationToSelection(session.incidentType)) return;
+    router.replace(EMERGENCY_SELECTION_PATH as Href);
   }, [session.incidentType]);
 
   useEffect(() => {
@@ -90,7 +94,30 @@ export default function EmergencyActivationScreen() {
     return () => clearInterval(statusTimer);
   }, [backendReady]);
 
-  const navigateToResponse = (selectedMode: ActivationMode) => {
+  const runOrchestration = async () => {
+    if (orchestratorRanRef.current || !session.incidentType) return;
+    orchestratorRanRef.current = true;
+    const result = await runEmergencyOrchestrator({
+      profile,
+      settings,
+      incidentType: session.incidentType,
+      smsKind: 'sos_hold',
+      triage: session.triage ?? 'RED',
+    });
+    if (result.coords) {
+      setLocation({
+        lat: result.coords.lat,
+        lng: result.coords.lng,
+        capturedAt: new Date().toISOString(),
+      });
+    }
+    if (result.nearestFacility) {
+      selectFacility(result.nearestFacility);
+    }
+  };
+
+  const navigateToResponse = async (selectedMode: ActivationMode) => {
+    await runOrchestration();
     const responseMode = selectedMode === 'manual' ? 'guided' : 'auto';
     router.replace(`${EMERGENCY_RESPONSE_PATH}?mode=${responseMode}` as Href);
   };
@@ -107,7 +134,7 @@ export default function EmergencyActivationScreen() {
       return;
     }
     hasAutoNavigatedRef.current = true;
-    navigateToResponse(mode);
+    void navigateToResponse(mode);
   }, [secondsLeft, mode, backendReady]);
 
   const cancelFlow = () => {
@@ -122,7 +149,7 @@ export default function EmergencyActivationScreen() {
           <MaterialIcons name="arrow-back" size={24} color={tokens.onPrimary} />
         </Pressable>
         <HudText variant="headlineMd" style={styles.headerTitle}>
-          TRAUMA RESPONSE
+          ACTIVATING SOS
         </HudText>
         <Pressable onPress={() => router.replace(EMERGENCY_SELECTION_PATH as Href)}>
           <MaterialIcons name="emergency-share" size={22} color={tokens.onPrimary} />
@@ -212,7 +239,7 @@ export default function EmergencyActivationScreen() {
                 router.push(EMERGENCY_TRIAGE_PATH as Href);
                 return;
               }
-              navigateToResponse(mode);
+              void navigateToResponse(mode);
             }}
           >
             <HudText variant="bodyMd" style={styles.continueText}>

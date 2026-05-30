@@ -6,7 +6,6 @@ import { HudText } from '../src/components/HudText';
 import { ScreenEnter } from '../src/components/ScreenEnter';
 import { useApp } from '../src/context/AppContext';
 import { EMERGENCY_SELECTION_PATH } from '../src/lib/emergency/emergencyNavigation';
-import { openEmergencySmsIntent } from '../src/lib/emergencySms';
 import { tokens } from '../src/theme/tokens';
 
 /**
@@ -27,7 +26,6 @@ export default function JourneyScreen() {
   const onSOS = () => {
     triggerSOS();
     beginEmergencyFlow();
-    void openEmergencySmsIntent('sos_hold');
     router.push(EMERGENCY_SELECTION_PATH as Href);
   };
 

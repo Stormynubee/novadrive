@@ -87,7 +87,7 @@ export function defaultSettings(): AppSettings {
     autoDispatchMedical: true,
     notifyEmergencyContacts: true,
     lockDeviceScreen: false,
-    voiceCrashDetection: true,
+    voiceCrashDetection: false,
     voiceDistressSensitivity: 'medium',
   };
 }

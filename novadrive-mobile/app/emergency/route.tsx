@@ -9,6 +9,7 @@ import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { rankFacilities } from '../../src/lib/facilitiesDb';
 import { EMERGENCY_RESPONSE_PATH } from '../../src/lib/emergency/emergencyNavigation';
+import { openMapsNavigate } from '../../src/lib/naariShakti/linkingActions';
 import { DISPATCH_108 } from '../../src/lib/ghp';
 import { resolveRegionalCoverage } from '../../src/lib/regionalCoverage';
 import type { Facility } from '../../src/lib/types';
@@ -158,6 +159,11 @@ export default function RouteScreen() {
                 selectFacility(f);
                 setSelected(f.id);
               }}
+              onNavigate={
+                f.lat != null && f.lng != null
+                  ? () => openMapsNavigate(f.lat!, f.lng!)
+                  : undefined
+              }
             />
           ))}
         </>

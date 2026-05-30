@@ -194,6 +194,8 @@ export async function rankFacilities(
     type: r.type as Facility['type'],
     traumaTier: r.trauma_tier as 1 | 2 | 3,
     phone: r.phone && r.phone.length > 0 ? r.phone : 'unverified',
+    lat: r.lat,
+    lng: r.lng,
     distanceKm: haversineKm(lat, lng, r.lat, r.lng),
     etaMinutes: Math.max(5, Math.round(haversineKm(lat, lng, r.lat, r.lng) * 2.5)),
     verified: r.verified === 1,

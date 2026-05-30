@@ -28,6 +28,24 @@ export async function resolveEmergencyCoords(): Promise<{ lat: number; lng: numb
   }
 }
 
+/** Opens the OS SMS composer to a contact — user must tap Send. */
+export async function openIceSmsIntent(phone: string, body: string): Promise<boolean> {
+  const normalized = phone.replace(/\s/g, '');
+  const url = `sms:${normalized}?body=${encodeURIComponent(body)}`;
+  try {
+    const ok = await Linking.canOpenURL(url);
+    if (!ok) {
+      Alert.alert('Notify emergency contact', body);
+      return false;
+    }
+    await Linking.openURL(url);
+    return true;
+  } catch {
+    Alert.alert('Notify emergency contact', body);
+    return false;
+  }
+}
+
 /** Opens the OS SMS composer to 108 — user must tap Send. Returns false if SMS URL cannot open. */
 export async function openEmergencySmsIntent(
   kind: EmergencySmsKind,

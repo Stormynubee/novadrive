@@ -73,6 +73,8 @@ describe('facilitiesDb', () => {
     expect(results[0].type).not.toBe('clinic');
     expect(results[0].recommended).toBe(true);
     expect(results[0].name).toBe('Trauma Center Near');
+    expect(results[0].lat).toBe(13.0);
+    expect(results[0].lng).toBe(80.2);
     expect(results.every((f) => f.type !== 'clinic')).toBe(true);
   });
 

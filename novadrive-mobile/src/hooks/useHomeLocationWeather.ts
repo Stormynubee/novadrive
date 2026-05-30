@@ -6,6 +6,8 @@ import { fetchCurrentWeather } from '../lib/home/weather';
 export type HomeLocationWeatherState = {
   cityLabel: string;
   regionLabel: string;
+  lat: number | null;
+  lng: number | null;
   tempC: number | null;
   summary: string;
   loading: boolean;
@@ -20,6 +22,8 @@ const DENIED_SUMMARY =
 export function useHomeLocationWeather(): HomeLocationWeatherState {
   const [cityLabel, setCityLabel] = useState('Locating…');
   const [regionLabel, setRegionLabel] = useState('');
+  const [lat, setLat] = useState<number | null>(null);
+  const [lng, setLng] = useState<number | null>(null);
   const [tempC, setTempC] = useState<number | null>(null);
   const [summary, setSummary] = useState('Fetching weather for your corridor…');
   const [loading, setLoading] = useState(true);
@@ -37,6 +41,8 @@ export function useHomeLocationWeather(): HomeLocationWeatherState {
         setPermissionDenied(true);
         setCityLabel('Location unavailable');
         setRegionLabel('');
+        setLat(null);
+        setLng(null);
         setTempC(null);
         setSummary(DENIED_SUMMARY);
         return;
@@ -46,6 +52,8 @@ export function useHomeLocationWeather(): HomeLocationWeatherState {
         accuracy: Location.Accuracy.Balanced,
       });
       const { latitude, longitude } = pos.coords;
+      setLat(latitude);
+      setLng(longitude);
       const place = await reverseGeocodePlace(latitude, longitude);
       const city = place.city ?? place.district ?? 'Your location';
       const region = place.region ?? (place.district && place.district !== city ? place.district : '');
@@ -65,6 +73,8 @@ export function useHomeLocationWeather(): HomeLocationWeatherState {
     } catch (e) {
       setCityLabel('Location unavailable');
       setRegionLabel('');
+      setLat(null);
+      setLng(null);
       setTempC(null);
       setSummary(DENIED_SUMMARY);
       setError((e as Error).message);
@@ -76,6 +86,8 @@ export function useHomeLocationWeather(): HomeLocationWeatherState {
   return {
     cityLabel,
     regionLabel,
+    lat,
+    lng,
     tempC,
     summary,
     loading,

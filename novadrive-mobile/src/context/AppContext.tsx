@@ -22,7 +22,6 @@ import { announceA11y, hapticCrashAlert, speakA11y } from '../lib/a11yRuntime';
 import { safetyAlertTitle } from '../lib/safetyAlert';
 import { parseEmergencyText } from '../lib/parseEmergencyText';
 import { buildPacket } from '../lib/ghp';
-import { openEmergencySmsIntent } from '../lib/emergencySms';
 import { rankFacilities } from '../lib/facilitiesDb';
 import {
   createCrashOrchestrator,
@@ -155,7 +154,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const profileRef = useRef(profile);
   const speedRef = useRef(0);
   const calmTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const crashAutoSmsSentRef = useRef(false);
   const monitoringActive = useRef(false);
   const lastSafetyDialogAt = useRef(0);
   const journeyStatusRef = useRef(journeyStatus);
@@ -228,7 +226,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const openCrashDialog = useCallback(() => {
-    crashAutoSmsSentRef.current = false;
     setCrashDialogOpen(true);
     setCalmCountdown(CRASH_CONFIG.CALM_DIALOG_SECONDS);
     if (calmTimer.current) clearInterval(calmTimer.current);
@@ -236,10 +233,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setCalmCountdown((c) => {
         if (c <= 1) {
           if (calmTimer.current) clearInterval(calmTimer.current);
-          if (!crashAutoSmsSentRef.current) {
-            crashAutoSmsSentRef.current = true;
-            void openEmergencySmsIntent('crash_detected');
-          }
           return 0;
         }
         return c - 1;
@@ -684,7 +677,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const beginEmergencyFlow = useCallback(() => {
     resetEmergency();
-    setSession({ incidentType: 'road_accident' });
   }, [resetEmergency]);
 
   const resetDemoToStart = useCallback(async () => {

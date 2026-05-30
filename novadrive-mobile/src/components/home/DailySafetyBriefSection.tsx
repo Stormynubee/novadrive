@@ -5,6 +5,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { HudText } from '../HudText';
 import { SafetyBriefCard } from './SafetyBriefCard';
 import { useHomeLocationWeather } from '../../hooks/useHomeLocationWeather';
+import { resolveDailyBriefCards } from '../../lib/home/safetyBriefExperience';
 import { tokens } from '../../theme/tokens';
 
 type Props = {
@@ -16,6 +17,8 @@ export function DailySafetyBriefSection({ active = true }: Props) {
   const {
     cityLabel,
     regionLabel,
+    lat,
+    lng,
     tempC,
     summary,
     loading,
@@ -39,6 +42,8 @@ export function DailySafetyBriefSection({ active = true }: Props) {
       : tempC != null
         ? `${summary}`
         : summary;
+
+  const briefCards = resolveDailyBriefCards(lat, lng);
 
   return (
     <View style={styles.section}>
@@ -75,9 +80,9 @@ export function DailySafetyBriefSection({ active = true }: Props) {
               <MaterialIcons name="verified" size={20} color={tokens.tertiary} />
             </View>
           }
-          title="Safety Protocol Alpha"
-          subtitle="New AI fatigue detection guidelines deployed for commercial drivers."
-          onPress={() => router.push('/brief/protocol-alpha' as Href)}
+          title={briefCards.protocol.title}
+          subtitle={briefCards.protocol.subtitle}
+          onPress={() => router.push(`/brief/${briefCards.protocol.slug}` as Href)}
         />
 
         <SafetyBriefCard
@@ -86,9 +91,9 @@ export function DailySafetyBriefSection({ active = true }: Props) {
               <MaterialIcons name="info" size={20} color={tokens.secondaryDeep} />
             </View>
           }
-          title="Regional Alert"
-          subtitle="Emergency lanes now active on NH-45 for fast-track response."
-          onPress={() => router.push('/brief/regional-alert' as Href)}
+          title={briefCards.regional.title}
+          subtitle={briefCards.regional.subtitle}
+          onPress={() => router.push(`/brief/${briefCards.regional.slug}` as Href)}
         />
       </View>
     </View>

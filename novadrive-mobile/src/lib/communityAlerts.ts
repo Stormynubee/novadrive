@@ -10,6 +10,8 @@ export interface CommunityAlert {
   severity: AlertSeverity;
   icon: 'flood' | 'construction' | 'traffic';
   verified?: boolean;
+  lat?: number;
+  lng?: number;
 }
 
 export interface SafetyPioneer {
@@ -28,6 +30,8 @@ export const SEED_ALERTS: CommunityAlert[] = [
     severity: 'critical',
     icon: 'flood',
     verified: true,
+    lat: 13.0542,
+    lng: 80.2124,
   },
   {
     id: 'alert-roadworks',
@@ -36,6 +40,8 @@ export const SEED_ALERTS: CommunityAlert[] = [
     ago: '1 hr ago',
     severity: 'warning',
     icon: 'construction',
+    lat: 13.0821,
+    lng: 80.2048,
   },
   {
     id: 'alert-traffic',
@@ -44,6 +50,8 @@ export const SEED_ALERTS: CommunityAlert[] = [
     ago: '2 hrs ago',
     severity: 'info',
     icon: 'traffic',
+    lat: 13.0486,
+    lng: 80.2279,
   },
 ];
 

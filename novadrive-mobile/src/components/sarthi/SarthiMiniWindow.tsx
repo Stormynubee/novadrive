@@ -18,6 +18,7 @@ import { SarthiPatternBackground } from './SarthiPatternBackground';
 import { SarthiTypingIndicator } from './SarthiTypingIndicator';
 import { useSarthi } from '../../context/SarthiContext';
 import { HudText } from '../HudText';
+import { sarthiConnectionBanner } from '../../lib/sarthi/sarthiStatusCopy';
 import { tokens } from '../../theme/tokens';
 
 const TAB_BAR_OFFSET = 88;
@@ -44,11 +45,15 @@ export function SarthiMiniWindow({
 }) {
   const insets = useSafeAreaInsets();
   const { session } = useApp();
-  const { thread, loading, offlineMode, bffUnavailable, send } = useSarthi();
+  const { thread, loading, offlineMode, bffUnavailable, send, context } = useSarthi();
   const [draft, setDraft] = useState('');
   const height = Dimensions.get('window').height * (showQuickLinks ? 0.52 : 0.4);
 
+  const statusBanner = sarthiConnectionBanner({ offlineMode, bffUnavailable });
   const recent = useMemo(() => thread.messages.slice(-4), [thread.messages]);
+  const monitorLine = context.corridorLabel
+    ? `Monitoring ${context.corridorLabel} for fatigue zones and road hazards.`
+    : 'Monitoring your route for fatigue zones and road hazards.';
 
   if (!open) return null;
 
@@ -71,19 +76,15 @@ export function SarthiMiniWindow({
     >
       <SarthiPatternBackground />
       <SarthiChatHeader compact onClose={onClose} />
-      {offlineMode ? (
+      {statusBanner ? (
         <HudText variant="bodySm" style={styles.banner}>
-          Offline — Sarthi uses on-device safety KB (30+ topics). Cloud AI unavailable.
-        </HudText>
-      ) : bffUnavailable ? (
-        <HudText variant="bodySm" style={styles.banner}>
-          Offline KB active — set EXPO_PUBLIC_SARTHI_API_URL for Gemini when online
+          {statusBanner}
         </HudText>
       ) : null}
       {showQuickLinks ? (
         <View style={styles.quickBlock}>
           <HudText variant="bodySm" style={styles.monitorLine}>
-            I am monitoring your current route for fatigue zones and road hazards.
+            {monitorLine}
           </HudText>
           <SarthiQuickLink
             label="Road Safety Report"

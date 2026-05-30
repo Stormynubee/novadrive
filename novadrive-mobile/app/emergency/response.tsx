@@ -9,6 +9,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import QRCode from 'react-native-qrcode-svg';
@@ -30,9 +31,11 @@ import {
   listNearbyVerifiedVolunteers,
 } from '../../src/lib/ngo/volunteerProviders';
 import { openMapsNavigate } from '../../src/lib/naariShakti/linkingActions';
+import { resolveHospitalNavTarget } from '../../src/lib/emergency/hospitalNavTarget';
 import {
   EMERGENCY_ACTIVATION_PATH,
 } from '../../src/lib/emergency/emergencyNavigation';
+import { unconfiguredDispatchMessage } from '../../src/lib/emergency/dispatchUserMessages';
 import { pickDispatchLocation } from '../../src/lib/emergency/dispatchLocation';
 import { getOfflineTraumaReply } from '../../src/lib/emergency/traumaAssistantOffline';
 import { createTraumaSessionEngine } from '../../src/lib/emergency/traumaSession';
@@ -115,10 +118,13 @@ export default function TraumaResponseScreen() {
 
   const runDispatch = async () => {
     if (!endpointConfig.configured) {
-      setDispatchError(
-        'Set EXPO_PUBLIC_TRAUMA_DISPATCH_URL and EXPO_PUBLIC_POLICE_DISPATCH_URL to production endpoints.'
-      );
-      setDispatchResult(null);
+      setDispatchError(unconfiguredDispatchMessage());
+      setDispatchResult({
+        status: 'partial',
+        referenceId: `MARGI-OFFLINE-${Date.now().toString(36).toUpperCase()}`,
+        traumaCenter: { name: 'Nearest trauma center', phone: '108', etaMinutes: null },
+        policeUnit: { name: 'Local police dispatch', phone: '112', etaMinutes: null },
+      });
       return;
     }
     setBusy(true);
@@ -266,8 +272,14 @@ export default function TraumaResponseScreen() {
     etaMinutes: null,
   };
 
+  const hospitalTarget = resolveHospitalNavTarget(session);
+  const icePhone =
+    settings.notifyEmergencyContacts !== false
+      ? profile.medical?.primaryContact?.phone?.trim() || null
+      : null;
+
   return (
-    <View style={styles.root}>
+    <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
       <View style={styles.header}>
         <Pressable onPress={() => router.back()}>
           <MaterialIcons name="arrow-back" size={24} color={tokens.onPrimary} />
@@ -286,7 +298,7 @@ export default function TraumaResponseScreen() {
             <HudText variant="mono" style={styles.voiceLabel}>
               SARTHI AI IS SPEAKING
             </HudText>
-            <MaterialIcons name="graphic-eq" size={20} color={tokens.onPrimary} />
+            <MaterialIcons name="graphic-eq" size={20} color={tokens.secondary} />
           </View>
           <HudText variant="headlineMd" style={styles.voiceText}>
             Calmly follow protocol. Help is on the way.
@@ -304,8 +316,8 @@ export default function TraumaResponseScreen() {
         <LanguageSelector value={settings.language} onChange={(value) => void updateSettings({ language: value })} />
 
         {dispatchError ? (
-          <View style={styles.errorCard}>
-            <HudText variant="bodySm" style={styles.errorText}>
+          <View style={styles.infoCard}>
+            <HudText variant="bodySm" style={styles.infoText}>
               {dispatchError}
             </HudText>
           </View>
@@ -371,16 +383,18 @@ export default function TraumaResponseScreen() {
           <View style={styles.mapPlaceholder}>
             <MaterialIcons name="map" size={54} color={tokens.primary} />
             <HudText variant="bodySm" style={{ color: tokens.onSurfaceVariant }}>
-              {session.location
-                ? `Live GPS · open Maps for turn-by-turn`
-                : 'Capture location in emergency flow first'}
+              {hospitalTarget
+                ? `Navigate to ${hospitalTarget.label}`
+                : session.location
+                  ? 'Ranking nearest trauma center…'
+                  : 'Capture location in emergency flow first'}
             </HudText>
           </View>
           <MargiButton
-            label="Open Route"
+            label={hospitalTarget ? 'Navigate to Hospital' : 'Open Route'}
             onPress={() => {
-              if (session.location) {
-                openMapsNavigate(session.location.lat, session.location.lng);
+              if (hospitalTarget) {
+                openMapsNavigate(hospitalTarget.lat, hospitalTarget.lng);
                 return;
               }
               router.push('/emergency/route' as Href);
@@ -428,8 +442,26 @@ export default function TraumaResponseScreen() {
         </View>
       </ScrollView>
 
+      {icePhone ? (
+        <Pressable
+          style={styles.iceFab}
+          onPress={() => {
+            const url = toDialUrl(icePhone);
+            if (!url) {
+              Alert.alert('Contact unavailable', 'Emergency contact phone is not valid.');
+              return;
+            }
+            void Linking.openURL(url);
+          }}
+        >
+          <MaterialIcons name="contact-phone" size={20} color={tokens.onSecondary} />
+          <HudText variant="bodySm" style={{ color: tokens.onSecondary, fontFamily: 'PublicSans_700Bold' }}>
+            CALL ICE
+          </HudText>
+        </Pressable>
+      ) : null}
       <Pressable
-        style={styles.fab}
+        style={[styles.fab, icePhone ? styles.fabWithIce : null]}
         onPress={() => {
           const url = toDialUrl(traumaCenter.phone);
           if (!url) {
@@ -444,7 +476,7 @@ export default function TraumaResponseScreen() {
           CALL CENTER
         </HudText>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -474,17 +506,17 @@ const styles = StyleSheet.create({
   },
   voiceHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   voiceLabel: { color: tokens.secondary, letterSpacing: 1, fontFamily: 'PublicSans_700Bold' },
-  voiceText: { color: tokens.onPrimary, fontFamily: 'HankenGrotesk_700Bold' },
-  voiceSub: { color: tokens.onPrimaryContainer },
-  modeBadge: { color: tokens.secondaryFixedDim, fontFamily: 'PublicSans_700Bold', letterSpacing: 1 },
-  errorCard: {
+  voiceText: { color: tokens.onPrimaryContainer, fontFamily: 'HankenGrotesk_700Bold' },
+  voiceSub: { color: tokens.onSurfaceVariant },
+  modeBadge: { color: tokens.secondary, fontFamily: 'PublicSans_700Bold', letterSpacing: 1 },
+  infoCard: {
     borderRadius: tokens.radius.card,
     borderWidth: 1,
-    borderColor: tokens.secondary,
-    backgroundColor: tokens.secondaryFixed,
+    borderColor: tokens.outlineVariant,
+    backgroundColor: tokens.surfaceContainerHigh,
     padding: 12,
   },
-  errorText: { color: tokens.secondaryDeep },
+  infoText: { color: tokens.onSurfaceVariant },
   chatCard: {
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
@@ -557,6 +589,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   bottomActions: { gap: 10 },
+  iceFab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 72,
+    minHeight: 44,
+    borderRadius: 22,
+    backgroundColor: tokens.secondaryContainer,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    ...tokens.elevation.card,
+  },
   fab: {
     position: 'absolute',
     right: 16,
@@ -570,4 +615,5 @@ const styles = StyleSheet.create({
     gap: 8,
     ...tokens.elevation.card,
   },
+  fabWithIce: { bottom: 16 },
 });
