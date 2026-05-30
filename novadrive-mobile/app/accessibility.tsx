@@ -12,6 +12,7 @@ import { useApp } from '../src/context/AppContext';
 import { announceA11y, speakA11y } from '../src/lib/a11yRuntime';
 import { setOnboarded } from '../src/lib/storage';
 import { useThemeTokens } from '../src/theme/useThemeTokens';
+import { tokens } from '../src/theme/tokens';
 
 /**
  * Stitch `accessibility_features` — Voice Command, High Contrast, Screen Reader,
@@ -105,7 +106,7 @@ export default function AccessibilityScreen() {
         step={3}
         total={3}
         title="Accessibility"
-        subtitle="Customize your Nova Drive experience for safer, distraction-free navigation."
+        subtitle="Customize your Margi experience for safer, distraction-free navigation."
       >
         {toggles}
         <MargiButton label="Enter Margi" onPress={finish} large style={{ marginTop: 8 }} />
@@ -125,7 +126,7 @@ export default function AccessibilityScreen() {
           Accessibility
         </HudText>
         <HudText variant="bodyMd" style={styles.subtitle}>
-          Customize your Nova Drive experience for safer, distraction-free navigation.
+          Customize your Margi experience for safer, distraction-free navigation.
         </HudText>
         {toggles}
         <MargiButton label="Save & close" onPress={finish} large style={{ marginTop: 16 }} />
@@ -138,6 +139,6 @@ const styles = StyleSheet.create({
   root: { flex: 1 },
   scroll: { padding: 20, gap: 12 },
   title: { marginTop: 4 },
-  subtitle: { color: '#44474e', lineHeight: 24, marginBottom: 8 },
+  subtitle: { color: tokens.onSurfaceVariant, lineHeight: 24, marginBottom: 8 },
   toggleList: { gap: 12 },
 });

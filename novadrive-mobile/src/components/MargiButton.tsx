@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 import { tokens } from '../theme/tokens';
-
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'mint';
+import { margiButtonPressedStyle, type MargiButtonVariant } from './margiButtonStyles';
 
 export function MargiButton({
   label,
@@ -13,7 +12,7 @@ export function MargiButton({
 }: {
   label: string;
   onPress: () => void;
-  variant?: Variant;
+  variant?: MargiButtonVariant;
   disabled?: boolean;
   style?: ViewStyle;
   large?: boolean;
@@ -22,11 +21,12 @@ export function MargiButton({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      android_ripple={{ color: 'rgba(255,255,255,0.12)' }}
       style={({ pressed }) => [
         styles.base,
         large && styles.large,
         styles[variant],
-        pressed && styles.pressed,
+        pressed && !disabled && margiButtonPressedStyle(variant),
         disabled && styles.disabled,
         style,
       ]}
@@ -76,7 +76,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: tokens.tertiary,
   },
-  pressed: { opacity: 0.9, transform: [{ scale: 0.99 }] },
   disabled: { opacity: 0.45 },
   label: {
     fontSize: 16,

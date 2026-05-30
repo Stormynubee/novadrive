@@ -52,7 +52,7 @@
     "start:tunnel": "expo start --tunnel --clear",
     "start:lan": "expo start --lan --clear",
     "start:localhost": "expo start --localhost --clear",
-    "android": "expo run:android",
+    "android": "node scripts/run-android.cjs",
     "android:apk": "node scripts/build-judge-apk.cjs",
     "android:clean-native": "powershell -ExecutionPolicy Bypass -File scripts/clean-android-native.ps1",
     "ios": "expo run:ios",

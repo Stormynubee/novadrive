@@ -4,33 +4,32 @@ import { APP_DISPLAY_NAME, APP_TAGLINE } from '../lib/brand';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
 
-const BLUE = '#0056b3';
-const ORANGE = '#ff8c00';
-
 /**
  * Margi emblem — abstract heart, path, and EKG pulse (vector approximation of brand logo).
  */
 export function MargiLogoMark({ size = 96 }: { size?: number }) {
+  const blue = tokens.primary;
+  const orange = tokens.secondary;
   return (
     <Svg width={size} height={size} viewBox="0 0 120 120">
       <Defs>
         <LinearGradient id="pathGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-          <Stop offset="0%" stopColor={BLUE} />
-          <Stop offset="100%" stopColor={ORANGE} stopOpacity={0.85} />
+          <Stop offset="0%" stopColor={blue} />
+          <Stop offset="100%" stopColor={orange} stopOpacity={0.85} />
         </LinearGradient>
       </Defs>
       {/* Left figure */}
       <Path
         d="M18 88 C18 52 28 28 42 22 C48 20 52 24 50 38 C46 58 38 72 32 88 Z"
-        fill={BLUE}
+        fill={blue}
       />
-      <Circle cx={42} cy={20} r={10} fill={BLUE} />
+      <Circle cx={42} cy={20} r={10} fill={blue} />
       {/* Right figure */}
       <Path
         d="M102 88 C102 52 92 28 78 22 C72 20 68 24 70 38 C74 58 82 72 88 88 Z"
-        fill={ORANGE}
+        fill={orange}
       />
-      <Circle cx={78} cy={20} r={10} fill={ORANGE} />
+      <Circle cx={78} cy={20} r={10} fill={orange} />
       {/* Winding path */}
       <Path
         d="M42 92 C52 78 58 68 60 58 C62 48 58 42 60 36"
@@ -42,7 +41,7 @@ export function MargiLogoMark({ size = 96 }: { size?: number }) {
       {/* EKG pulse */}
       <Path
         d="M48 52 H54 L58 44 L62 60 L66 48 H72"
-        stroke={ORANGE}
+        stroke={orange}
         strokeWidth={3}
         strokeLinecap="round"
         strokeLinejoin="round"

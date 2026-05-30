@@ -58,7 +58,7 @@ export default function EmergencySelectionScreen() {
         <View style={styles.headerLeft}>
           <MaterialIcons name="emergency" size={22} color={tokens.onPrimary} />
           <HudText variant="headlineMd" style={styles.headerTitle} numberOfLines={1}>
-            Nova Drive | Incident Tracker
+            Margi | Incident Tracker
           </HudText>
         </View>
         <Pressable
@@ -119,7 +119,7 @@ export default function EmergencySelectionScreen() {
 
       <View style={styles.footer}>
         <HudText variant="bodySm" style={styles.footerText}>
-          Nova Drive Platform
+          Margi Platform
         </HudText>
       </View>
     </SafeAreaView>

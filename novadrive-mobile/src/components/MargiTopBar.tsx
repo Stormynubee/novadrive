@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import { APP_DISPLAY_NAME } from '../lib/brand';
+import { MargiLogoMark } from './MargiLogo';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
 
@@ -62,9 +63,7 @@ export function MargiTopBar({
         </Pressable>
       ) : (
         <View style={styles.brand}>
-          <View style={[styles.shield, { borderColor: onPrimary ? 'rgba(255,255,255,0.18)' : tokens.primary }]}>
-            <MaterialIcons name="favorite" size={18} color={tokens.secondary} />
-          </View>
+          <MargiLogoMark size={28} />
         </View>
       )}
 
@@ -124,14 +123,6 @@ const styles = StyleSheet.create({
     borderBottomColor: tokens.outlineVariant,
   },
   brand: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
-  shield: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
   titleWrap: { flex: 1, minWidth: 0, pointerEvents: 'none' },
   iconBtnRaised: { zIndex: 10, elevation: 6 },
   title: {

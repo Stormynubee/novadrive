@@ -39,8 +39,8 @@ export default function RouteScreen() {
   }, [session.location, triageResult]);
 
   useEffect(() => {
-    if (!baselineMode || loading || triageResult === 'BLACK') return;
-    selectFacility(DISPATCH_108 as Facility);
+    if (!baselineMode || loading || triageResult === 'BLACK' || !DISPATCH_108) return;
+    selectFacility(DISPATCH_108);
     setSelected(DISPATCH_108.id);
   }, [baselineMode, loading, selectFacility, triageResult]);
 

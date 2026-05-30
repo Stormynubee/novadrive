@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     shadowRadius: 16,
     elevation: 6,
   },
-  pressed: { opacity: 0.92, transform: [{ scale: 0.98 }] },
+  pressed: { backgroundColor: tokens.surfaceContainer, transform: [{ scale: 0.99 }] },
   stripe: {
     position: 'absolute',
     left: 0,

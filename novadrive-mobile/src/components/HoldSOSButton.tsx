@@ -2,6 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { MaterialIcons } from '@expo/vector-icons';
+import {
+  holdSosHudTopInnerStyle,
+  holdSosHudTopSublabelCopy,
+  holdSosHudTopSublabelStyle,
+  holdSosHudTopTextColumnStyle,
+} from './holdSosHudTopLayout';
 import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
 
@@ -104,14 +110,16 @@ export function HoldSOSButton({
           <View style={[styles.btn, isDashboard && !isHudTop && styles.btnDashboard, isHudTop && styles.btnHudTop]}>
             <View style={[styles.fill, { height: `${progress * 100}%` }]} />
             {isHudTop ? (
-              <View style={styles.hudTopInner}>
+              <View style={holdSosHudTopInnerStyle}>
                 <MaterialIcons name="emergency" size={36} color={tokens.onError} style={styles.icon} />
-                <HudText variant="headlineMd" style={styles.sosWordHudTop}>
-                  HOLD FOR SOS
-                </HudText>
-                <HudText variant="mono" style={styles.sosSubHudTop}>
-                  {holding ? 'Hold steady…' : '3 seconds'}
-                </HudText>
+                <View style={holdSosHudTopTextColumnStyle}>
+                  <HudText variant="headlineMd" style={styles.sosWordHudTop}>
+                    HOLD FOR SOS
+                  </HudText>
+                  <HudText variant="mono" style={holdSosHudTopSublabelStyle}>
+                    {holdSosHudTopSublabelCopy(holding)}
+                  </HudText>
+                </View>
               </View>
             ) : isDashboard ? (
               <>
@@ -223,26 +231,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
   },
-  hudTopInner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-    zIndex: 1,
-    paddingHorizontal: 16,
-  },
   sosWordHudTop: {
     color: tokens.onError,
     fontFamily: 'HankenGrotesk_800ExtraBold',
     fontSize: 18,
     letterSpacing: 1,
-  },
-  sosSubHudTop: {
-    position: 'absolute',
-    right: 16,
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 10,
-    letterSpacing: 1.2,
   },
   sosWord: {
     color: tokens.onError,

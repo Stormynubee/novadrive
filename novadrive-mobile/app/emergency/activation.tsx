@@ -1,9 +1,11 @@
 import { type Href, router } from 'expo-router';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import Svg, { Circle } from 'react-native-svg';
 import * as Location from 'expo-location';
 import { HudText } from '../../src/components/HudText';
+import { MargiLogoMark } from '../../src/components/MargiLogo';
 import { MedicalDisclaimerBanner } from '../../src/components/MedicalDisclaimerBanner';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { useApp } from '../../src/context/AppContext';
@@ -12,6 +14,11 @@ import {
   shouldNavigateToResponse,
   type ActivationMode,
 } from '../../src/lib/emergency/activationAuto';
+import {
+  activationCountdownProgress,
+  autoAdvanceLabel,
+  shouldShowManualContinue,
+} from '../../src/lib/emergency/activationUi';
 import {
   EMERGENCY_RESPONSE_PATH,
   EMERGENCY_SELECTION_PATH,
@@ -28,6 +35,11 @@ const ROTATING_STATUS = [
   'NOTIFYING EMERGENCY CONTACTS...',
 ];
 
+const RING_SIZE = 200;
+const RING_STROKE = 4;
+const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
 export default function EmergencyActivationScreen() {
   const { settings, updateSettings, session, resetEmergency } = useApp();
   const [statusIndex, setStatusIndex] = useState(0);
@@ -36,8 +48,11 @@ export default function EmergencyActivationScreen() {
   const [backendReady, setBackendReady] = useState(false);
   const hasAutoNavigatedRef = useRef(false);
   const status = useMemo(() => ROTATING_STATUS[statusIndex % ROTATING_STATUS.length], [statusIndex]);
+  const progress = activationCountdownProgress(secondsLeft, ACTIVATION_SPLASH_SECONDS);
+  const showContinue = shouldShowManualContinue(mode, secondsLeft);
 
-  useEffect(() => {    if (!session.incidentType) {
+  useEffect(() => {
+    if (!session.incidentType) {
       router.replace('/emergency/selection' as Href);
     }
   }, [session.incidentType]);
@@ -57,8 +72,10 @@ export default function EmergencyActivationScreen() {
     };
   }, []);
 
-  useEffect(() => {    const countdownTimer = setInterval(() => {
-      setSecondsLeft((value) => {        if (value <= 1) return 0;
+  useEffect(() => {
+    const countdownTimer = setInterval(() => {
+      setSecondsLeft((value) => {
+        if (value <= 1) return 0;
         return value - 1;
       });
     }, 1000);
@@ -89,7 +106,8 @@ export default function EmergencyActivationScreen() {
     ) {
       return;
     }
-    hasAutoNavigatedRef.current = true;    navigateToResponse(mode);
+    hasAutoNavigatedRef.current = true;
+    navigateToResponse(mode);
   }, [secondsLeft, mode, backendReady]);
 
   const cancelFlow = () => {
@@ -111,11 +129,46 @@ export default function EmergencyActivationScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.shieldWrap}>
-          <View style={styles.shieldOuter}>
-            <MaterialIcons name="shield" size={96} color={tokens.primary} />
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        <View style={styles.logoWrap}>
+          <View style={styles.ringHost}>
+            <Svg width={RING_SIZE} height={RING_SIZE} style={styles.ringSvg}>
+              <Circle
+                cx={RING_SIZE / 2}
+                cy={RING_SIZE / 2}
+                r={RING_RADIUS}
+                stroke={tokens.outlineVariant}
+                strokeWidth={RING_STROKE}
+                fill="none"
+              />
+              <Circle
+                cx={RING_SIZE / 2}
+                cy={RING_SIZE / 2}
+                r={RING_RADIUS}
+                stroke={tokens.secondary}
+                strokeWidth={RING_STROKE}
+                fill="none"
+                strokeDasharray={`${RING_CIRCUMFERENCE}`}
+                strokeDashoffset={RING_CIRCUMFERENCE * (1 - progress)}
+                strokeLinecap="round"
+                rotation={-90}
+                origin={`${RING_SIZE / 2}, ${RING_SIZE / 2}`}
+              />
+            </Svg>
+            <View style={styles.logoInner}>
+              <MargiLogoMark size={72} />
+            </View>
           </View>
+          {mode === 'auto' ? (
+            <HudText variant="mono" style={styles.autoLabel}>
+              {autoAdvanceLabel(secondsLeft)}
+            </HudText>
+          ) : null}
         </View>
 
         <MedicalDisclaimerBanner compact />
@@ -136,50 +189,47 @@ export default function EmergencyActivationScreen() {
           }}
         />
 
-        <View style={styles.modeWrap}>
-          <Pressable
-            style={[styles.modeButton, mode === 'auto' && styles.modeButtonActive]}
-            onPress={() => setMode('auto')}
-          >
-            <HudText variant="bodySm" style={[styles.modeText, mode === 'auto' && styles.modeTextActive]}>
-              Auto System
+        {mode === 'auto' ? (
+          <Pressable onPress={() => setMode('manual')} style={styles.manualLink}>
+            <HudText variant="bodySm" style={styles.manualLinkText}>
+              Switch to manual
             </HudText>
           </Pressable>
-          <Pressable
-            style={[styles.modeButton, mode === 'manual' && styles.modeButtonActive]}
-            onPress={() => setMode('manual')}
-          >
-            <HudText
-              variant="bodySm"
-              style={[styles.modeText, mode === 'manual' && styles.modeTextActive]}
-            >
-              Manual System
+        ) : (
+          <Pressable onPress={() => setMode('auto')} style={styles.manualLink}>
+            <HudText variant="bodySm" style={styles.manualLinkText}>
+              Switch to auto
             </HudText>
           </Pressable>
-        </View>
+        )}
 
-        <Pressable
-          style={styles.continueButton}
-          onPress={() => {
-            hasAutoNavigatedRef.current = true;
-            if (mode === 'manual') {
-              router.push(EMERGENCY_TRIAGE_PATH as Href);
-              return;
-            }
-            navigateToResponse(mode);
-          }}
-        >
-          <HudText variant="bodyMd" style={styles.continueText}>
-            {mode === 'auto' && secondsLeft > 0 ? `Continue in ${secondsLeft}s` : 'Continue'}
-          </HudText>
-        </Pressable>
-      </View>
+        {showContinue ? (
+          <Pressable
+            style={({ pressed }) => [styles.continueButton, pressed && styles.continueButtonPressed]}
+            onPress={() => {
+              hasAutoNavigatedRef.current = true;
+              if (mode === 'manual') {
+                router.push(EMERGENCY_TRIAGE_PATH as Href);
+                return;
+              }
+              navigateToResponse(mode);
+            }}
+          >
+            <HudText variant="bodyMd" style={styles.continueText}>
+              {mode === 'auto' && secondsLeft > 0 ? `Continue in ${secondsLeft}s` : 'Continue'}
+            </HudText>
+          </Pressable>
+        ) : null}
+      </ScrollView>
 
       <View style={styles.footer}>
         <HudText variant="mono" style={styles.footerTitle}>
           SARTHI AI ACTIVE
         </HudText>
-        <Pressable style={styles.cancelBtn} onPress={cancelFlow}>
+        <Pressable
+          style={({ pressed }) => [styles.cancelBtn, pressed && styles.cancelBtnPressed]}
+          onPress={cancelFlow}
+        >
           <MaterialIcons name="close" size={18} color={tokens.error} />
           <HudText variant="bodyMd" style={styles.cancelText}>
             CANCEL SOS
@@ -191,7 +241,7 @@ export default function EmergencyActivationScreen() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: tokens.surface, paddingTop: 24 },
+  root: { flex: 1, backgroundColor: tokens.surface },
   header: {
     height: 64,
     backgroundColor: tokens.primary,
@@ -199,25 +249,30 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 24,
   },
   headerTitle: { color: tokens.onPrimary, fontFamily: 'HankenGrotesk_700Bold' },
-  content: {
-    flex: 1,
+  scroll: { flex: 1 },
+  scrollContent: {
     paddingHorizontal: tokens.spacing.sideMargin,
-    paddingVertical: tokens.spacing.stackLg,
-    gap: tokens.spacing.stackLg,
-    justifyContent: 'center',
+    paddingTop: tokens.spacing.stackMd,
+    paddingBottom: tokens.spacing.stackLg,
+    gap: tokens.spacing.stackMd,
   },
-  shieldWrap: { alignItems: 'center', justifyContent: 'center' },
-  shieldOuter: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    borderWidth: 3,
-    borderColor: tokens.secondary,
-    backgroundColor: tokens.surfaceContainerLow,
+  logoWrap: { alignItems: 'center', gap: 12 },
+  ringHost: {
+    width: RING_SIZE,
+    height: RING_SIZE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  ringSvg: { position: 'absolute' },
+  logoInner: { alignItems: 'center', justifyContent: 'center' },
+  autoLabel: {
+    color: tokens.secondary,
+    letterSpacing: 1.2,
+    fontFamily: 'PublicSans_700Bold',
+    textAlign: 'center',
   },
   statusWrap: { gap: 8, alignItems: 'center' },
   statusText: { textAlign: 'center', color: tokens.primary, fontFamily: 'HankenGrotesk_700Bold' },
@@ -227,6 +282,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'PublicSans_700Bold',
   },
+  manualLink: { alignSelf: 'center', paddingVertical: 8, paddingHorizontal: 12 },
+  manualLinkText: { color: tokens.primary, fontFamily: 'PublicSans_700Bold', textDecorationLine: 'underline' },
   continueButton: {
     minHeight: 54,
     borderRadius: tokens.radius.button,
@@ -234,21 +291,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: tokens.primary,
   },
+  continueButtonPressed: { backgroundColor: tokens.primaryDeep },
   continueText: { color: tokens.onPrimary, fontFamily: 'PublicSans_700Bold' },
-  modeWrap: { flexDirection: 'row', gap: 8 },
-  modeButton: {
-    flex: 1,
-    minHeight: 42,
-    borderRadius: tokens.radius.button,
-    borderWidth: 1,
-    borderColor: tokens.outlineVariant,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: tokens.surface,
-  },
-  modeButtonActive: { borderColor: tokens.primary, backgroundColor: tokens.primary },
-  modeText: { color: tokens.primary, fontFamily: 'PublicSans_700Bold' },
-  modeTextActive: { color: tokens.onPrimary },
   footer: {
     paddingHorizontal: tokens.spacing.sideMargin,
     paddingBottom: 20,
@@ -256,6 +300,7 @@ const styles = StyleSheet.create({
     gap: 14,
     borderTopWidth: 1,
     borderTopColor: tokens.outlineVariant,
+    backgroundColor: tokens.surface,
   },
   footerTitle: { color: tokens.primary, textAlign: 'center', fontFamily: 'PublicSans_700Bold' },
   cancelBtn: {
@@ -267,6 +312,8 @@ const styles = StyleSheet.create({
     gap: 8,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: tokens.surface,
   },
+  cancelBtnPressed: { backgroundColor: tokens.errorContainer },
   cancelText: { color: tokens.error, fontFamily: 'PublicSans_700Bold' },
 });

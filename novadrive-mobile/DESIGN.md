@@ -1,7 +1,7 @@
 # Design System: Margi (Care Path)
 
 **Product:** Margi — highway safety co-pilot (IIT Madras RoadSoS 2026)  
-**Logo:** Two figures forming a heart around a winding path and EKG pulse — royal blue `#0056b3` and orange `#ff8c00`.
+**Logo:** Two figures forming a heart around a winding path and EKG pulse — deep navy `#000a1e` and saffron `#fe6b00`.
 
 ## 1. Visual Theme & Atmosphere
 
@@ -13,10 +13,10 @@
 |------|-----|------|
 | Canvas | `#f8f9fb` | App background |
 | Surface | `#ffffff` | Cards, sheets |
-| Royal Blue | `#0056b3` | Primary CTAs, wordmark, tab chrome |
-| Vibrant Orange | `#ff8c00` | SOS, urgent actions, active tab accent |
+| Royal Blue | `#000a1e` | Primary CTAs, wordmark, tab chrome |
+| Vibrant Orange | `#fe6b00` | SOS, urgent actions, active tab accent |
 | Safe Green | `#249c53` | Verified / system secure |
-| Ink | `#1a2a3d` | Primary copy |
+| Ink | `#191c1d` | Primary copy |
 | Muted | `#4a5568` | Secondary copy |
 | Error | `#ba1a1a` | Critical alerts |
 
@@ -28,7 +28,7 @@
 
 ## 4. Component Stylings
 
-- **Primary button:** Royal blue fill, white label, 8px radius
+- **Primary button:** Deep navy fill, white label, 8px radius
 - **Urgent button:** Orange fill (`secondary`)
 - **Cards:** White surface, 12px radius, subtle blue-tint shadow
 - **Splash:** White field, centered logo, tagline, orange “Get started”

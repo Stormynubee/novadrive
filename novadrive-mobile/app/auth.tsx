@@ -175,18 +175,38 @@ export default function AuthScreen() {
             : 'Supabase keys are not configured — use Guest demo mode. Add keys in .env for production auth.'}
         </HudText>
 
-        <View style={styles.tabRow}>
-          {(['signin', 'signup', 'guest'] as AuthTab[]).map((key) => (
-            <Pressable
-              key={key}
-              onPress={() => setTab(key)}
-              style={[styles.tab, tab === key && styles.tabActive]}
-            >
-              <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
-                {key === 'signin' ? 'Sign in' : key === 'signup' ? 'Create account' : 'Guest demo'}
-              </HudText>
-            </Pressable>
-          ))}
+        <View style={styles.tabBlock}>
+          <View style={styles.tabRow}>
+            {(['signin', 'signup'] as AuthTab[]).map((key) => (
+              <Pressable
+                key={key}
+                onPress={() => setTab(key)}
+                style={({ pressed }) => [
+                  styles.tab,
+                  styles.tabHalf,
+                  tab === key && styles.tabActive,
+                  pressed && tab !== key && styles.tabPressed,
+                ]}
+              >
+                <HudText variant="mono" style={[styles.tabText, tab === key && styles.tabTextActive]}>
+                  {key === 'signin' ? 'Sign in' : 'Create account'}
+                </HudText>
+              </Pressable>
+            ))}
+          </View>
+          <Pressable
+            onPress={() => setTab('guest')}
+            style={({ pressed }) => [
+              styles.tab,
+              styles.tabFull,
+              tab === 'guest' && styles.tabActive,
+              pressed && tab !== 'guest' && styles.tabPressed,
+            ]}
+          >
+            <HudText variant="mono" style={[styles.tabText, tab === 'guest' && styles.tabTextActive]}>
+              Guest demo
+            </HudText>
+          </Pressable>
         </View>
 
         {tab !== 'guest' ? (
@@ -273,18 +293,22 @@ const styles = StyleSheet.create({
   brandSub: { color: tokens.onSurfaceVariant, marginTop: 2, fontSize: 10 },
   title: { color: tokens.primary },
   body: { color: tokens.onSurfaceVariant, marginTop: 8, marginBottom: 24, lineHeight: 24 },
-  tabRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+  tabBlock: { gap: 8, marginBottom: 16 },
+  tabRow: { flexDirection: 'row', gap: 8 },
   tab: {
-    flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderRadius: tokens.radius.button,
     borderWidth: 1,
     borderColor: tokens.outlineVariant,
     alignItems: 'center',
+    backgroundColor: tokens.surface,
   },
-  tabActive: { backgroundColor: tokens.primaryContainer, borderColor: tokens.primary },
-  tabText: { color: tokens.onSurfaceVariant, fontSize: 10, letterSpacing: 0.8 },
-  tabTextActive: { color: tokens.primary },
+  tabHalf: { flex: 1 },
+  tabFull: { width: '100%' },
+  tabActive: { backgroundColor: tokens.primary, borderColor: tokens.primary },
+  tabPressed: { backgroundColor: tokens.primaryContainer, borderColor: tokens.primaryDeep },
+  tabText: { color: tokens.onSurfaceVariant, fontSize: 11, letterSpacing: 0.8 },
+  tabTextActive: { color: tokens.onPrimary },
   label: { color: tokens.primary, fontSize: 12, marginBottom: 8 },
   hint: { color: tokens.onSurfaceVariant, lineHeight: 20 },
   footer: {

@@ -146,7 +146,7 @@ Full matrix: [docs/DEVICE_SMOKE_MATRIX.md](docs/DEVICE_SMOKE_MATRIX.md)
 
 ```bash
 npm run typecheck    # TypeScript (includes *.test.ts)
-npm test             # 194 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2–3
+npm test             # 208 unit tests — lib/, voice, FSM, crash, GHP, Sarthi, Naari Shakti, brand, tokens, public branding, Phase 2–3
 npm run verify:docs      # README "N unit tests" matches src/**/*.test.ts
 npm run verify:branding  # no NovaDrive in public GitHub copy
 npm run test:coverage
@@ -218,10 +218,10 @@ QR URL should contain `exp.direct`. If you see `CommandError: failed to start tu
 #### D — No dev server (judge demo)
 
 ```bash
-npx expo run:android
+npm run android
 ```
 
-Installs a debug build on the device; no Expo Go or Metro required.
+Installs a debug build on the device; no Expo Go or Metro required. Uses JDK 17+ automatically (Windows often has Java 8 on PATH).
 
 ---
 
@@ -252,10 +252,7 @@ adb devices
 
 You should see your phone as `device` (not `unauthorized`). Install [platform-tools](https://developer.android.com/tools/releases/platform-tools) only if that folder is missing.
 
-**Java:** Gradle needs **JDK 17+**. If you see `Gradle requires JVM 17 or later` and your PC only has Java 8, either:
-
-- Use Android Studio’s bundled JDK (already wired in `android/gradle.properties` if Studio is at `C:\Program Files\Android\Android Studio`), or
-- In PowerShell before building:
+**Java:** Gradle needs **JDK 17+**. If you see `This build uses a Java 8 JVM` or `Gradle requires JVM 17 or later`, use **`npm run android`** (auto-detects Android Studio JBR). Or set manually for this PowerShell session:
 
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Android\Android Studio\jbr"
@@ -267,7 +264,7 @@ You should see `openjdk version "17"` or `21`, not `1.8`.
 
 ```bash
 cd novadrive-mobile
-npx expo run:android
+npm run android
 ```
 
 First build downloads Gradle/SDK and can take 10–20 minutes. Later builds are faster. Grant location (journey), microphone, and camera when prompted.
@@ -276,12 +273,12 @@ First build downloads Gradle/SDK and can take 10–20 minutes. Later builds are 
 
 **`hermes-compiler` / `getAbsolutePath() on null`:** Install dev dep `hermes-compiler` (in `package.json`) and ensure `android/local.properties` contains `sdk.dir=...` pointing at your Android SDK (create it if missing; path is machine-specific).
 
-**`build.ninja` / file used by another process (Reanimated CMake):** Two Gradle builds ran at once (e.g. double `npx expo run:android`, or Android Studio + CLI). Fix:
+**`build.ninja` / file used by another process (Reanimated CMake):** Two Gradle builds ran at once (e.g. double `npm run android`, or Android Studio + CLI). Fix:
 
 ```powershell
 npm run android:clean-native
 # wait ~5 seconds
-npx expo run:android
+npm run android
 ```
 
 Run only **one** build at a time. Close Android Studio during CLI builds if locks persist.
