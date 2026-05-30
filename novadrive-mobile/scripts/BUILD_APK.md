@@ -30,7 +30,22 @@ Output:
 
 `novadrive-mobile/android/app/build/outputs/apk/debug/app-debug.apk`
 
-The script deletes stale `android/` first so an old prebuild cannot reintroduce `expo-dev-menu`.
+The script stops Gradle daemons, retries deletion, then runs prebuild so an old prebuild cannot reintroduce `expo-dev-menu`.
+
+### Windows: `EPERM` / Permission denied on `android/`
+
+Gradle or Android Studio often lock files under `android/`. Before retrying:
+
+```powershell
+cd novadrive-mobile\android
+.\gradlew.bat --stop
+cd ..
+npm run android:apk
+```
+
+Also close Android Studio and any File Explorer window open inside `android/`. If delete still fails, the script continues with `expo prebuild --clean` — that usually works once daemons are stopped.
+
+**Disk space:** keep at least ~4 GB free; builds fail unpredictably when the drive is nearly full (~98% used).
 
 ## Manual steps
 

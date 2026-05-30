@@ -5,6 +5,7 @@
 const { execSync } = require('node:child_process');
 const { existsSync, rmSync } = require('node:fs');
 const path = require('node:path');
+const { setTimeout: sleep } = require('node:timers/promises');
 const { resolveJdkHome } = require('./resolve-jdk.cjs');
 
 const mobileRoot = path.resolve(__dirname, '..');
@@ -49,14 +50,69 @@ function run(cmd, opts = {}) {
   });
 }
 
-if (existsSync(androidDir)) {
-  console.log('Removing stale android/ (may include expo-dev-menu from old prebuild)...');
-  rmSync(androidDir, { recursive: true, force: true });
+function runQuiet(cmd, opts = {}) {
+  try {
+    execSync(cmd, {
+      stdio: 'ignore',
+      cwd: opts.cwd ?? mobileRoot,
+      env: opts.env ?? env,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-run('npx expo prebuild --platform android --clean');
-run(`${gradle} assembleDebug --no-daemon`, { cwd: androidDir });
+async function removeAndroidDir() {
+  if (!existsSync(androidDir)) return;
 
-const apk = path.join(androidDir, 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk');
-console.log(`\nAPK ready: ${apk}`);
-console.log('Copy to margi-debug.apk for judges if uploading to GitHub Releases.');
+  const gradlew = path.join(androidDir, gradle);
+  if (existsSync(gradlew)) {
+    console.log('Stopping Gradle daemons (releases file locks on Windows)...');
+    runQuiet(`${gradle} --stop`, { cwd: androidDir });
+    await sleep(1500);
+  }
+
+  console.log('Removing stale android/ (may include expo-dev-menu from old prebuild)...');
+  const maxAttempts = 5;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      rmSync(androidDir, { recursive: true, force: true, maxRetries: 3, retryDelay: 500 });
+      return;
+    } catch (err) {
+      if (attempt === maxAttempts) {
+        console.warn(`
+Could not delete android/ (${err.code || err.message}).
+Common causes on Windows:
+  - Android Studio has this project open
+  - A terminal is cd'd into novadrive-mobile/android
+  - Gradle or Java still holding files
+
+Try:
+  1. Close Android Studio and any File Explorer window in android/
+  2. cd novadrive-mobile/android && .\\gradlew.bat --stop
+  3. npm run android:apk
+
+Continuing with expo prebuild --clean (may succeed or show the same lock)...
+`);
+        return;
+      }
+      console.log(`Delete attempt ${attempt}/${maxAttempts} failed; retrying in 2s...`);
+      await sleep(2000);
+    }
+  }
+}
+
+(async () => {
+  await removeAndroidDir();
+
+  run('npx expo prebuild --platform android --clean');
+  run(`${gradle} assembleDebug --no-daemon`, { cwd: androidDir });
+
+  const apk = path.join(androidDir, 'app', 'build', 'outputs', 'apk', 'debug', 'app-debug.apk');
+  console.log(`\nAPK ready: ${apk}`);
+  console.log('Copy to margi-debug.apk for judges if uploading to GitHub Releases.');
+})().catch((err) => {
+  console.error(err.message || err);
+  process.exit(1);
+});
