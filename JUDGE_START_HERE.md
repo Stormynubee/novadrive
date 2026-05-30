@@ -47,12 +47,12 @@ No Gradle or JDK required if you use the release APK.
 
 | Works offline | Needs network |
 |---------------|---------------|
-| START triage FSM, SQLite facility routing (~50 demo POIs), GHP, QR encode | Sarthi Gemini BFF, Supabase sign-in, HTTP dispatch to configured endpoints |
+| START triage FSM, SQLite facility routing (NH48 verified pack ~50 POIs), **baseline 108 mode outside pack**, GHP, QR encode | Sarthi Gemini BFF, Supabase sign-in, HTTP dispatch to configured endpoints |
 | 24+ Sarthi FAQ playbooks (en/hi/ta) | Live LLM answers |
 
-**Not production medical software:** START triage is a deterministic demo tree — not physician-certified. Crash/voice detection are **experimental**; no auto-dial to 108 without user confirming SMS.
+**Not production medical software:** START triage is a deterministic demo tree — not physician-certified. Crash/voice detection are **experimental**; no auto-dial to 108 without user confirming SMS. **NH48 corridor** has verified hospital phones; **other states** (e.g. Odisha) use **baseline mode** — call 108, share GPS + triage, no verified ER list.
 
-**Unit tests:** `cd novadrive-mobile && npm test` — **183** tests.
+**Unit tests:** `cd novadrive-mobile && npm test` — **194** tests.
 
 **APK CI:** [Android debug APK workflow](https://github.com/Stormynubee/Margi/actions/workflows/android-apk.yml) — download artifact **`margi-debug.apk`** if the release asset is not yet attached.
 

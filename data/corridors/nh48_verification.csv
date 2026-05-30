@@ -7,10 +7,10 @@ osm_id,canonical_name,phone,trauma_tier,verified,verifier,verified_date,notes
 941471945,Appasamy Hospital,044-30595959,2,1,web-official,2026-05-30,Official/public line per http://appasamyhospitals.com
 941611681,Appasamy Hospital,044-30595959,2,1,web-official,2026-05-30,Official/public line per http://appasamyhospitals.com
 941621037,Appolo Clinic,,2,0,,,OSM ingest — pending phone verification
-1621246558,Ashwini Eye Care,,2,0,,,OSM ingest — pending phone verification
-1185699253,Avadi Hospital,,2,0,,,OSM ingest — pending phone verification
-540658116,B.M.Orthopaedic Hospital,,2,0,,,OSM ingest — pending phone verification
-1446415367,Bhadra Homeo,,2,0,,,OSM ingest — pending phone verification
+1621246558,Ashwini Eye Care,044-26573635,2,1,web-official,2026-05-30,Official/public line per https://ashwinieyecarehospital.com/
+1185699253,Avadi Hospital,044-26557989,2,1,web-official,2026-05-30,Official/public line per https://www.bharatibiz.com/en/avadi-government-hospital_1u-044-2655-7989
+540658116,B.M.Orthopaedic Hospital,044-26570707,2,1,web-official,2026-05-30,Official/public line per https://www.bmorthohospital.com/contact-us/
+1446415367,Bhadra Homeo,044-42428877,2,1,web-official,2026-05-30,Official/public line per https://www.streetdir.com/IN/Tamil-Nadu/Chennai-District/Ward-183-Kotivakkam/Spots/Bhadra-Homeo/
 310910945,BM Hospital,044-22670277,2,1,,,OSM ingest — pending phone verification
 312000326,Cancer Institute,044-22209150,2,1,web-official,2026-05-30,Official/public line per https://cancerinstitutewia.in/
 262452334,City Tower Hospitals,044-26192626,2,1,web-official,2026-05-30,Official/public line per https://citytowerhospitals.net/
@@ -18,18 +18,18 @@ osm_id,canonical_name,phone,trauma_tier,verified,verifier,verified_date,notes
 1129195836,Facility 1129195836,,2,0,,,OSM ingest — pending phone verification
 1597151538,Facility 1597151538,,2,0,,,OSM ingest — pending phone verification
 370967673,Facility 370967673,,2,0,,,OSM ingest — pending phone verification
-310504820,Goverment dental hospital & collage,,2,0,,,OSM ingest — pending phone verification
+310504820,Goverment dental hospital & collage,044-25340681,2,1,web-official,2026-05-30,Official/public line per https://www.collegebatch.com/266-tamilnadu-government-dental-college-and-hospital-contact-number-address-map-chennai-fs025
 320275820,Govt Maternity Hospital,044-28191483,2,1,web-official,2026-05-30,Official/public line per https://yappe.in/tamil-nadu/chennai/institute-of-obstetrics-and-gynaecology-and-government-hospital-for-women-and-children/493527
 308811614,"Hindu Mission Health Services, Kanchipuram",044-22243026,2,1,web-official,2026-05-30,Official/public line per https://www.hmhealthservices.in/
 320275824,Institute of Child Health,044-28191135,2,1,web-official,2026-05-30,Official/public line per https://chennai.nic.in/public-utility/institute-of-child-health-and-hospital-for-children/
 320275839,Institute of Obstetrics and Gynaecology dd,044-28191483,2,1,web-official,2026-05-30,Official/public line per https://yappe.in/tamil-nadu/chennai/institute-of-obstetrics-and-gynaecology-and-government-hospital-for-women-and-children/493527
-597590621,JJ Hospital,,2,0,,,OSM ingest — pending phone verification
-311429396,K.F. Hospital,,2,0,,,OSM ingest — pending phone verification
+597590621,JJ Hospital,044-24790462,2,1,web-official,2026-05-30,Official/public line per https://www.qa.jupiteryellowdetail.com/Chennai/search-by-listings/hospital-/virugambakkam-/jj-hospital/8805.jws
+311429396,K.F. Hospital,044-22245020,2,1,web-official,2026-05-30,Official/public line per https://www.timesmed.com/Hospital/Chennai/k-f-hospital-49694
 295544111,K.H.M.Hospital,044-26423288,2,1,web-official,2026-05-30,Official/public line per https://kmhospitalskilpauk.com/
 248420920,Kalaignar Karunanidhi Nagar,,2,0,,,OSM ingest — pending phone verification
 248560797,Kasimedu,,2,0,,,OSM ingest — pending phone verification
 310732936,Kilpauk Medical College,044-28364951,2,1,web-official,2026-05-30,Official/public line per https://chennai.nic.in/public-utility/government-kilpauk-hospital/
-310015097,Military Hospital,,2,0,,,OSM ingest — pending phone verification
+310015097,Military Hospital,044-22342632,2,1,web-official,2026-05-30,Official/public line per https://www.jupiteryellowdetail.com/Chennai/search-by-listings/hospital-/adambakkam-/military-hospital/50562.jws
 364650995,MIOT International Trauma Bay,044-42002288,1,1,,2026-05-28,Pre-curated demo
 1152858038,Rajan Eye Care Hospital,2834 0500/0300,2,1,,,OSM ingest — pending phone verification
 375668400,Rajiv Gandhi Govt General Hospital ER,044-28194600,2,1,,2026-05-28,Pre-curated demo
@@ -38,14 +38,14 @@ osm_id,canonical_name,phone,trauma_tier,verified,verifier,verified_date,notes
 442508332,Sarswathi Hospital,,2,0,,,OSM ingest — pending phone verification
 591555028,skandan nursing home,,2,0,,,OSM ingest — pending phone verification
 1315895438,sree dhanalakshmi family clinic,,2,0,,,OSM ingest — pending phone verification
-295552092,Sri Devi Speciality Hospial,,2,0,,,OSM ingest — pending phone verification
+295552092,Sri Devi Speciality Hospial,044-24792401,2,1,web-official,2026-05-30,Official/public line per https://yellowpages.goldenchennai.com/listings/?c=chennai&i=307
 313027868,Sri Ramachandra Medical Centre and Hospital,044-40012345,1,1,web-official,2026-05-30,Official/public line per https://srmc.sriramachandra.edu/contact-us/
 1015571498,Srm Speciality Hospital,044-45928692,2,1,web-official,2026-05-30,Official/public line per https://srmc.sriramachandra.edu/contact-us/
 1015571601,SRMC Emergency & Trauma (Chennai),044-27440000,1,1,,2026-05-28,Pre-curated demo
 367795605,St. Thomas Hospital,044-61739393,2,1,web-official,2026-05-30,Official/public line per https://www.stthomashospital.in/contact.php
 295552091,Sundaram Medical Foundation,044-26144240,2,1,web-official,2026-05-30,Official/public line per https://smf.in/contact
-1560720462,Vasan Eye Care Hospital,,2,0,,,OSM ingest — pending phone verification
-595706154,"Vasan Eye Care Hospital, Vadapalani",,2,0,,,OSM ingest — pending phone verification
+1560720462,Vasan Eye Care Hospital,1800-571-2222,2,1,web-official,2026-05-30,Official/public line per https://vasaneye.com/
+595706154,"Vasan Eye Care Hospital, Vadapalani",044-23652100,2,1,web-official,2026-05-30,Official/public line per https://vasaneye.com/eye-hospital/chennai-vadapalani/
 310909754,Vellore CMC Casualty (NH referral),0416-2282010,1,1,,2026-05-28,Pre-curated demo
 459648701,Vijaya Heart Centre,044-66646664,2,1,web-official,2026-05-30,Official/public line per https://vijayahospital.org/contact-us/
 258978417,Vikram Hospital,,2,0,,,OSM ingest — pending phone verification

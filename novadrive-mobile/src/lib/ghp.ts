@@ -1,6 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from 'lz-string';
 import { GHP_HASH_PREFIX, GHP_SMS_HEADER } from './brand';
+import { resolveRegionalCoverage } from './regionalCoverage';
 import { formatIceLine } from './storage';
 import type { EmergencySession, GoldenHourPacket, MedicalProfile } from './types';
 
@@ -16,7 +17,7 @@ export async function hashPayload(payload: string): Promise<string> {
   return `${GHP_HASH_PREFIX}-${digest.slice(0, 8)}`;
 }
 
-const DISPATCH_108: EmergencySession['facility'] = {
+export const DISPATCH_108: EmergencySession['facility'] = {
   id: '108',
   name: 'National emergency (108)',
   type: 'hospital',
@@ -27,15 +28,25 @@ const DISPATCH_108: EmergencySession['facility'] = {
   verified: true,
 };
 
+function resolvePacketFacility(session: EmergencySession): EmergencySession['facility'] | null {
+  if (session.facility) return session.facility;
+  if (!session.location || !session.triage) return null;
+  if (session.triage === 'BLACK') return DISPATCH_108;
+  const coverage = resolveRegionalCoverage(session.location.lat, session.location.lng);
+  if (coverage.mode === 'baseline') return DISPATCH_108;
+  return null;
+}
+
 export async function buildPacket(
   session: EmergencySession,
   medical?: MedicalProfile
 ): Promise<GoldenHourPacket | null> {
   if (!session.location || !session.triage) return null;
-  const facility = session.facility ?? (session.triage === 'BLACK' ? DISPATCH_108 : null);
+  const facility = resolvePacketFacility(session);
   if (!facility) return null;
 
   const id = await newPacketId();
+  const coverage = resolveRegionalCoverage(session.location.lat, session.location.lng);
   const core = JSON.stringify({
     id,
     triage: session.triage,
@@ -64,7 +75,7 @@ export async function buildPacket(
       etaMinutes: facility.etaMinutes,
       distanceKm: facility.distanceKm,
     },
-    emergency: { dial: '108', state: 'Tamil Nadu', language: 'en' },
+    emergency: { dial: '108', state: coverage.stateName, language: 'en' },
     integrity,
   };
 }
@@ -153,6 +164,7 @@ export function decodeQrPayload(raw: string): QrDecodedMinimal | null {
 /** Reconstruct a relay-ready packet from minimal QR decode (full round-trip for bystander scan). */
 export function packetFromQrDecoded(decoded: QrDecodedMinimal): GoldenHourPacket {
   const triage = decoded.triage as GoldenHourPacket['triage'];
+  const coverage = resolveRegionalCoverage(decoded.lat, decoded.lng);
   return {
     id: decoded.id,
     createdAt: new Date().toISOString(),
@@ -177,7 +189,7 @@ export function packetFromQrDecoded(decoded: QrDecodedMinimal): GoldenHourPacket
       etaMinutes: 0,
       distanceKm: 0,
     },
-    emergency: { dial: '108', state: 'Tamil Nadu', language: 'en' },
+    emergency: { dial: '108', state: coverage.stateName, language: 'en' },
     integrity: decoded.integrity,
   };
 }

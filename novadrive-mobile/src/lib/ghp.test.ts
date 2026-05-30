@@ -54,6 +54,25 @@ describe('buildPacket', () => {
     expect(packet?.triage).toBe('YELLOW');
     expect(packet?.integrity).toMatch(/^mg-[a-f0-9]{8}$/);
     expect(packet?.routing.facilityName).toBe('Govt GH');
+    expect(packet?.emergency.state).toBe('Tamil Nadu');
+  });
+
+  it('uses 108 and Odisha state for baseline RED without a selected facility', async () => {
+    const packet = await buildPacket({
+      location: { lat: 20.2961, lng: 85.8245, capturedAt: '2026-05-30T12:00:00.000Z' },
+      triage: 'RED',
+    });
+    expect(packet?.routing.phone).toBe('108');
+    expect(packet?.routing.facilityName).toBe('National emergency (108)');
+    expect(packet?.emergency.state).toBe('Odisha');
+  });
+
+  it('uses Tamil Nadu state for NH48 verified pack coordinates', async () => {
+    const packet = await buildPacket({
+      location: { lat: 13.0, lng: 80.2, capturedAt: '2026-05-30T12:00:00.000Z' },
+      triage: 'BLACK',
+    });
+    expect(packet?.emergency.state).toBe('Tamil Nadu');
   });
 });
 

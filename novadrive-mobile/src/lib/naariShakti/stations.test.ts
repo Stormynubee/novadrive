@@ -15,4 +15,11 @@ describe('findNearestPoliceStation', () => {
     const tambaram = findNearestPoliceStation(12.925, 80.12);
     expect(tambaram.id).toBe('tambaram-ps');
   });
+
+  it('returns national 112 fallback when far from Chennai demo stations', () => {
+    const odisha = findNearestPoliceStation(20.2961, 85.8245);
+    expect(odisha.id).toBe('national-112');
+    expect(odisha.phone).toBe('112');
+    expect(odisha.name).toContain('National emergency');
+  });
 });

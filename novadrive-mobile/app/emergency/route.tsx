@@ -1,5 +1,5 @@
 import { type Href, router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Linking } from 'react-native';
 import { EmergencyStepShell } from '../../src/components/EmergencyStepShell';
 import { FacilityCard } from '../../src/components/FacilityCard';
@@ -9,6 +9,8 @@ import { MargiButton } from '../../src/components/MargiButton';
 import { useApp } from '../../src/context/AppContext';
 import { rankFacilities } from '../../src/lib/facilitiesDb';
 import { EMERGENCY_RESPONSE_PATH } from '../../src/lib/emergency/emergencyNavigation';
+import { DISPATCH_108 } from '../../src/lib/ghp';
+import { resolveRegionalCoverage } from '../../src/lib/regionalCoverage';
 import type { Facility } from '../../src/lib/types';
 import { tokens } from '../../src/theme/tokens';
 
@@ -17,6 +19,13 @@ export default function RouteScreen() {
   const [list, setList] = useState<Facility[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string | null>(session.facility?.id ?? null);
+
+  const coverage = useMemo(() => {
+    if (!session.location) return null;
+    return resolveRegionalCoverage(session.location.lat, session.location.lng);
+  }, [session.location]);
+
+  const baselineMode = coverage?.mode === 'baseline' || list.length === 0;
 
   useEffect(() => {
     if (!session.location || !triageResult) {
@@ -28,6 +37,12 @@ export default function RouteScreen() {
       .then((f) => setList(f))
       .finally(() => setLoading(false));
   }, [session.location, triageResult]);
+
+  useEffect(() => {
+    if (!baselineMode || loading || triageResult === 'BLACK') return;
+    selectFacility(DISPATCH_108 as Facility);
+    setSelected(DISPATCH_108.id);
+  }, [baselineMode, loading, selectFacility, triageResult]);
 
   if (!session.location) {
     return (
@@ -87,7 +102,16 @@ export default function RouteScreen() {
     router.push('/emergency/packet');
   };
 
-  const footer = (
+  const footer = baselineMode ? (
+    <>
+      <MargiButton label="Call 108" onPress={() => Linking.openURL('tel:108')} large />
+      <MargiButton
+        label="Build Golden Hour Packet"
+        onPress={() => goPacket(DISPATCH_108 as Facility)}
+        variant="secondary"
+      />
+    </>
+  ) : (
     <>
       <MargiButton
         label="Build Golden Hour Packet"
@@ -103,34 +127,24 @@ export default function RouteScreen() {
     <EmergencyStepShell
       step="Route"
       title="Route"
-      subtitle="Nearest trauma-ready facilities within 100 km."
+      subtitle={
+        baselineMode
+          ? `${coverage?.stateName ?? 'India'} · Baseline coverage`
+          : 'Nearest trauma-ready facilities within 100 km.'
+      }
       showBack
       footer={footer}
     >
       {loading ? (
         <ActivityIndicator color={tokens.primary} />
-      ) : list.length === 0 ? (
+      ) : baselineMode ? (
         <HudCard accent="secondary">
-          <HudText variant="bodyMd" style={{ lineHeight: 22, marginBottom: 12, color: tokens.primary }}>
-            No facilities within 100 km in the offline pack. Call 108 — expand the regional POI
-            seed for your state to extend the routing range.
+          <HudText variant="mono" style={{ color: tokens.secondary, marginBottom: 8 }}>
+            {`${coverage?.stateName ?? 'India'} · BASELINE COVERAGE`}
           </HudText>
-          <MargiButton
-            label="Build packet anyway (108)"
-            onPress={() =>
-              goPacket({
-                id: '108',
-                name: 'National emergency (108)',
-                type: 'hospital',
-                traumaTier: 2,
-                phone: '108',
-                distanceKm: 0,
-                etaMinutes: 0,
-                verified: true,
-              })
-            }
-            variant="secondary"
-          />
+          <HudText variant="bodyMd" style={{ lineHeight: 22, color: tokens.primary }}>
+            No verified hospitals in your area. Baseline mode — call 108 and share your GPS + triage.
+          </HudText>
         </HudCard>
       ) : (
         <>

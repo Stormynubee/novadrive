@@ -4,7 +4,7 @@ import { HudText } from './HudText';
 import { tokens } from '../theme/tokens';
 
 const DISCLAIMER =
-  'Margi provides decision support only. It is not a medical diagnosis or certified triage. In an emergency, call 108/112 when possible. Facility data in this build is a demo seed — verify by phone.';
+  'Margi provides decision support only. It is not a medical diagnosis or certified triage. In an emergency, call 108/112 when possible. NH48 corridor has verified facility phones; elsewhere uses baseline mode (108 + GPS) — always verify by phone.';
 
 export function MedicalDisclaimerBanner({ compact }: { compact?: boolean }) {
   return (

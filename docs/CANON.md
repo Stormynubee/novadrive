@@ -32,8 +32,8 @@ This document is the **single source of truth** for what the repo actually ships
 
 | Topic | Demo truth |
 |-------|------------|
-| POI database | ~11 curated Chennai/NH48 names + synthetic padding; `POI_DATA_VERIFIED` is hand-curated date, not NHA sync |
-| Naari police | Chennai corridor **demo** stations aligned with POI geography |
+| POI database | **NH48 verified pack** (50 OSM nodes, 40 phone-verified) inside Chennai corridor bbox; **baseline mode** elsewhere in India — 108 + GPS + triage, no verified hospital routing until a regional pack ships — see [POI_VERIFICATION_RUNBOOK.md](POI_VERIFICATION_RUNBOOK.md) and [2026-05-30-odisha-baseline-pack-design.md](superpowers/specs/2026-05-30-odisha-baseline-pack-design.md) |
+| Naari police | Chennai corridor **demo** stations; **112 national fallback** when >150 km from demo seed |
 | Phase 3 “production” tag | Historical release name **`v2.0.0-production`** = integration milestone, **not** clinical production |
 | Community tab | Mix of local SQLite feedback + seeded demo alerts |
 | Sarthi | 31+ offline KB entries; cloud LLM optional |

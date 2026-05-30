@@ -38,6 +38,16 @@ export const NAARI_POLICE_STATIONS: NaariPoliceStation[] = [
   },
 ];
 
+export const NATIONAL_EMERGENCY_STATION: NaariPoliceStation = {
+  id: 'national-112',
+  name: 'National emergency (112)',
+  phone: '112',
+  lat: 20.5937,
+  lng: 78.9629,
+};
+
+const DEMO_STATION_MAX_KM = 150;
+
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -65,5 +75,14 @@ export function findNearestPoliceStation(
     }
   }
   const etaMinutes = Math.max(2, Math.round(bestKm * 5));
+  if (bestKm > DEMO_STATION_MAX_KM) {
+    return {
+      ...NATIONAL_EMERGENCY_STATION,
+      lat,
+      lng,
+      distanceKm: 0,
+      etaMinutes: 0,
+    };
+  }
   return { ...best, distanceKm: Math.round(bestKm * 10) / 10, etaMinutes };
 }

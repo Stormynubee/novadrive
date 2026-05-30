@@ -62,8 +62,8 @@ describe('facilitiesDb', () => {
     expect(countVerifiedFacilities()).toBeGreaterThanOrEqual(1);
   });
 
-  // C1 production gate — un-skip after CSV has ≥40 phone-verified rows (Task 6)
-  it.skip('reports at least 40 verified facilities in production pack', () => {
+  // C1 production gate — satisfied after Task 6 web-official pass (2026-05-30)
+  it('reports at least 40 verified facilities in production pack', () => {
     expect(countVerifiedFacilities()).toBeGreaterThanOrEqual(40);
   });
 
