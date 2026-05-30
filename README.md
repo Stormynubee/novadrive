@@ -105,7 +105,7 @@ flowchart LR
 | **Phase 3** | Supabase auth + profile sync, NGO volunteer registry, OSRM trip routing, Sarthi BFF health, HTTP dispatch audit |
 | **Phase 2 P1** | Drive HUD layout, Rah-Veer claim log, journey debrief, TTS on START triage |
 | **Voice** | Distress policy + classifier; optional YAMNet on dev/APK builds |
-| **Quality** | **239** Jest unit tests · `npm run verify:docs` · `npm run verify:branding` |
+| **Quality** | **244** Jest unit tests · `npm run verify:docs` · `npm run verify:branding` |
 
 Package: `novadrive-mobile` **2.0.0** · Android `com.margi.app` · deep link `margi://`
 
@@ -212,7 +212,7 @@ cd novadrive-mobile
 npm install --legacy-peer-deps
 npx expo install react-native-worklets babel-preset-expo
 cp .env.example .env    # optional: Sarthi BFF + Supabase keys
-npm test                # 239 unit tests
+npm test                # 244 unit tests
 npm run android         # debug APK + Metro (uses Android Studio JBR on Windows)
 ```
 
