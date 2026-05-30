@@ -24,11 +24,11 @@ export function NaariShaktiHero() {
 
 const styles = StyleSheet.create({
   wrap: {
-    backgroundColor: tokens.primaryContainer,
+    backgroundColor: tokens.primary,
     paddingHorizontal: 24,
     paddingVertical: 28,
     borderBottomWidth: 4,
-    borderBottomColor: tokens.secondaryContainer,
+    borderBottomColor: tokens.secondary,
     gap: 8,
   },
   badge: {
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     alignSelf: 'flex-start',
-    backgroundColor: tokens.secondaryContainer,
+    backgroundColor: tokens.secondary,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 999,
@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     fontFamily: 'PublicSans_700Bold',
   },
   title: {
-    color: tokens.primaryFixed,
+    color: tokens.onPrimary,
     fontFamily: 'HankenGrotesk_800ExtraBold',
     letterSpacing: -0.5,
   },
-  sub: { color: tokens.onPrimaryContainer, opacity: 0.85, maxWidth: 360 },
+  sub: { color: 'rgba(255,255,255,0.82)', maxWidth: 360 },
 });

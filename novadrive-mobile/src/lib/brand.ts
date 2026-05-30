@@ -5,6 +5,9 @@ export const APP_DISPLAY_NAME = 'Margi';
 /** Hackathon team credit (product name remains Margi). */
 export const TEAM_DISPLAY_NAME = 'Team NovaDrive';
 
+/** Dashboard header line under Margi. */
+export const TEAM_ATTRIBUTION_LINE = 'BY TEAM NOVADRIVE';
+
 export const APP_TAGLINE = 'When signal drops, the path still holds.';
 
 export const GHP_SMS_HEADER = 'MARGI GHP';

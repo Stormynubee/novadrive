@@ -74,7 +74,12 @@ export function MargiTopBar({
         {subtitle ? (
           <HudText
             variant="mono"
-            style={[styles.sub, { color: onPrimary ? tokens.onPrimaryContainer : tokens.onSurfaceVariant }]}
+            style={[
+              styles.sub,
+              {
+                color: onPrimary ? 'rgba(255,255,255,0.78)' : tokens.onSurfaceVariant,
+              },
+            ]}
             numberOfLines={1}
           >
             {subtitle}
@@ -131,7 +136,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     letterSpacing: 0.5,
   },
-  sub: { fontSize: 10, marginTop: 2 },
+  sub: { fontSize: 10, marginTop: 2, letterSpacing: 1.4, fontFamily: 'PublicSans_600SemiBold' },
   iconBtn: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   trailing: { flexDirection: 'row', alignItems: 'center' },
 });

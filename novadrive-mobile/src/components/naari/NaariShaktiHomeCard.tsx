@@ -26,7 +26,7 @@ export function NaariShaktiHomeCard({ onPress }: Props) {
           Emergency Safety Portal
         </HudText>
       </View>
-      <MaterialIcons name="chevron-right" size={24} color={tokens.outline} />
+      <MaterialIcons name="chevron-right" size={24} color="rgba(255,255,255,0.85)" />
     </Pressable>
   );
 }
@@ -39,23 +39,24 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: tokens.radius.card,
     borderWidth: 1,
-    borderColor: `${tokens.secondaryContainer}4D`,
-    backgroundColor: tokens.surfaceContainerLowest,
+    borderColor: 'rgba(254, 107, 0, 0.35)',
+    backgroundColor: tokens.secondary,
+    ...tokens.elevation.sos,
   },
   pressed: { opacity: 0.92, transform: [{ scale: 0.98 }] },
   iconWrap: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: tokens.secondaryContainer,
+    backgroundColor: 'rgba(255,255,255,0.22)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   textCol: { flex: 1 },
   title: {
-    color: tokens.secondaryContainer,
+    color: tokens.onSecondary,
     fontFamily: 'PublicSans_700Bold',
     letterSpacing: 1,
   },
-  sub: { color: tokens.onSurfaceVariant, marginTop: 2 },
+  sub: { color: 'rgba(255,255,255,0.9)', marginTop: 2 },
 });

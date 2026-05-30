@@ -19,7 +19,7 @@ export function NaariShaktiProtocolModal({ visible, onEnable, onDismiss }: Props
               <MaterialIcons
                 name="shield"
                 size={40}
-                color={tokens.secondaryContainer}
+                color={tokens.secondary}
                 style={{ fontWeight: 'bold' }}
               />
             </View>
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   message: { color: tokens.onSurfaceVariant, textAlign: 'center', marginBottom: 24 },
   enableBtn: {
     width: '100%',
-    backgroundColor: tokens.secondaryContainer,
+    backgroundColor: tokens.secondary,
     paddingVertical: 14,
     borderRadius: tokens.radius.card,
     alignItems: 'center',

@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   primaryLabel: {
-    color: tokens.secondaryContainer,
+    color: tokens.secondary,
     fontFamily: 'PublicSans_700Bold',
     letterSpacing: 1,
   },

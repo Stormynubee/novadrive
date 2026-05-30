@@ -61,7 +61,6 @@ export function NaariShaktiPortalButton({ onPress }: { onPress: () => void }) {
       accessibilityRole="button"
       accessibilityLabel="Naari Shakti Safety Portal"
     >
-      <View style={styles.gradientFill} />
       <View style={styles.row}>
         <View style={styles.iconCircle}>
           <Animated.View style={iconStyle}>
@@ -82,23 +81,18 @@ export function NaariShaktiPortalButton({ onPress }: { onPress: () => void }) {
 }
 
 const styles = StyleSheet.create({
-  gradientFill: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: tokens.secondaryContainer,
-    opacity: 0.95,
-  },
   outer: {
     height: 124,
     borderRadius: 16,
     borderWidth: 2,
-    borderColor: 'rgba(255, 200, 150, 0.35)',
+    borderColor: 'rgba(255, 255, 255, 0.28)',
     overflow: 'hidden',
     backgroundColor: tokens.secondary,
-    shadowColor: tokens.secondaryContainer,
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 6,
+    shadowColor: tokens.secondary,
+    shadowOpacity: 0.45,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 8,
   },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.96 },
   row: {

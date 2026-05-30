@@ -15,7 +15,7 @@ import * as Location from 'expo-location';
 import QRCode from 'react-native-qrcode-svg';
 import { HudText } from '../../src/components/HudText';
 import { MargiButton } from '../../src/components/MargiButton';
-import { FirstAidBoard } from '../../src/components/emergency/FirstAidBoard';
+import { TraumaResponseActionBar } from '../../src/components/emergency/TraumaResponseActionBar';
 import { LanguageSelector } from '../../src/components/emergency/LanguageSelector';
 import { TraumaCenterPanel } from '../../src/components/emergency/TraumaCenterPanel';
 import { useApp } from '../../src/context/AppContext';
@@ -59,6 +59,7 @@ export default function TraumaResponseScreen() {
     completeTraumaAssessment,
     resetEmergency,
     a11y,
+    markIncidentActivated,
   } = useApp();
   const [dispatchResult, setDispatchResult] = useState<DispatchResult | null>(null);
   const [dispatchError, setDispatchError] = useState<string | null>(null);
@@ -88,6 +89,7 @@ export default function TraumaResponseScreen() {
       router.replace(EMERGENCY_ACTIVATION_PATH as Href);
       return;
     }
+    markIncidentActivated();
     const started = engine.startSession({
       incidentType: session.incidentType,
       language: settings.language,
@@ -277,6 +279,7 @@ export default function TraumaResponseScreen() {
     settings.notifyEmergencyContacts !== false
       ? profile.medical?.primaryContact?.phone?.trim() || null
       : null;
+  const incidentLabel = session.incidentType?.replace(/_/g, ' ').toUpperCase();
 
   return (
     <SafeAreaView style={styles.root} edges={['top', 'left', 'right']}>
@@ -293,6 +296,11 @@ export default function TraumaResponseScreen() {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+        <TraumaResponseActionBar
+          activatedAt={session.activatedAt ?? session.location?.capturedAt}
+          incidentLabel={incidentLabel}
+        />
+
         <View style={styles.voiceBanner}>
           <View style={styles.voiceHead}>
             <HudText variant="mono" style={styles.voiceLabel}>

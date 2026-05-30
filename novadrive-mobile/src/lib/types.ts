@@ -62,6 +62,8 @@ export type IncidentType = 'road_accident' | 'natural_calamity' | 'human_crime';
 export interface EmergencySession {
   location?: LocationFix;
   incidentType?: IncidentType;
+  /** ISO timestamp when SOS activation completed (trauma response entry). */
+  activatedAt?: string;
   triage?: TriageColor;
   facility?: Facility;
   packet?: GoldenHourPacket;

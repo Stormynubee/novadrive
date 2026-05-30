@@ -44,7 +44,7 @@ const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 export default function EmergencyActivationScreen() {
-  const { settings, updateSettings, session, resetEmergency, profile, setLocation, selectFacility } =
+  const { settings, updateSettings, session, resetEmergency, profile, setLocation, selectFacility, markIncidentActivated } =
     useApp();
   const [statusIndex, setStatusIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(ACTIVATION_SPLASH_SECONDS);
@@ -118,6 +118,7 @@ export default function EmergencyActivationScreen() {
 
   const navigateToResponse = async (selectedMode: ActivationMode) => {
     await runOrchestration();
+    markIncidentActivated();
     const responseMode = selectedMode === 'manual' ? 'guided' : 'auto';
     router.replace(`${EMERGENCY_RESPONSE_PATH}?mode=${responseMode}` as Href);
   };

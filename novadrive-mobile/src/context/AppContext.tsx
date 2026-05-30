@@ -98,6 +98,7 @@ interface AppContextValue {
   confirmCrash: () => void;
   setLocation: (loc: LocationFix) => void;
   setIncidentType: (type: IncidentType) => void;
+  markIncidentActivated: () => void;
   completeTraumaAssessment: (triage: TriageColor) => void;
   answerTriage: (value: Partial<FSMContext>) => void;
   skipTriageStep: () => void;
@@ -557,6 +558,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setSession((s) => ({ ...s, incidentType }));
   }, []);
 
+  const markIncidentActivated = useCallback(() => {
+    setSession((s) =>
+      s.activatedAt ? s : { ...s, activatedAt: new Date().toISOString() }
+    );
+  }, []);
+
   const completeTraumaAssessment = useCallback((triage: TriageColor) => {
     setTriageResult(triage);
     setSession((s) => ({ ...s, triage }));
@@ -734,6 +741,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       confirmCrash,
       setLocation,
       setIncidentType,
+      markIncidentActivated,
       completeTraumaAssessment,
       answerTriage,
       skipTriageStep,
@@ -783,6 +791,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       confirmCrash,
       setLocation,
       setIncidentType,
+      markIncidentActivated,
       completeTraumaAssessment,
       answerTriage,
       skipTriageStep,
